@@ -34,6 +34,7 @@ function OnGUI() {
 				
 				if(GUI.Button(Rect(Screen.width/2 - 100, 320, 120, 30), "Retour", test2)){
 					newAccount = false;
+					hasBeenPressed = false;
 				}
 				
 				if(GUI.Button(Rect(Screen.width/2 + 40, 320, 120, 30), "Créer", test2)){
