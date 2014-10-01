@@ -1,10 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\script_Menu.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\script_Acceuil.js">
     <Files>
-      <File FileName="Assets\Scripts\script_Connexion.js" Line="18" Column="38" />
-      <File FileName="Assets\Scripts\script_Acceuil.js" Line="17" Column="1" />
-      <File FileName="Assets\Scripts\script_Menu.js" Line="9" Column="34" />
+      <File FileName="Assets\Scripts\script_Acceuil.js" Line="16" Column="18" />
+      <File FileName="Assets\Scripts\script_Lobby.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\script_Menu.js" Line="39" Column="2" />
+      <File FileName="Assets\Scripts\script_Connexion.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

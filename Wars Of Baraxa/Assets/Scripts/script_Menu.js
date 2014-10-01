@@ -6,9 +6,11 @@ var test : GUIStyle;
 var warOfBaraxa : GUIStyle;
 var GUIBox : GUIStyle;
 var GUIButton : GUIStyle;
+var Background : GUIStyle;
 
 function OnGUI(){
-	test.fontSize = Screen.width/30;
+	GUI.Box(Rect(0,0,Screen.width,Screen.height),"",Background);
+	test.fontSize = Screen.width/26;
 	warOfBaraxa.fontSize = Screen.width/10;
 	GUI.Label(Rect((Screen.width/2) - (Screen.width * 0.6f/2), Screen.height * 0.1f,Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
 	
