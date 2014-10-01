@@ -6,7 +6,7 @@ var test : GUIStyle;
 
 function OnGUI(){
 	if(GUI.Button(Rect(Screen.width/3, Screen.height / 3,120, 30), "Trouver une partie", test)){
-		Application.LoadLevel("Loading");
+		Application.LoadLevel("Lobby");
 	}
 	if(GUI.Button(Rect(Screen.width/3, Screen.height / 2.4,120, 30), "Profile", test)){
 		Application.LoadLevel("Profile");

@@ -1,7 +1,7 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{44FEF5E2-3379-1D0F-AEC8-7D3A51EB5C13}") = "Assembly-UnityScript", "Assembly-UnityScript.unityproj", "{36109DBA-2D0D-4E25-88D5-4772E2FE25F9}"
+# Visual Studio 2008
+
+Project("{44FEF5E2-3379-1D0F-AEC8-7D3A51EB5C13}") = "Wars Of Baraxa", "Assembly-UnityScript.unityproj", "{36109DBA-2D0D-4E25-88D5-4772E2FE25F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,7 +14,10 @@ Global
 		{36109DBA-2D0D-4E25-88D5-4772E2FE25F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36109DBA-2D0D-4E25-88D5-4772E2FE25F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+					GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-UnityScript.unityproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -32,7 +35,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
+
 EndGlobal
