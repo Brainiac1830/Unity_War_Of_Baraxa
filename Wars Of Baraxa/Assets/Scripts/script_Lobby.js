@@ -2,9 +2,11 @@
 var warOfBaraxa : GUIStyle;
 var GUIBox : GUIStyle;
 var GUIButton : GUIStyle;
+var Background : GUIStyle;
 
 
 function OnGUI () {
+	GUI.Box(Rect(0,0,Screen.width,Screen.height),"",Background);
 	warOfBaraxa.fontSize = Screen.width/10;
 	GUIBox.fontSize = Screen.width/30;
 	GUIButton.fontSize = Screen.width/30;

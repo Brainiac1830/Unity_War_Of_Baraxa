@@ -9,14 +9,16 @@ var textArea : GUIStyle;
 var buttons : GUIStyle;
 var text : GUIStyle;
 var warOfBaraxa : GUIStyle;
+var Background : GUIStyle;
 
 
 
 function OnGUI() {
+	GUI.Box(Rect(0,0,Screen.width,Screen.height),"",Background);
 	warOfBaraxa.fontSize = Screen.width / 10;
-	text.fontSize = Screen.width/45;
-	textArea.fontSize = Screen.width/45;
-	buttons.fontSize = Screen.width/45;
+	text.fontSize = Screen.width/42;
+	textArea.fontSize = Screen.width/42;
+	buttons.fontSize = Screen.width/42;
 	
 	//Titre
 	GUI.Label(Rect((Screen.width/2) - (Screen.width * 0.6f/2), Screen.height * 0.1f,Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);

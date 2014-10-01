@@ -54,7 +54,7 @@
      <Compile Include="Assets\Scripts\script_Menu.js" />
      <Compile Include="Assets\Scripts\script_Profile.js" />
  <Reference Include="warsofbaraxa">
- <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/warsofbaraxa.dll</HintPath>
+ <HintPath>C:/Users/200666155/Documents/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/warsofbaraxa.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
