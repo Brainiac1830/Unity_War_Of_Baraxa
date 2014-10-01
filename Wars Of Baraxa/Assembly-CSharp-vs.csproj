@@ -50,6 +50,7 @@
  <Reference Include="warsofbaraxa">
  <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/warsofbaraxa.dll</HintPath>
  </Reference>
+     <Compile Include="Assets\Scripts\script_Board.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

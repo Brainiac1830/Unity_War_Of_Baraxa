@@ -35,10 +35,10 @@ function OnGUI() {
 			if(alias == "" || password == ""){
 				//Erreur
 			}
-			else if (false){
+			//else if (false){
 				//Code pour vérifier si l'alias et le mot de passe 
 				//correspondent a un enregistrement dans la base de donnée
-			}
+			//}
 			else{
 				//Connection et changement de page
 			}
@@ -63,10 +63,10 @@ function OnGUI() {
 			if(alias == "" || password == "" || nom == "" || prenom == ""){
 				//Erreur
 			}
-			else if(false){
+			//else if(false){
 				//Alias déja utilisé
 				//Erreur
-			}
+			//}
 			
 			nouveauCompte = false;
 		}
