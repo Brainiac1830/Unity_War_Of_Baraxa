@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\script_Connexion.js" />
      <Compile Include="Assets\Scripts\script_Loading.js" />
      <Compile Include="Assets\Scripts\script_Menu.js" />
+     <Compile Include="Assets\Scripts\script_Profile.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,6 +4,8 @@ var trouverPartie = false;
 var quitter = false;
 var test : GUIStyle;
 var warOfBaraxa : GUIStyle;
+var GUIBox : GUIStyle;
+var GUIButton : GUIStyle;
 
 function OnGUI(){
 	test.fontSize = Screen.width/30;
@@ -22,13 +24,15 @@ function OnGUI(){
 
 
 	if(guiON){
-		GUI.Box (Rect (Screen.width*1.35/8,Screen.height*1.5/8,370,270), "You sure?");
+		GUIBox.fontSize = Screen.width/30;
+		GUIButton.fontSize = Screen.width/40;
+		GUI.Box (Rect (Screen.width*0.35f,Screen.height * 0.35f,Screen.width * 0.30f,Screen.height * 0.30f), "\nVoulez-vous \n vraiment quitter?", GUIBox);
 		
-		if(GUI.Button (Rect (Screen.width*1.5/8,Screen.height*2/4,150,60),"Confirmer")){
+		if(GUI.Button (Rect ((Screen.width * 0.36f) ,Screen.height * 0.55f,Screen.width * 0.135f,Screen.height * 0.07f),"Confirmer", GUIButton)){
 			Application.Quit();
 		}
 		
-		if(GUI.Button (Rect (Screen.width*4.5/8,Screen.height*2/4,150,60), "Annuler")){
+		if(GUI.Button (Rect ((Screen.width * 0.43f) + (Screen.width * 0.15f/2),Screen.height * 0.55f,Screen.width * 0.135f,Screen.height * 0.07f), "Annuler", GUIButton)){
 			guiON = false;
 		}
 	}
