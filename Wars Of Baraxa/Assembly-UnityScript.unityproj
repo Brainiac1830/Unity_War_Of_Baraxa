@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\script_Acceuil.js" />
      <Compile Include="Assets\Scripts\script_Connexion.js" />
      <Compile Include="Assets\Scripts\script_Loading.js" />
+     <Compile Include="Assets\Scripts\script_Lobby.js" />
      <Compile Include="Assets\Scripts\script_Menu.js" />
      <Compile Include="Assets\Scripts\script_Profile.js" />
   </ItemGroup>

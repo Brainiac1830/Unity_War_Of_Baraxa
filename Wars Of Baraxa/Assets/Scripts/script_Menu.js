@@ -13,7 +13,7 @@ function OnGUI(){
 	GUI.Label(Rect((Screen.width/2) - (Screen.width * 0.6f/2), Screen.height * 0.1f,Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
 	
 	if(GUI.Button(Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.40f,Screen.width * 0.3f, Screen.height * 0.05f), "Trouver une partie", test)){
-		Application.LoadLevel("Loading");
+		Application.LoadLevel("Lobby");
 	}
 	if(GUI.Button(Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.50f,Screen.width * 0.3f ,Screen.height * 0.05f), "Profile", test)){
 		Application.LoadLevel("Connexion");
