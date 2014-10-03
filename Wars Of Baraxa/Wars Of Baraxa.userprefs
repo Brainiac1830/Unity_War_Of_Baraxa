@@ -1,15 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\script_Attaquer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\farmressources.js">
     <Files>
-      <File FileName="Assets\Scripts\script_Acceuil.js" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\script_Connexion.js" Line="10" Column="21" />
-      <File FileName="Assets\Scripts\script_Menu.js" Line="10" Column="1" />
-      <File FileName="Assets\Scripts\script_Attaquer.cs" Line="13" Column="83" />
+      <File FileName="Assets\Scripts\farmressources.js" Line="52" Column="66" />
+      <File FileName="Assets\Scripts\script_Acceuil.js" Line="22" Column="183" />
+      <File FileName="Assets\Scripts\script_Menu.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\mike\Documents\puzzle2d\Assets\personnagePrincipal.cs" line="46" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
