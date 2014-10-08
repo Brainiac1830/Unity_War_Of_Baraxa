@@ -9,6 +9,9 @@ var NbBois :int;
 var NbGem :int;
 var NbWorkerMax :int;
 var NbWorker :int;
+var NbBleEnnemis :int;
+var NbBoisEnnemis :int;
+var NbGemEnnemis :int;
 function Update() {
 }
 	
@@ -16,6 +19,9 @@ function Start(){
  NbBle=0;
  NbBois=0;
  NbGem=0;
+ NbBleEnnemis=0;
+ NbBoisEnnemis=0;
+ NbGemEnnemis=0;
  NbWorkerMax=2;
  NbWorker= NbWorkerMax;
  placerClick=false;
@@ -26,6 +32,15 @@ function OnGUI(){
 	var e:Event;
 	e=Event.current;
 	GUI.Box(Rect(0,0,Screen.width,Screen.height),"",Background);
+	//blé
+	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.005,Screen.width*0.05, Screen.height*0.07),ble);
+	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.07,Screen.width*0.09, Screen.height*0.07),"Blé: " + NbBleEnnemis.ToString());
+	//bois
+	GUI.Label(Rect(Screen.width*0.06,Screen.height*0.005,Screen.width*0.05,Screen.height*0.07),bois);
+	GUI.Label(Rect(Screen.width*0.06,Screen.height*0.07,Screen.width*0.09,Screen.height*0.07),"Bois: " + NbBoisEnnemis.ToString());
+	//gem
+	GUI.Label(Rect(Screen.width*0.14,Screen.height*0.005,Screen.width*0.05,Screen.height*0.07),gem);
+	GUI.Label(Rect(Screen.width*0.14,Screen.height*0.07,Screen.width*0.09,Screen.height*0.07),"gem: " + NbGemEnnemis.ToString());
 	if(!placerClick){
 		//BLE
 	    if(GUI.Button(Rect(Screen.width/1.27f, Screen.height/1.10f, Screen.width*0.05, Screen.height*0.07),ble)){

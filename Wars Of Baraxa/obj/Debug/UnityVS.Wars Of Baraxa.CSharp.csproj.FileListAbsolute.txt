@@ -1,1 +1,10 @@
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\UnityEditor.dll
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\UnityEngine.dll
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\warsofbaraxa.dll
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\UnityEngine.xml
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\obj\Debug\Assembly-CSharp.dll
+C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\obj\Debug\Assembly-CSharp.pdb
 C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\obj\Debug\UnityVS.Wars Of Baraxa.CSharp.csprojResolveAssemblyReference.cache
