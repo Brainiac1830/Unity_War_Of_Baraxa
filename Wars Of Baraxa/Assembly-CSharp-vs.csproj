@@ -47,8 +47,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Jouer.cs" />
+     <Compile Include="Assets\Scripts\Script_logIn.cs" />
  <Reference Include="warsofbaraxa">
  <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
+ </Reference>
+ <Reference Include="WarsOfBaraxaBD">
+ <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
+ </Reference>
+ <Reference Include="Oracle.DataAccess">
+ <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/Oracle.DataAccess.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

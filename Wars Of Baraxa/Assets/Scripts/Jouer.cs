@@ -35,7 +35,7 @@ public class Jouer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        Attaquer();
 	}
     //affichage (refresh per frame)
     public void OnGUI(){
@@ -93,8 +93,46 @@ public class Jouer : MonoBehaviour {
 	    }
     }
     public void Attaquer()
-    { 
-        
+    {
+        Carte attaquant = new Carte("test","Permanent",1,0,0);
+        attaquant.perm =  new Permanent("Creature",4,2,0);
+        Carte Defenseur = new Carte("test2", "Permanent", 1, 0, 0);
+        Defenseur.perm = new Permanent("Creature", 1, 1, 0);
+        Joueur playerDef = new Joueur("Defenseur");
+        if(!attaquant.perm.aAttaque)
+        {
+            
+            //if(personne attaquer n'est pas le héros)
+            CombatCreature(attaquant.perm, Defenseur.perm);
+            CombatCreature(Defenseur.perm, attaquant.perm);
+            //else
+            playerDef.vie = CombatJoueur(attaquant.perm.Attaque, playerDef.vie);
+
+            //si l'attaquant ou le defenseur n'on plus de vie on les enleve du board
+            if (attaquant.perm.Vie <= 0)
+                attaquant = null;
+            if (Defenseur.perm.Vie <= 0)
+                Defenseur = null;
+            if (playerDef.vie <= 0)
+                playerDef = null;
+
+            attaquant.perm.aAttaque = true;
+        }
+    }
+    private void CombatCreature(Permanent attaquant, Permanent defenseur)
+    {
+        if (defenseur.Armure - attaquant.Attaque >= 0)
+            defenseur.Armure -= attaquant.Attaque;
+        else
+        {
+            int attaque = attaquant.Attaque - defenseur.Armure;
+            defenseur.Armure=0;
+            defenseur.Vie -= attaque;
+        }        
+    }
+    private int CombatJoueur(int attaque, int vie)
+    {
+        return vie - attaque;  
     }
     public int SetManaAjouter(Event events, int ressource)
     {
