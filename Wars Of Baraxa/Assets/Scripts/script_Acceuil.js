@@ -6,7 +6,7 @@ var speed = 1.0;
 
 function Update() {
 		if(Input.anyKeyDown)
-			Application.LoadLevel("Menu");
+			Application.LoadLevel("Connexion");
 }
 	
 function Start(){

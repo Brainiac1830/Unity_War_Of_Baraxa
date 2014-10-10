@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using WarsOfBaraxaBD;
-using Oracle.DataAccess.Client;
+using System.Net;
+using System.Text;
+using System.Net.Sockets;
 
 public class Script_logIn : MonoBehaviour {
 //Variables
@@ -12,6 +13,7 @@ public class Script_logIn : MonoBehaviour {
     public string messageErreur="";
     bool nouveauCompte = false;
     bool showBox = false;
+    public Socket sck;
 
 //GUIStyle
     public GUIStyle textArea;
@@ -23,7 +25,19 @@ public class Script_logIn : MonoBehaviour {
     public GUIStyle GUIButton;
 
 
-
+    public void Awake()
+    {
+        sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
+        try
+        {
+            sck.Connect(localEndPoint);
+        }
+        catch(SocketException ex)
+        {
+            
+        }
+    }
 public void OnGUI() {
 	GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
 	warOfBaraxa.fontSize = Screen.width / 10;
@@ -59,7 +73,7 @@ public void OnGUI() {
                 }
                 else
                 {
-                    //Connection et changement de page
+                    Application.LoadLevel("Menu");                    
                 }
 
             }
@@ -96,7 +110,7 @@ public void OnGUI() {
                     showBox = true;
                     messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
                 }
-                else if (getAliasBd(alias))
+                else if (getAliasBd(alias,password,nom,prenom))
                 {
                     showBox = true;
                     messageErreur = "\n Votre alias est deja utiliser.";
@@ -129,16 +143,48 @@ public void OnGUI() {
 	void Update () {
 	
 	}
-    private bool getAliasBd(string alias)
+    private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
-        AccesBD conn = new AccesBD();
-        conn.Connection();
-        return conn.estDejaPresent(alias);
+        envoyerMessage(alias+","+mdp+","+nom+","+prenom);
+        string reponse = lire();
+        if (reponse == "oui")
+            return true;
+
+        return false;
     }
     private bool estDansBd(string alias, string mdp)
     {
-        AccesBD conn = new AccesBD();
-        conn.Connection();
-        return conn.estPresent(alias,mdp);
+        envoyerMessage(alias +","+mdp);
+        string reponse = lire();
+        if (reponse == "oui")
+            return true;
+
+        return false;
+    }
+    private void envoyerMessage(string message)
+    {
+        byte[] data = Encoding.ASCII.GetBytes(message);
+        sck.Send(data);
+    }
+    private string lire()
+    {
+        string message = null;
+        do
+        {
+            message = recevoirResultat();
+        } while (message == null);
+        return message;
+    }
+    private string recevoirResultat()
+    {
+        byte[] buff = new byte[sck.SendBufferSize];
+        int bytesRead = sck.Receive(buff);
+        byte[] formatted = new byte[bytesRead];
+        for (int i = 0; i < bytesRead; i++)
+        {
+            formatted[i] = buff[i];
+        }
+        string strData = Encoding.ASCII.GetString(formatted);
+        return strData;
     }
 }

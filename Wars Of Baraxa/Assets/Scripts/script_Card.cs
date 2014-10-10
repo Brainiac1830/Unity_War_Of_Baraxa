@@ -13,7 +13,7 @@ public class script_Card : MonoBehaviour {
 	public float x_ = 0;
 	public float y_ = 0;
 	public Transform bitch;
-	GameObject card;
+    GameObject card;
 	int i = 0;
 
 
@@ -21,7 +21,7 @@ public class script_Card : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        card = null;
 	}
 
 	void OnMouseDown()
@@ -34,13 +34,16 @@ public class script_Card : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		x_ = card.renderer.bounds.size.x;
-		y_ = card.renderer.bounds.size.y;
+        if (card != null)
+        {
+            x_ = card.renderer.bounds.size.x;
+            y_ = card.renderer.bounds.size.y;
+        }
 	}
 
 	void OnGUI()
 	{
-		GUI.Label (new Rect (x_, y_, x_ * 0.1f, y_ * 0.1f), "2");
+		GUI.Label (new Rect (x_, y_,100,100), "2");
 	}
 
 	/*public void setCarte()
