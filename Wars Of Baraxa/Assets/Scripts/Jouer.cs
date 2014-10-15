@@ -7,10 +7,13 @@ public class Jouer : MonoBehaviour {
     public GUIStyle Background;
     Joueur joueur1;
     public bool placerClick;
+	public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
     public Texture2D gem;
     public Texture2D Worker;
+	public Texture2D PlayerChar;
+	public Texture2D EnnemiChar;
     public int NbBle;
     public int NbBois;
     public int NbGem;
@@ -18,9 +21,14 @@ public class Jouer : MonoBehaviour {
     public int NbWorker;
     public int NbBleEnnemis;
     public int NbBoisEnnemis;
-    public int NbGemEnnemis;     
+    public int NbGemEnnemis;
+	public int HpJoueur;
+	public int HpEnnemi;
+	public GameObject CarteTest;
 	//initialization
 	void Start () {
+		HpJoueur = 30;
+		HpEnnemi = 30;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -42,6 +50,16 @@ public class Jouer : MonoBehaviour {
 	    Event e;
 	    e=Event.current;
 	    GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
+
+		//Test pour deplacement Carte
+		//CarteTest = new GameObject ("Carte1");
+
+		//Héro Joueur
+		GUI.Label(new Rect(Screen.width*0.02f,Screen.height*0.70f,Screen.width*0.3f, Screen.height*0.3f),PlayerChar);
+		GUI.Label(new Rect(Screen.width*0.035f,Screen.height*0.69f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
+		//Héro Ennemi
+		GUI.Label(new Rect(Screen.width*0.87f,Screen.height*0.00009f,Screen.width*5.0f, Screen.height*0.305f),EnnemiChar);
+		GUI.Label(new Rect(Screen.width*0.89f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
 	    //blé
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.005f,Screen.width*0.05f, Screen.height*0.07f),ble);
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.07f,Screen.width*0.09f, Screen.height*0.07f),"Blé: " + NbBleEnnemis.ToString());

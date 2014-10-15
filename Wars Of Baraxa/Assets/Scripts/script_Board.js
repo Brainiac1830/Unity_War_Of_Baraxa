@@ -4,6 +4,8 @@ var ble :Texture2D;
 var bois : Texture2D;
 var gem : Texture2D;
 var Worker :Texture2D;
+var PlayerChar:Texture2D;
+var EnnemieChar:Texture2D;
 var NbBle : int;
 var NbBois :int;
 var NbGem :int;
@@ -32,6 +34,10 @@ function OnGUI(){
 	var e:Event;
 	e=Event.current;
 	GUI.Box(Rect(0,0,Screen.width,Screen.height),"",Background);
+	//Héro Joueur
+	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.005,Screen.width*0.05, Screen.height*0.07),PlayerChar);
+	//Héro Ennemie
+	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.005,Screen.width*0.05, Screen.height*0.07),EnnemieChar);
 	//blé
 	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.005,Screen.width*0.05, Screen.height*0.07),ble);
 	GUI.Label(Rect(Screen.width*0.005,Screen.height*0.07,Screen.width*0.09, Screen.height*0.07),"Blé: " + NbBleEnnemis.ToString());
