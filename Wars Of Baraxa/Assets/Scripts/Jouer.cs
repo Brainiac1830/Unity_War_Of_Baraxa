@@ -24,9 +24,18 @@ public class Jouer : MonoBehaviour {
     public int NbGemEnnemis;
 	public int HpJoueur;
 	public int HpEnnemi;
-	public GameObject CarteTest;
+	public Transform bitch;
+	public GameObject card;
+	public int i;
+	public GameObject CarteTest1;
+	public GameObject CarteTest2;
+	public GameObject CarteTest3;
+	public GameObject CarteTest4;
 	//initialization
 	void Start () {
+		i = 0;
+		CarteTest1 = GameObject.Find ("Card");
+		card = null;
 		HpJoueur = 30;
 		HpEnnemi = 30;
         NbBle = 0;
@@ -39,8 +48,18 @@ public class Jouer : MonoBehaviour {
         NbWorker = NbWorkerMax;
         placerClick = false;
         joueur1 = new Joueur("player1");
+		CarteDepart ();
 	}
-	
+
+	public void CarteDepart(){
+		while (i<4) {
+			Transform t = Instantiate (bitch, new Vector3 (0, 0, 13), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
+			card = t.gameObject;
+			i++;
+			card.name = "card" + i.ToString ();
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
         Attaquer();
