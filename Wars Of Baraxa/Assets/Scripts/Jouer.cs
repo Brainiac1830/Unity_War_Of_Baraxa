@@ -7,6 +7,7 @@ public class Jouer : MonoBehaviour {
     public GUIStyle Background;
     Joueur joueur1;
     public bool placerClick;
+    public bool tourFinis;
 	public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
@@ -47,6 +48,7 @@ public class Jouer : MonoBehaviour {
         NbWorkerMax = 2;
         NbWorker = NbWorkerMax;
         placerClick = false;
+        tourFinis = false;
         joueur1 = new Joueur("player1");
 		CarteDepart ();
 	}
@@ -79,6 +81,20 @@ public class Jouer : MonoBehaviour {
 		//Héro Ennemi
 		GUI.Label(new Rect(Screen.width*0.87f,Screen.height*0.00009f,Screen.width*5.0f, Screen.height*0.305f),EnnemiChar);
 		GUI.Label(new Rect(Screen.width*0.89f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
+        //BTN EndTurn
+        if (!tourFinis && placerClick)
+        {
+            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finnis"))
+            {
+                tourFinis = true;
+            }
+        }
+        else
+        {
+            GUI.enabled = false;
+            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finnis");
+            GUI.enabled = true;
+        }
 	    //blé
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.005f,Screen.width*0.05f, Screen.height*0.07f),ble);
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.07f,Screen.width*0.09f, Screen.height*0.07f),"Blé: " + NbBleEnnemis.ToString());
@@ -131,9 +147,9 @@ public class Jouer : MonoBehaviour {
     }
     public void Attaquer()
     {
-        Carte attaquant = new Carte("test","Permanent",1,0,0);
+        Carte attaquant = new Carte(1,"test","Permanent",1,0,0);
         attaquant.perm =  new Permanent("Creature",4,2,0);
-        Carte Defenseur = new Carte("test2", "Permanent", 1, 0, 0);
+        Carte Defenseur = new Carte(1,"test2", "Permanent", 1, 0, 0);
         Defenseur.perm = new Permanent("Creature", 1, 1, 0);
         Joueur playerDef = new Joueur("Defenseur");
         if(!attaquant.perm.aAttaque)
