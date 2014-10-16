@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Net.Sockets;
+using warsofbaraxa;
 
 public class Script_logIn : MonoBehaviour {
 //Variables
@@ -13,7 +15,6 @@ public class Script_logIn : MonoBehaviour {
     public string messageErreur="";
     bool nouveauCompte = false;
     bool showBox = false;
-    public Socket sck;
 
 //GUIStyle
     public GUIStyle textArea;
@@ -23,21 +24,24 @@ public class Script_logIn : MonoBehaviour {
     public GUIStyle Background;
     public GUIStyle GUIBox;
     public GUIStyle GUIButton;
-
-
-    public void Awake()
+    void OnApplicationQuit()
     {
-        sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        envoyerMessage("deconnection");
+    }
+    void Awake()
+    {
+        connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
         try
         {
-            sck.Connect(localEndPoint);
+            connexionServeur.sck.Connect(localEndPoint);
         }
-        catch(SocketException ex)
+        catch (SocketException ex)
         {
-            
+            Application.LoadLevel("Acceuil");
         }
     }
+
 public void OnGUI() {
 	GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
 	warOfBaraxa.fontSize = Screen.width / 10;
@@ -136,19 +140,20 @@ public void OnGUI() {
 }		
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
     private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
         envoyerMessage(alias+","+mdp+","+nom+","+prenom);
         string reponse = lire();
         if (reponse == "oui")
+        {
+            connexionServeur.nom = alias;
             return true;
+        }
 
         return false;
     }
@@ -157,14 +162,17 @@ public void OnGUI() {
         envoyerMessage(alias +","+mdp);
         string reponse = lire();
         if (reponse == "oui")
+        {
+            connexionServeur.nom = alias;
             return true;
+        }
 
         return false;
     }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
-        sck.Send(data);
+        connexionServeur.sck.Send(data);
     }
     private string lire()
     {
@@ -177,8 +185,8 @@ public void OnGUI() {
     }
     private string recevoirResultat()
     {
-        byte[] buff = new byte[sck.SendBufferSize];
-        int bytesRead = sck.Receive(buff);
+        byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+        int bytesRead = connexionServeur.sck.Receive(buff);
         byte[] formatted = new byte[bytesRead];
         for (int i = 0; i < bytesRead; i++)
         {

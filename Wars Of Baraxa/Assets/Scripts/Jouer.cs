@@ -112,9 +112,9 @@ public class Jouer : MonoBehaviour {
     }
     public void Attaquer()
     {
-        Carte attaquant = new Carte("test","Permanent",1,0,0);
+        Carte attaquant = new Carte(1,"test","Permanent",1,0,0);
         attaquant.perm =  new Permanent("Creature",4,2,0);
-        Carte Defenseur = new Carte("test2", "Permanent", 1, 0, 0);
+        Carte Defenseur = new Carte(1,"test2", "Permanent", 1, 0, 0);
         Defenseur.perm = new Permanent("Creature", 1, 1, 0);
         Joueur playerDef = new Joueur("Defenseur");
         if(!attaquant.perm.aAttaque)

@@ -48,6 +48,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Jouer.cs" />
      <Compile Include="Assets\Scripts\Script_logIn.cs" />
+     <Compile Include="Assets\Scripts\connexionServeur.cs" />
+     <Compile Include="Assets\Scripts\menu_Script.cs" />
      <Compile Include="Assets\Scripts\script_Card.cs" />
  <Reference Include="warsofbaraxa">
  <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
