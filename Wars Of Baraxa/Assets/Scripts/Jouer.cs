@@ -4,7 +4,6 @@ using warsofbaraxa;
 
 public class Jouer : MonoBehaviour {
     //variable
-    public GUIStyle Background;
     Joueur joueur1;
     public bool placerClick;
     public bool tourFinis;
@@ -25,17 +24,15 @@ public class Jouer : MonoBehaviour {
     public int NbGemEnnemis;
 	public int HpJoueur;
 	public int HpEnnemi;
-	public Transform bitch;
+	public Transform PlacementCarte;
 	public GameObject card;
 	public int i;
-	public GameObject CarteTest1;
-	public GameObject CarteTest2;
-	public GameObject CarteTest3;
-	public GameObject CarteTest4;
+	static public float pos;
 	//initialization
 	void Start () {
 		i = 0;
-		CarteTest1 = GameObject.Find ("Card");
+		//CarteTest1 = GameObject.Find ("Card");
+		pos = 0;
 		card = null;
 		HpJoueur = 30;
 		HpEnnemi = 30;
@@ -54,11 +51,14 @@ public class Jouer : MonoBehaviour {
 	}
 
 	public void CarteDepart(){
-		while (i<4) {
-			Transform t = Instantiate (bitch, new Vector3 (0, 0, 13), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
+		float pos = 0;
+		while (i<5) {
+			Transform t = Instantiate (PlacementCarte, new Vector3 (-4.0f+pos, -3.1f, 6.0f), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
 			card = t.gameObject;
 			i++;
 			card.name = "card" + i.ToString ();
+			card.transform.localScale = new Vector3(0.1f,1.0f,0.13f);
+			pos += 1.5f;
 		}
 	}
 
@@ -70,10 +70,6 @@ public class Jouer : MonoBehaviour {
     public void OnGUI(){
 	    Event e;
 	    e=Event.current;
-	    GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
-
-		//Test pour deplacement Carte
-		//CarteTest = new GameObject ("Carte1");
 
 		//Héro Joueur
 		GUI.Label(new Rect(Screen.width*0.02f,Screen.height*0.70f,Screen.width*0.3f, Screen.height*0.3f),PlayerChar);
@@ -84,7 +80,7 @@ public class Jouer : MonoBehaviour {
         //BTN EndTurn
         if (!tourFinis && placerClick)
         {
-            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finnis"))
+            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis"))
             {
                 tourFinis = true;
             }
@@ -92,7 +88,7 @@ public class Jouer : MonoBehaviour {
         else
         {
             GUI.enabled = false;
-            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finnis");
+            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis");
             GUI.enabled = true;
         }
 	    //blé

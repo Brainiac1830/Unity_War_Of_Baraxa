@@ -10,7 +10,7 @@ public class menu_Script : MonoBehaviour {
  public bool profile = false;
  public bool trouverPartie = false;
  public bool quitter = false;
- string nom;
+ public string nom;
 
     //GUI
  public GUIStyle test;
