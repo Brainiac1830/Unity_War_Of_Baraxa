@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Jouer.cs" />
-     <Compile Include="Assets\Scripts\JouerCarteBoard.cs" />
      <Compile Include="Assets\Scripts\Script_logIn.cs" />
      <Compile Include="Assets\Scripts\attaque.cs" />
      <Compile Include="Assets\Scripts\connexionServeur.cs" />
@@ -62,6 +61,13 @@
  </Reference>
  <Reference Include="WarsOfBaraxaBD">
  <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
+     <Compile Include="Assets\Scripts\script_Card.cs" />
+     <Compile Include="Assets\Scripts\script_TestingShit.cs" />
+ <Reference Include="warsofbaraxa">
+ <HintPath>C:/Users/201184401/Desktop/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
+ </Reference>
+ <Reference Include="WarsOfBaraxaBD">
+ <HintPath>C:/Users/201184401/Desktop/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

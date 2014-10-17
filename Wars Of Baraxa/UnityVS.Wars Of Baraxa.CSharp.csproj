@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\menu_Script.cs" />
     <Compile Include="Assets\Scripts\profile_Script.cs" />
     <Compile Include="Assets\Scripts\script_Card.cs" />
+    <Compile Include="Assets\Scripts\script_TestingShit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>

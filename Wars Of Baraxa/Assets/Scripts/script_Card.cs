@@ -12,8 +12,11 @@ public class script_Card : MonoBehaviour {
 	int coutGem_ = 0;*/
 	public float x_ = 0;
 	public float y_ = 0;
-	public Transform bitch;
-    GameObject card;
+	public Transform cardFront;
+	public Transform cardBack;
+    public GameObject cardF;
+	public GameObject cardB;
+	public float layer;
 	int i = 0;
 
 
@@ -21,29 +24,38 @@ public class script_Card : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        card = null;
+		cardF = null;
+		cardB = null;
+		layer = 0.15f;
 	}
 
 	void OnMouseDown()
 	{
-		Transform t = Instantiate(bitch, new Vector3 (0, 1, 0), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
-		card = t.gameObject;
+		Transform F_cardFront = Instantiate(cardFront, new Vector3 (-3, -2, 0), Quaternion.Euler (new Vector3 (90, 0, 0))) as Transform;
+		Transform F_cardBack = Instantiate(cardBack, new Vector3 (-3, -2, layer), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
+		cardF = cardFront.gameObject;
+		cardB = cardBack.gameObject;
 		i++;
-		card.name = "card" + i.ToString();
+		F_cardFront.name = "Card" + i.ToString();
+		F_cardBack.name = "Cardback" + i.ToString ();
+
+		foreach (Transform child in F_cardFront) 
+		{
+			child.name = child.name + i;
+			child.tag = "textStats";
+		}
+
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (card != null)
-        {
-            x_ = card.renderer.bounds.size.x;
-            y_ = card.renderer.bounds.size.y;
-        }
+
 	}
 
 	void OnGUI()
 	{
-		GUI.Label (new Rect (x_, y_,100,100), "2");
+
 	}
 
 	/*public void setCarte()
