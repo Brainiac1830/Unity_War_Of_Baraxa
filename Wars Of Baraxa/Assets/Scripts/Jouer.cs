@@ -26,8 +26,13 @@ public class Jouer : MonoBehaviour {
 	public int HpEnnemi;
 	public Transform PlacementCarte;
 	public GameObject card;
+    public GameObject cardennemis;
 	public int i;
 	static public float pos;
+    static public Carte[] tabCarteAllier;
+    static public GameObject[] styleCarteAllier;
+    static public Carte[] tabCarteEnnemis;
+    static public GameObject[] styleCarteEnnemis;
 	//initialization
 	void Start () {
 		i = 0;
@@ -46,25 +51,48 @@ public class Jouer : MonoBehaviour {
         NbWorker = NbWorkerMax;
         placerClick = false;
         tourFinis = false;
+        tabCarteAllier = new Carte[5];
+        styleCarteAllier = new GameObject[5];
+        tabCarteEnnemis = new Carte[5];
+        styleCarteEnnemis = new GameObject[5];
         joueur1 = new Joueur("player1");
-		CarteDepart ();
+        CarteDepart();
 	}
 
 	public void CarteDepart(){
 		float pos = 0;
 		while (i<5) {
-			Transform t = Instantiate (PlacementCarte, new Vector3 (-4.0f+pos, -3.1f, 6.0f), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
-			card = t.gameObject;
-			i++;
-			card.name = "card" + i.ToString ();
-			card.transform.localScale = new Vector3(0.1f,1.0f,0.13f);
-			pos += 1.5f;
-		}
+             Transform t = Instantiate(PlacementCarte, new Vector3(-4.0f + pos, -3.1f, 6.0f), Quaternion.Euler(new Vector3(90, 180, 0))) as Transform;
+             Transform Ennemis = Instantiate(PlacementCarte, new Vector3(-4.0f+pos,-0.0005f,6.0f),Quaternion.Euler(new Vector3(90,180,0))) as Transform;
+             card = t.gameObject;
+             cardennemis = Ennemis.gameObject;
+             card.name = "card" + i.ToString();
+             card.transform.localScale = new Vector3(0.1f, 1.0f, 0.13f);
+             cardennemis.name = "cardennemis" + i.ToString();
+             cardennemis.transform.localScale = new Vector3(0.1f, 1.0f, 0.13f);
+             pos += 1.5f;
+             if (i == 2)
+             {
+                 tabCarteAllier[i] = new Carte(1, "batiment", "Permanent", 0, 0, 0);
+                 tabCarteAllier[i].perm = new Permanent("batiment", 0, 2, 1);
+                 tabCarteEnnemis[i] = new Carte(1, "batiment", "Permanent", 0, 0, 0);
+                 tabCarteEnnemis[i].perm = new Permanent("batiment", 0, 2, 1);
+             }
+             else
+             {
+                 tabCarteAllier[i] = new Carte(1, "creature", "Permanent", 0, 0, 0);
+                 tabCarteAllier[i].perm = new Permanent("creature", 1, 1, 1);
+                 tabCarteEnnemis[i] = new Carte(1, "creature", "Permanent", 0, 0, 0);
+                 tabCarteEnnemis[i].perm = new Permanent("creature", 1, 1, 1);
+             }
+             styleCarteAllier[i] = card;
+             styleCarteEnnemis[i] = cardennemis;
+             ++i;
+        }
 	}
 
 	// Update is called once per frame
 	void Update () {
-        Attaquer();
 	}
     //affichage (refresh per frame)
     public void OnGUI(){
