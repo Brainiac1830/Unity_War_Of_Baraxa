@@ -4,13 +4,16 @@ using warsofbaraxa;
 
 public class Jouer : MonoBehaviour {
     //variable
-    public GUIStyle Background;
     Joueur joueur1;
     public bool placerClick;
+    public bool tourFinis;
+	public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
     public Texture2D gem;
     public Texture2D Worker;
+	public Texture2D PlayerChar;
+	public Texture2D EnnemiChar;
     public int NbBle;
     public int NbBois;
     public int NbGem;
@@ -18,9 +21,21 @@ public class Jouer : MonoBehaviour {
     public int NbWorker;
     public int NbBleEnnemis;
     public int NbBoisEnnemis;
-    public int NbGemEnnemis;     
+    public int NbGemEnnemis;
+	public int HpJoueur;
+	public int HpEnnemi;
+	public Transform PlacementCarte;
+	public GameObject card;
+	public int i;
+	static public float pos;
 	//initialization
 	void Start () {
+		i = 0;
+		//CarteTest1 = GameObject.Find ("Card");
+		pos = 0;
+		card = null;
+		HpJoueur = 30;
+		HpEnnemi = 30;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -30,9 +45,23 @@ public class Jouer : MonoBehaviour {
         NbWorkerMax = 2;
         NbWorker = NbWorkerMax;
         placerClick = false;
+        tourFinis = false;
         joueur1 = new Joueur("player1");
+		CarteDepart ();
 	}
-	
+
+	public void CarteDepart(){
+		float pos = 0;
+		while (i<5) {
+			Transform t = Instantiate (PlacementCarte, new Vector3 (-4.0f+pos, -3.1f, 6.0f), Quaternion.Euler (new Vector3 (90, 180, 0))) as Transform;
+			card = t.gameObject;
+			i++;
+			card.name = "card" + i.ToString ();
+			card.transform.localScale = new Vector3(0.1f,1.0f,0.13f);
+			pos += 1.5f;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
         Attaquer();
@@ -41,7 +70,27 @@ public class Jouer : MonoBehaviour {
     public void OnGUI(){
 	    Event e;
 	    e=Event.current;
-	    GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
+
+		//Héro Joueur
+		GUI.Label(new Rect(Screen.width*0.02f,Screen.height*0.70f,Screen.width*0.3f, Screen.height*0.3f),PlayerChar);
+		GUI.Label(new Rect(Screen.width*0.035f,Screen.height*0.69f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
+		//Héro Ennemi
+		GUI.Label(new Rect(Screen.width*0.87f,Screen.height*0.00009f,Screen.width*5.0f, Screen.height*0.305f),EnnemiChar);
+		GUI.Label(new Rect(Screen.width*0.89f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
+        //BTN EndTurn
+        if (!tourFinis && placerClick)
+        {
+            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis"))
+            {
+                tourFinis = true;
+            }
+        }
+        else
+        {
+            GUI.enabled = false;
+            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis");
+            GUI.enabled = true;
+        }
 	    //blé
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.005f,Screen.width*0.05f, Screen.height*0.07f),ble);
 	    GUI.Label(new Rect(Screen.width*0.005f,Screen.height*0.07f,Screen.width*0.09f, Screen.height*0.07f),"Blé: " + NbBleEnnemis.ToString());
@@ -94,9 +143,9 @@ public class Jouer : MonoBehaviour {
     }
     public void Attaquer()
     {
-        Carte attaquant = new Carte("test","Permanent",1,0,0);
+        Carte attaquant = new Carte(1,"test","Permanent",1,0,0);
         attaquant.perm =  new Permanent("Creature",4,2,0);
-        Carte Defenseur = new Carte("test2", "Permanent", 1, 0, 0);
+        Carte Defenseur = new Carte(1,"test2", "Permanent", 1, 0, 0);
         Defenseur.perm = new Permanent("Creature", 1, 1, 0);
         Joueur playerDef = new Joueur("Defenseur");
         if(!attaquant.perm.aAttaque)

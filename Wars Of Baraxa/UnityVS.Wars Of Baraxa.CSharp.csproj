@@ -46,6 +46,9 @@
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Oracle.DataAccess">
+      <HintPath>Assets\Plugins\Oracle.DataAccess.dll</HintPath>
+    </Reference>
     <Reference Include="warsofbaraxa">
       <HintPath>Assets\Plugins\warsofbaraxa.dll</HintPath>
     </Reference>
@@ -55,7 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Jouer.cs" />
+    <Compile Include="Assets\Scripts\JouerCarteBoard.cs" />
     <Compile Include="Assets\Scripts\Script_logIn.cs" />
+    <Compile Include="Assets\Scripts\connexionServeur.cs" />
+    <Compile Include="Assets\Scripts\menu_Script.cs" />
+    <Compile Include="Assets\Scripts\profile_Script.cs" />
     <Compile Include="Assets\Scripts\script_Card.cs" />
     <Compile Include="Assets\Scripts\script_TestingShit.cs" />
   </ItemGroup>

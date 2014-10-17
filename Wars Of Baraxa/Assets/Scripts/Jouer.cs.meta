@@ -2,7 +2,15 @@ fileFormatVersion: 2
 guid: 1f305b2335daeba499eecf86b09670fd
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Test: {instanceID: 0}
+  - ble: {instanceID: 0}
+  - bois: {instanceID: 0}
+  - gem: {instanceID: 0}
+  - Worker: {instanceID: 0}
+  - PlayerChar: {instanceID: 0}
+  - EnnemiChar: {instanceID: 0}
+  - CarteTest: {fileID: 100000, guid: e739df3c4d610274099492ea54f9fcb3, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
