@@ -12,8 +12,9 @@ public class Jouer : MonoBehaviour {
     public Texture2D bois;
     public Texture2D gem;
     public Texture2D Worker;
-	public Texture2D PlayerChar;
-	public Texture2D EnnemiChar;
+    public Texture2D PlayerChar;
+    public Texture2D EnnemiChar;
+    public Rect posEnnemis;
     public int NbBle;
     public int NbBois;
     public int NbGem;
@@ -56,41 +57,76 @@ public class Jouer : MonoBehaviour {
         tabCarteEnnemis = new Carte[5];
         styleCarteEnnemis = new GameObject[5];
         joueur1 = new Joueur("player1");
+        posEnnemis = new Rect(Screen.width * 0.87f, Screen.height * 0.00009f, Screen.width * 5.0f, Screen.height * 0.305f);
         CarteDepart();
 	}
 
 	public void CarteDepart(){
 		float pos = 0;
 		while (i<5) {
-             Transform t = Instantiate(PlacementCarte, new Vector3(-4.0f + pos, -3.1f, 6.0f), Quaternion.Euler(new Vector3(90, 180, 0))) as Transform;
-             Transform Ennemis = Instantiate(PlacementCarte, new Vector3(-4.0f+pos,-0.0005f,6.0f),Quaternion.Euler(new Vector3(90,180,0))) as Transform;
+             Transform t = Instantiate(PlacementCarte, new Vector3(-4.0f + pos, -3.1f, 6.0f), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+             Transform Ennemis = Instantiate(PlacementCarte, new Vector3(-4.0f+pos,-0.0005f,6.0f),Quaternion.Euler(new Vector3(0,0,0))) as Transform;
              card = t.gameObject;
              cardennemis = Ennemis.gameObject;
              card.name = "card" + i.ToString();
-             card.transform.localScale = new Vector3(0.1f, 1.0f, 0.13f);
              cardennemis.name = "cardennemis" + i.ToString();
-             cardennemis.transform.localScale = new Vector3(0.1f, 1.0f, 0.13f);
+             foreach (Transform  child in t)
+             {
+                 child.name = child.name + i;
+                 child.tag = "textStats";
+             }
+             foreach (Transform child in Ennemis)
+             {
+                 child.name = child.name+"Ennemis" + i;
+                 child.tag = "textStats";
+             }
              pos += 1.5f;
              if (i == 2)
              {
-                 tabCarteAllier[i] = new Carte(1, "batiment", "Permanent", 0, 0, 0);
+                 tabCarteAllier[i] = new Carte(1, "card" + i, "Permanent", 0, 0, 0);
                  tabCarteAllier[i].perm = new Permanent("batiment", 0, 2, 1);
-                 tabCarteEnnemis[i] = new Carte(1, "batiment", "Permanent", 0, 0, 0);
+                 setValue(i, t,true);
+
+                 tabCarteEnnemis[i] = new Carte(1, "cardennemis"+i, "Permanent", 0, 0, 0);
                  tabCarteEnnemis[i].perm = new Permanent("batiment", 0, 2, 1);
+                 setValue(i, Ennemis,false);
              }
              else
              {
-                 tabCarteAllier[i] = new Carte(1, "creature", "Permanent", 0, 0, 0);
-                 tabCarteAllier[i].perm = new Permanent("creature", 1, 1, 1);
-                 tabCarteEnnemis[i] = new Carte(1, "creature", "Permanent", 0, 0, 0);
+                 tabCarteAllier[i] = new Carte(1,"card"+i, "Permanent", 0, 0, 0);
+                 tabCarteAllier[i].perm = new Permanent("creature", 30, 1, 1);
+                 setValue(i, t,true);
+
+                 tabCarteEnnemis[i] = new Carte(1, "cardennemis" + i, "Permanent", 0, 0, 0);
                  tabCarteEnnemis[i].perm = new Permanent("creature", 1, 1, 1);
+                 setValue(i, Ennemis,false);
              }
              styleCarteAllier[i] = card;
              styleCarteEnnemis[i] = cardennemis;
              ++i;
         }
 	}
-
+    private void setValue(int i,Transform t,bool allier)
+    {
+        if (allier)
+        {
+            t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBois.ToString();
+            t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBle.ToString();
+            t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutGem.ToString();
+            t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Attaque.ToString();
+            t.Find("armure" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Armure.ToString();
+            t.Find("vie" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Vie.ToString();
+        }
+        else 
+        {
+            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBois.ToString();
+            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBle.ToString();
+            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutGem.ToString();
+            t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Attaque.ToString();
+            t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Armure.ToString();
+            t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Vie.ToString();            
+        }
+    }
 	// Update is called once per frame
 	void Update () {
 	}
@@ -100,17 +136,20 @@ public class Jouer : MonoBehaviour {
 	    e=Event.current;
 
 		//Héro Joueur
-		GUI.Label(new Rect(Screen.width*0.02f,Screen.height*0.70f,Screen.width*0.3f, Screen.height*0.3f),PlayerChar);
+        
+	    GUI.Label(new Rect(Screen.width*0.02f,Screen.height*0.70f,Screen.width*0.3f, Screen.height*0.3f),PlayerChar);
 		GUI.Label(new Rect(Screen.width*0.035f,Screen.height*0.69f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
 		//Héro Ennemi
-		GUI.Label(new Rect(Screen.width*0.87f,Screen.height*0.00009f,Screen.width*5.0f, Screen.height*0.305f),EnnemiChar);
-		GUI.Label(new Rect(Screen.width*0.89f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
+		GUI.Label(new Rect(Screen.width*0.85f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
+
         //BTN EndTurn
         if (!tourFinis && placerClick)
         {
             if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis"))
             {
                 tourFinis = true;
+                resetArmor(tabCarteAllier);
+                resetArmor(tabCarteEnnemis);
             }
         }
         else
@@ -169,48 +208,6 @@ public class Jouer : MonoBehaviour {
 		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());		
 	    }
     }
-    public void Attaquer()
-    {
-        Carte attaquant = new Carte(1,"test","Permanent",1,0,0);
-        attaquant.perm =  new Permanent("Creature",4,2,0);
-        Carte Defenseur = new Carte(1,"test2", "Permanent", 1, 0, 0);
-        Defenseur.perm = new Permanent("Creature", 1, 1, 0);
-        Joueur playerDef = new Joueur("Defenseur");
-        if(!attaquant.perm.aAttaque)
-        {
-            
-            //if(personne attaquer n'est pas le héros)
-            CombatCreature(attaquant.perm, Defenseur.perm);
-            CombatCreature(Defenseur.perm, attaquant.perm);
-            //else
-            playerDef.vie = CombatJoueur(attaquant.perm.Attaque, playerDef.vie);
-
-            //si l'attaquant ou le defenseur n'on plus de vie on les enleve du board
-            if (attaquant.perm.Vie <= 0)
-                attaquant = null;
-            if (Defenseur.perm.Vie <= 0)
-                Defenseur = null;
-            if (playerDef.vie <= 0)
-                playerDef = null;
-
-            attaquant.perm.aAttaque = true;
-        }
-    }
-    private void CombatCreature(Permanent attaquant, Permanent defenseur)
-    {
-        if (defenseur.Armure - attaquant.Attaque >= 0)
-            defenseur.Armure -= attaquant.Attaque;
-        else
-        {
-            int attaque = attaquant.Attaque - defenseur.Armure;
-            defenseur.Armure=0;
-            defenseur.Vie -= attaque;
-        }        
-    }
-    private int CombatJoueur(int attaque, int vie)
-    {
-        return vie - attaque;  
-    }
     public int SetManaAjouter(Event events, int ressource)
     {
 	    if(events.button==0 && NbWorker>0){
@@ -222,5 +219,12 @@ public class Jouer : MonoBehaviour {
 		    NbWorker++;
 	    }
 	    return ressource;
+    }
+    private void resetArmor(Carte [] tab)
+    {
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            tab[i].perm.Armure = tab[i].perm.getBasicArmor();
+        }
     }
 }
