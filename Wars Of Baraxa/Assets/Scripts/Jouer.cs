@@ -5,6 +5,9 @@ using warsofbaraxa;
 public class Jouer : MonoBehaviour {
     //variable
     Joueur joueur1;
+    public PosZoneCombat[] ZoneCarteJoueur;
+    public PosZoneCombat[] ZoneCombat;
+    public PosZoneCombat[] ZoneCarteEnnemie;
     public bool placerClick;
     public bool tourFinis;
 	public Texture2D Test;
@@ -37,7 +40,9 @@ public class Jouer : MonoBehaviour {
 	//initialization
 	void Start () {
 		i = 0;
-		//CarteTest1 = GameObject.Find ("Card");
+        InitZoneJoueur();
+        InitZoneCombatEnnemie();
+        InitZoneCombatJoueur();
 		pos = 0;
 		card = null;
 		HpJoueur = 30;
@@ -61,11 +66,48 @@ public class Jouer : MonoBehaviour {
         CarteDepart();
 	}
 
+    public void InitZoneJoueur()
+    {
+        ZoneCarteJoueur = new PosZoneCombat[8];
+        float pos = 0;
+        for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
+        {
+            ZoneCarteJoueur[i] = new PosZoneCombat();
+            ZoneCarteJoueur[i].Pos = new Vector3(-4.5f + pos, -3.9f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
+    public void InitZoneCombatEnnemie()
+    {
+        ZoneCarteEnnemie = new PosZoneCombat[8];
+        float pos = 0;
+        for (int i = 0; i < ZoneCarteEnnemie.Length; ++i)
+        {
+            ZoneCarteEnnemie[i] = new PosZoneCombat();
+            ZoneCarteEnnemie[i].Pos = new Vector3(-4.0f + pos, 1.5f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
+    public void InitZoneCombatJoueur()
+    {
+        ZoneCombat = new PosZoneCombat[8];
+        float pos = 0;
+        for (int i = 0; i < ZoneCombat.Length; ++i)
+        {
+            ZoneCombat[i] = new PosZoneCombat();
+            ZoneCombat[i].Pos = new Vector3(-4.0f + pos, -1.5f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
 	public void CarteDepart(){
-		float pos = 0;
+        int pos = 0;
+        float posi = 0;
 		while (i<5) {
-             Transform t = Instantiate(PlacementCarte, new Vector3(-4.0f + pos, -3.1f, 6.0f), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-             Transform Ennemis = Instantiate(PlacementCarte, new Vector3(-4.0f+pos,-0.0005f,6.0f),Quaternion.Euler(new Vector3(0,0,0))) as Transform;
+             Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+             Transform Ennemis = Instantiate(PlacementCarte, ZoneCarteEnnemie[pos].Pos,Quaternion.Euler(new Vector3(0,0,0))) as Transform;
              card = t.gameObject;
              cardennemis = Ennemis.gameObject;
              card.name = "card" + i.ToString();
@@ -80,7 +122,8 @@ public class Jouer : MonoBehaviour {
                  child.name = child.name+"Ennemis" + i;
                  child.tag = "textStats";
              }
-             pos += 1.5f;
+             ++pos;
+             posi += 1.5f;
              if (i == 2)
              {
                  tabCarteAllier[i] = new Carte(1, "card" + i, "Permanent", 0, 0, 0);

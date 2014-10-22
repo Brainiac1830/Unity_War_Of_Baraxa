@@ -18,16 +18,16 @@ public class JouerCarteBoard : MonoBehaviour {
 	}
 
 	void OnMouseOver(){
-		delay += Time.deltaTime;
-		// here the 2 is the time that you want before load the bar
-		if(delay >=0.5f){
-			//this.transform.position = new Vector3 (0,-1.50f, 6.0f);
-			this.transform.localScale = new Vector3(0.2f,0.2f,0.2f);
-		}
+        //delay += Time.deltaTime;
+        //// here the 2 is the time that you want before load the bar
+        //if(delay >=0.5f){
+        //    //this.transform.position = new Vector3 (0,-1.50f, 6.0f);
+        //    this.transform.localScale = new Vector3(0.2f,0.2f,0.2f);
+        //}
 	}
 
 	void OnMouseExit(){
-		delay = 0;
-		this.transform.localScale = new Vector3 (0.1f, 1.0f, 0.13f);
+        //delay = 0;
+        //this.transform.localScale = new Vector3 (0.1f, 1.0f, 0.13f);
 	}
 }
