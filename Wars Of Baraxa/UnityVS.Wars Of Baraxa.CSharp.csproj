@@ -59,6 +59,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Jouer.cs" />
     <Compile Include="Assets\Scripts\JouerCarteBoard.cs" />
+    <Compile Include="Assets\Scripts\Loading_Script.cs" />
+    <Compile Include="Assets\Scripts\Lobby_Script.cs" />
     <Compile Include="Assets\Scripts\Script_logIn.cs" />
     <Compile Include="Assets\Scripts\attaque.cs" />
     <Compile Include="Assets\Scripts\connexionServeur.cs" />

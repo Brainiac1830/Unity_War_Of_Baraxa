@@ -94,11 +94,11 @@ public class Jouer : MonoBehaviour {
              else
              {
                  tabCarteAllier[i] = new Carte(1,"card"+i, "Permanent", 0, 0, 0);
-                 tabCarteAllier[i].perm = new Permanent("creature", 30, 1, 1);
+                 tabCarteAllier[i].perm = new Permanent("creature", 10, 1, 1);
                  setValue(i, t,true);
 
                  tabCarteEnnemis[i] = new Carte(1, "cardennemis" + i, "Permanent", 0, 0, 0);
-                 tabCarteEnnemis[i].perm = new Permanent("creature", 1, 1, 1);
+                 tabCarteEnnemis[i].perm = new Permanent("creature", 10, 1, 1);
                  setValue(i, Ennemis,false);
              }
              styleCarteAllier[i] = card;
@@ -119,12 +119,12 @@ public class Jouer : MonoBehaviour {
         }
         else 
         {
-            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBois.ToString();
-            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBle.ToString();
-            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutGem.ToString();
-            t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Attaque.ToString();
-            t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Armure.ToString();
-            t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Vie.ToString();            
+            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBois.ToString();
+            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
+            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
+            t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Attaque.ToString();
+            t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Armure.ToString();
+            t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Vie.ToString();            
         }
     }
 	// Update is called once per frame

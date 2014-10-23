@@ -119,7 +119,7 @@ public class attaque : MonoBehaviour {
                     carteDefense = null;
                     Jouer.tabCarteAllier[posAllier].perm.aAttaque = true;
                 }
-                else
+                else if (carteDefense.name == "hero ennemis")
                 {
                     script.HpEnnemi = CombatJoueur(Attaquant.Attaque, script.HpEnnemi);
                     Jouer.tabCarteAllier[posAllier].perm.aAttaque = true;
