@@ -5,6 +5,11 @@ using warsofbaraxa;
 public class Jouer : MonoBehaviour {
     //variable
     Joueur joueur1;
+    static public PosZoneCombat[] ZoneCarteJoueur;
+    static public PosZoneCombat[] ZoneCombat;
+    static public PosZoneCombat[] ZoneCombatEnnemie;
+    static public PosZoneCombat[] ZoneCarteEnnemie;
+    public int NbCarteEnMainJoueur;
     public bool placerClick;
     public bool tourFinis;
 	public Texture2D Test;
@@ -28,7 +33,8 @@ public class Jouer : MonoBehaviour {
 	public Transform PlacementCarte;
 	public GameObject card;
     public GameObject cardennemis;
-	public int i;
+    public JouerCarteBoard ScriptEnnemie;
+	public int NoCarte;
 	static public float pos;
     static public Carte[] tabCarteAllier;
     static public GameObject[] styleCarteAllier;
@@ -36,10 +42,14 @@ public class Jouer : MonoBehaviour {
     static public GameObject[] styleCarteEnnemis;
 	//initialization
 	void Start () {
-		i = 0;
-		//CarteTest1 = GameObject.Find ("Card");
+		NoCarte = 0;
+        InitZoneJoueur();
+        InitZoneEnnemie();
+        InitZoneCombatEnnemie();
+        InitZoneCombatJoueur();
 		pos = 0;
 		card = null;
+        NbCarteEnMainJoueur = 5;
 		HpJoueur = 30;
 		HpEnnemi = 30;
         NbBle = 0;
@@ -61,49 +71,107 @@ public class Jouer : MonoBehaviour {
         CarteDepart();
 	}
 
-	public void CarteDepart(){
+    public void InitZoneJoueur()
+    {
+        ZoneCarteJoueur = new PosZoneCombat[5];
 		float pos = 0;
-		while (i<5) {
-             Transform t = Instantiate(PlacementCarte, new Vector3(-4.0f + pos, -3.1f, 6.0f), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-             Transform Ennemis = Instantiate(PlacementCarte, new Vector3(-4.0f+pos,-0.0005f,6.0f),Quaternion.Euler(new Vector3(0,0,0))) as Transform;
+        for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
+        {
+            ZoneCarteJoueur[i] = new PosZoneCombat();
+            ZoneCarteJoueur[i].Pos = new Vector3(-4.5f + pos, -3.9f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+    public void InitZoneEnnemie()
+    {
+        ZoneCarteEnnemie = new PosZoneCombat[5];
+        float pos = 0;
+        for (int i = 0; i < ZoneCarteEnnemie.Length; ++i)
+        {
+            ZoneCarteEnnemie[i] = new PosZoneCombat();
+            ZoneCarteEnnemie[i].Pos = new Vector3(-4.0f + pos, 3.95f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
+    public void InitZoneCombatEnnemie()
+    {
+        ZoneCombatEnnemie = new PosZoneCombat[8];
+        float pos = 0;
+        for (int i = 0; i < ZoneCombatEnnemie.Length; ++i)
+        {
+            ZoneCombatEnnemie[i] = new PosZoneCombat();
+            ZoneCombatEnnemie[i].Pos = new Vector3(-4.0f + pos, 1.5f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
+    public void InitZoneCombatJoueur()
+    {
+        ZoneCombat = new PosZoneCombat[8];
+        float pos = 0;
+        for (int i = 0; i < ZoneCombat.Length; ++i)
+        {
+            ZoneCombat[i] = new PosZoneCombat();
+            ZoneCombat[i].Pos = new Vector3(-4.0f + pos, -1.5f, 6.0f);
+            pos += 1.5f;
+        }
+    }
+
+	public void CarteDepart(){
+        int pos = 0;
+        float posi = 0;
+		while (NoCarte<5) {
+             Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+             Transform Ennemis = Instantiate(PlacementCarte, ZoneCarteEnnemie[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+
+             ZoneCarteJoueur[pos].EstOccupee = true;
+             ZoneCarteEnnemie[pos].EstOccupee = true;
+
              card = t.gameObject;
              cardennemis = Ennemis.gameObject;
-             card.name = "card" + i.ToString();
-             cardennemis.name = "cardennemis" + i.ToString();
+
+             ScriptEnnemie = Ennemis.GetComponent<JouerCarteBoard>();
+             ScriptEnnemie.enabled = false;
+
+             card.name = "card" + NoCarte.ToString();
+             cardennemis.name = "cardennemis" + NoCarte.ToString();
+
              foreach (Transform  child in t)
              {
-                 child.name = child.name + i;
+                 child.name = child.name + NoCarte;
                  child.tag = "textStats";
              }
              foreach (Transform child in Ennemis)
              {
-                 child.name = child.name+"Ennemis" + i;
+                 child.name = child.name+"Ennemis" + NoCarte;
                  child.tag = "textStats";
              }
-             pos += 1.5f;
-             if (i == 2)
+             ++pos;
+             posi += 1.5f;
+             if (NoCarte == 2)
              {
-                 tabCarteAllier[i] = new Carte(1, "card" + i, "Permanent", 0, 0, 0);
-                 tabCarteAllier[i].perm = new Permanent("batiment", 0, 2, 1);
-                 setValue(i, t,true);
+                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteAllier[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
+                 setValue(NoCarte, t,true);
 
-                 tabCarteEnnemis[i] = new Carte(1, "cardennemis"+i, "Permanent", 0, 0, 0);
-                 tabCarteEnnemis[i].perm = new Permanent("batiment", 0, 2, 1);
-                 setValue(i, Ennemis,false);
+                 tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis"+NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteEnnemis[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
+                 setValue(NoCarte, Ennemis,false);
              }
              else
              {
-                 tabCarteAllier[i] = new Carte(1,"card"+i, "Permanent", 0, 0, 0);
-                 tabCarteAllier[i].perm = new Permanent("creature", 10, 1, 1);
-                 setValue(i, t,true);
+                 tabCarteAllier[NoCarte] = new Carte(1,"card"+NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
+                 setValue(NoCarte, t,true);
 
-                 tabCarteEnnemis[i] = new Carte(1, "cardennemis" + i, "Permanent", 0, 0, 0);
-                 tabCarteEnnemis[i].perm = new Permanent("creature", 10, 1, 1);
-                 setValue(i, Ennemis,false);
+                 tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis" + NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteEnnemis[NoCarte].perm = new Permanent("creature", 1, 1, 1);
+                 setValue(NoCarte, Ennemis,false);
              }
-             styleCarteAllier[i] = card;
-             styleCarteEnnemis[i] = cardennemis;
-             ++i;
+             styleCarteAllier[NoCarte] = card;
+             styleCarteEnnemis[NoCarte] = cardennemis;
+             ++NoCarte;
         }
 	}
     private void setValue(int i,Transform t,bool allier)
@@ -145,17 +213,18 @@ public class Jouer : MonoBehaviour {
         //BTN EndTurn
         if (!tourFinis && placerClick)
         {
-            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis"))
+            if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini"))
             {
                 tourFinis = true;
                 resetArmor(tabCarteAllier);
                 resetArmor(tabCarteEnnemis);
+                PigerCarte();
             }
         }
         else
         {
             GUI.enabled = false;
-            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Finis");
+            GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini");
             GUI.enabled = true;
         }
 	    //blé
@@ -166,23 +235,23 @@ public class Jouer : MonoBehaviour {
 	    GUI.Label(new Rect(Screen.width*0.06f,Screen.height*0.07f,Screen.width*0.09f,Screen.height*0.07f),"Bois: " + NbBoisEnnemis.ToString());
 	    //gem
 	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.005f,Screen.width*0.05f,Screen.height*0.07f),gem);
-	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.07f,Screen.width*0.09f,Screen.height*0.07f),"gem: " + NbGemEnnemis.ToString());
+	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.07f,Screen.width*0.09f,Screen.height*0.07f),"Gem: " + NbGemEnnemis.ToString());
 	    if(!placerClick){
 		    //BLE
 	        if(GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),ble)){
                 NbBle = SetManaAjouter(e, NbBle);
 		    }
-		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "blé: "+ NbBle.ToString());
+		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
 		    //BOIS
 		    if(GUI.Button(new Rect((Screen.width/1.17f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),bois)){
                 NbBois = SetManaAjouter(e, NbBois);
 		    }
-		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "bois: " + NbBois.ToString());
+		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
 		    //GEM
 		    if(GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),gem)){
                 NbGem = SetManaAjouter(e, NbGem);
 		    }
-		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "gem: " + NbGem.ToString());
+		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
 		    //WORKER
 		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.24f,Screen.width*0.25f, Screen.height*0.10f),Worker);
 		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());
@@ -201,9 +270,9 @@ public class Jouer : MonoBehaviour {
 		    GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),gem);
 		
 		    GUI.enabled=true;
-		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "blé: "+ NbBle.ToString());
-		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "bois: " + NbBois.ToString());
-		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "gem: " + NbGem.ToString());
+		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
+		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
+		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
 		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.24f,Screen.width*0.25f, Screen.height*0.10f),Worker);
 		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());		
 	    }
@@ -225,6 +294,64 @@ public class Jouer : MonoBehaviour {
         for (int i = 0; i < tab.Length; ++i)
         {
             tab[i].perm.Armure = tab[i].perm.getBasicArmor();
+        }
+    }
+
+    //Retourne la premiere position qui est vide (disponible) sur la zone passé en parametre
+    public static int TrouverOuPlacerCarte(PosZoneCombat[] Zone)
+    {
+        int OuPlacerCarte = 0;
+        for (int i = 0; i < Zone.Length && Zone[i].EstOccupee == true; ++i)
+        {
+            OuPlacerCarte++;
+        }
+        return OuPlacerCarte;
+    }
+
+    private void PigerCarte()
+    {
+        NbCarteEnMainJoueur = 0;
+        for(int i=0;i<ZoneCarteJoueur.Length;++i)
+        {
+            if(ZoneCarteJoueur[i].EstOccupee == true)
+            {
+                ++NbCarteEnMainJoueur;
+            }
+        }
+
+        if(NbCarteEnMainJoueur == 5)
+        {
+
+        }
+        else
+        {
+            int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);
+            Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[OuPlacerCarte].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+            card = t.gameObject;
+            card.name = "card" + NoCarte.ToString();
+            foreach (Transform child in t)
+            {
+                child.name = child.name + NoCarte;
+                child.tag = "textStats";
+            }
+
+            ++pos;
+            if (NoCarte == 2)
+            {
+                tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
+                tabCarteAllier[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
+                setValue(NoCarte, t, true);
+            }
+            else
+            {
+                tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
+                tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
+                setValue(NoCarte, t, true);
+
+                
+            }
+            styleCarteAllier[NoCarte] = card;
+            ++NoCarte;
         }
     }
 }
