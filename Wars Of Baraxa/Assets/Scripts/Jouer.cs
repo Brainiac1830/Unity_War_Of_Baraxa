@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
 using warsofbaraxa;
 
 public class Jouer : MonoBehaviour {
@@ -11,7 +14,6 @@ public class Jouer : MonoBehaviour {
     static public PosZoneCombat[] ZoneCarteEnnemie;
     public int NbCarteEnMainJoueur;
     public bool placerClick;
-    public bool tourFinis;
 	public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
@@ -40,6 +42,7 @@ public class Jouer : MonoBehaviour {
     static public GameObject[] styleCarteAllier;
     static public Carte[] tabCarteEnnemis;
     static public GameObject[] styleCarteEnnemis;
+    public bool MonTour;
 	//initialization
 	void Start () {
 		NoCarte = 0;
@@ -61,15 +64,21 @@ public class Jouer : MonoBehaviour {
         NbWorkerMax = 2;
         NbWorker = NbWorkerMax;
         placerClick = false;
-        tourFinis = false;
         tabCarteAllier = new Carte[5];
         styleCarteAllier = new GameObject[5];
         tabCarteEnnemis = new Carte[5];
         styleCarteEnnemis = new GameObject[5];
         joueur1 = new Joueur("player1");
-        posEnnemis = new Rect(Screen.width * 0.87f, Screen.height * 0.00009f, Screen.width * 5.0f, Screen.height * 0.305f);
         CarteDepart();
 	}
+    void Awake()
+    {
+        string message = recevoirResultat();
+        if (message == "Premier Joueur")
+            MonTour = true;
+        else
+            MonTour = false;
+    }
 
     public void InitZoneJoueur()
     {
@@ -213,11 +222,11 @@ public class Jouer : MonoBehaviour {
 		GUI.Label(new Rect(Screen.width*0.85f,Screen.height*0.00009f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpEnnemi.ToString());
 
         //BTN EndTurn
-        if (!tourFinis && placerClick)
+        if (placerClick && MonTour)
         {
             if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini"))
             {
-                tourFinis = true;
+                MonTour = false;
                 resetArmor(tabCarteAllier);
                 resetArmor(tabCarteEnnemis);
                 PigerCarte();
@@ -238,7 +247,7 @@ public class Jouer : MonoBehaviour {
 	    //gem
 	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.005f,Screen.width*0.05f,Screen.height*0.07f),gem);
 	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.07f,Screen.width*0.09f,Screen.height*0.07f),"Gem: " + NbGemEnnemis.ToString());
-	    if(!placerClick){
+	    if(!placerClick && MonTour){
 		    //BLE
 	        if(GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),ble)){
                 NbBle = SetManaAjouter(e, NbBle);
@@ -355,5 +364,31 @@ public class Jouer : MonoBehaviour {
             styleCarteAllier[NoCarte] = card;
             ++NoCarte;
         }
+    }
+    private void envoyerMessage(string message)
+    {
+        byte[] data = Encoding.ASCII.GetBytes(message);
+        connexionServeur.sck.Send(data);
+    }
+    private string lire()
+    {
+        string message = null;
+        do
+        {
+            message = recevoirResultat();
+        } while (message == null);
+        return message;
+    }
+    private string recevoirResultat()
+    {
+        byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+        int bytesRead = connexionServeur.sck.Receive(buff);
+        byte[] formatted = new byte[bytesRead];
+        for (int i = 0; i < bytesRead; i++)
+        {
+            formatted[i] = buff[i];
+        }
+        string strData = Encoding.ASCII.GetString(formatted);
+        return strData;
     }
 }
