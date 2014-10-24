@@ -2,13 +2,20 @@
 using System.Collections;
 using warsofbaraxa;
 
+
 public class JouerCarteBoard : MonoBehaviour {
 	public float delay;
     public Jouer Script_Jouer;
     public bool EstJouer = false;
+    public bool EstEnnemie = false;
+    TextMesh[] Cout;
+    
+
 
 	// Use this for initialization
 	void Start () {
+
+        Cout = GetComponentsInChildren<TextMesh>();
 	}
 	
 	// Update is called once per frame
@@ -44,16 +51,26 @@ public class JouerCarteBoard : MonoBehaviour {
         return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
     }
 	void OnMouseDown(){
-        if (!EstJouer)
+        if (!EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
             int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
             Vector3 temp = this.transform.position;
             this.transform.position = Jouer.ZoneCombat[PlacementZoneCombat].Pos;
             EstJouer = true;
-            //JouerCarteBoard script = GetComponent<JouerCarteBoard>();
-            //script.enabled = false;
-            Jouer.ZoneCarteJoueur[TrouverEmplacementCarteJoueur(temp,Jouer.ZoneCarteJoueur)].EstOccupee = false;
-            Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+            int Emplacement = TrouverEmplacementCarteJoueur(temp, Jouer.ZoneCarteJoueur);
+            Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
+            Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
+            Jouer.joueur1.nbGem -= System.Int32.Parse(Cout[2].text);
+
+            Jouer.NbBle -= System.Int32.Parse(Cout[0].text);
+            Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
+            Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
+
+            if (Emplacement != -1)
+            {
+                Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
+                Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+            }
         }
 	}
 

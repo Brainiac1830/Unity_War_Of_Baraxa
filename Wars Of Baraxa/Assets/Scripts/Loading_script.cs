@@ -4,26 +4,34 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 
-public class Loading_script : MonoBehaviour {
+public class Loading_script : MonoBehaviour
+{
     public GUIStyle Background;
-	// Use this for initialization
-	void Start () {
-	}
-     public IEnumerator wait(int i)
+    // Use this for initialization
+    void Start()
     {
-        yield return new WaitForSeconds(i);           
+    }
+    public IEnumerator wait(int i)
+    {
+        yield return new WaitForSeconds(i);
+    }
+    void Awake()
+    {
+        envoyerMessage("trouver partie");
     }
     void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
     }
-	// Update is called once per frame
-	void Update () {
-            string message = lire();
-            if (message == "Partie commencer")
-                Application.LoadLevel("Board");
-            envoyerMessage("oui");
-	}
+    // Update is called once per frame
+    void Update()
+    {
+        string message = lire();
+        if (message == "Partie Commencer")
+            Application.LoadLevel("Board");
+
+        envoyerMessage("oui");
+    }
     void OnGUI()
     {
         GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", Background);

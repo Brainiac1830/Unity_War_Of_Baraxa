@@ -4,7 +4,7 @@ using warsofbaraxa;
 
 public class Jouer : MonoBehaviour {
     //variable
-    Joueur joueur1;
+    static public Joueur joueur1;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public PosZoneCombat[] ZoneCombatEnnemie;
@@ -20,9 +20,9 @@ public class Jouer : MonoBehaviour {
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
     public Rect posEnnemis;
-    public int NbBle;
-    public int NbBois;
-    public int NbGem;
+    public static int NbBle; //test avec static
+    public static int NbBois; // test avec static
+    public static int NbGem; // test avec statics
     public int NbWorkerMax;
     public int NbWorker;
     public int NbBleEnnemis;
@@ -128,11 +128,13 @@ public class Jouer : MonoBehaviour {
              ZoneCarteJoueur[pos].EstOccupee = true;
              ZoneCarteEnnemie[pos].EstOccupee = true;
 
+
              card = t.gameObject;
              cardennemis = Ennemis.gameObject;
 
              ScriptEnnemie = Ennemis.GetComponent<JouerCarteBoard>();
              ScriptEnnemie.enabled = false;
+             ScriptEnnemie.EstEnnemie = true;
 
              card.name = "card" + NoCarte.ToString();
              cardennemis.name = "cardennemis" + NoCarte.ToString();
@@ -151,7 +153,7 @@ public class Jouer : MonoBehaviour {
              posi += 1.5f;
              if (NoCarte == 2)
              {
-                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 1, 1, 0);
                  tabCarteAllier[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
                  setValue(NoCarte, t,true);
 
@@ -161,7 +163,7 @@ public class Jouer : MonoBehaviour {
              }
              else
              {
-                 tabCarteAllier[NoCarte] = new Carte(1,"card"+NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteAllier[NoCarte] = new Carte(1,"card"+NoCarte, "Permanent", 1, 1, 1);
                  tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
                  setValue(NoCarte, t,true);
 
