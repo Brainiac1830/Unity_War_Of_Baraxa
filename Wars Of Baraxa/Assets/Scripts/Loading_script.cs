@@ -13,6 +13,10 @@ public class Loading_script : MonoBehaviour {
     {
         yield return new WaitForSeconds(i);           
     }
+     void Awake()
+     {
+         envoyerMessage("trouver partie");
+     }
     void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
@@ -20,8 +24,9 @@ public class Loading_script : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
             string message = lire();
-            if (message == "Partie commencer")
+            if (message == "Partie Commencer")
                 Application.LoadLevel("Board");
+
             envoyerMessage("oui");
 	}
     void OnGUI()
