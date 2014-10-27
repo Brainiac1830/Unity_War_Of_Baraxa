@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
+using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Net;
+using System.Net.Sockets;
 using warsofbaraxa;
 public class attaque : MonoBehaviour {
     bool AttaquantClick;
@@ -137,6 +142,10 @@ public class attaque : MonoBehaviour {
                     script.HpEnnemi = CombatJoueur(Attaquant.Attaque, script.HpEnnemi);
                     Jouer.tabCarteAllier[posAllier].perm.aAttaque = true;
                     AttaquantClick = false;
+                    envoyerMessage("Attaquer Joueur");
+                    wait(1);
+                    EnvoyerCarte(connexionServeur.sck, Jouer.tabCarteAllier[posAllier]);
+
                     Attaquant = null;
                 }
             }
@@ -145,6 +154,21 @@ public class attaque : MonoBehaviour {
         {
             AttaquantClick = false;
         }
+    }
+    private void EnvoyerCarte(Socket client, Carte carte)
+    {
+        byte[] data;
+        BinaryFormatter b = new BinaryFormatter();
+        using (var stream = new MemoryStream())
+        {
+            b.Serialize(stream, carte);
+            data = stream.ToArray();
+        }
+        client.Send(data);
+    }
+    public IEnumerator wait(int i)
+    {
+        yield return new WaitForSeconds(i);
     }
     private int getPosCarte(string nom,Carte[] tab)
     { 
@@ -205,5 +229,10 @@ public class attaque : MonoBehaviour {
             t = GameObject.Find("vieEnnemis" + pos);
             t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();            
         }
+    }
+    private void envoyerMessage(string message)
+    {
+        byte[] data = Encoding.ASCII.GetBytes(message);
+        connexionServeur.sck.Send(data);
     }
 }

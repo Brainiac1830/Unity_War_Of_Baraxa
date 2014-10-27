@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.Specialized;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Threading;
 using warsofbaraxa;
 
 public class Jouer : MonoBehaviour {
     //variable
     static public Joueur joueur1;
+    ThreadLire ReceiveMessage;
+    Thread t;
+    string reponse = "";
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public PosZoneCombat[] ZoneCombatEnnemie;
@@ -21,7 +29,6 @@ public class Jouer : MonoBehaviour {
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
-    public Rect posEnnemis;
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
@@ -46,6 +53,8 @@ public class Jouer : MonoBehaviour {
 	//initialization
 	void Start () {
 		NoCarte = 0;
+        ReceiveMessage = new ThreadLire();
+        ReceiveMessage.workSocket = connexionServeur.sck;
         InitZoneJoueur();
         InitZoneEnnemie();
         InitZoneCombatEnnemie();
@@ -226,6 +235,7 @@ public class Jouer : MonoBehaviour {
         {
             if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini"))
             {
+                envoyerMessage("Fin De Tour");
                 MonTour = false;
                 resetArmor(tabCarteAllier);
                 resetArmor(tabCarteEnnemis);
@@ -272,6 +282,7 @@ public class Jouer : MonoBehaviour {
                 joueur1.nbBle = NbBle;
                 joueur1.nbBois = NbBois;
                 joueur1.nbGem = NbGem;
+                envoyerMessage("Ajouter Mana," + NbBle + "," + NbBois + "," + NbGem);
 		    }
 	    }
 	    else{
@@ -287,6 +298,83 @@ public class Jouer : MonoBehaviour {
 		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.24f,Screen.width*0.25f, Screen.height*0.10f),Worker);
 		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());		
 	    }
+        if (!MonTour)
+        {
+            if (t==null || !t.IsAlive)
+            {
+                t = new Thread(ReceiveMessage.doWork);
+                t.Start();
+            }
+            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { ',' }));
+            Thread.Sleep(1000);
+        }
+    }
+    private void traiterMessagePartie(string[] data)
+    {
+        switch(data[0])
+        {
+            case "AjouterManaEnnemis":
+                setManaEnnemis(int.Parse(data[1]),int.Parse(data[2]),int.Parse(data[3]));
+                ReceiveMessage.message = "";
+            break;
+            case "Tour Commencer":
+                MonTour = true;
+                placerClick = false;
+                if (NbWorkerMax < 5)
+                    setWorker(true);
+                else
+                    setWorker(false);
+
+                ReceiveMessage.message = "";
+            break;
+            case "AjouterCarteEnnemis":
+                setManaEnnemis(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
+                wait(1);
+                Carte temp = ReceiveCarte(connexionServeur.sck);
+                GameObject zeCarteEnnemis = createCardObject(temp);
+                placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
+                ReceiveMessage.message = "";
+            break;
+            case "Joueur attaquer":
+                HpJoueur = int.Parse(data[1]);
+            break;
+        }
+    }
+
+    public IEnumerator wait(int i)
+    {
+        yield return new WaitForSeconds(i);
+    }
+    private GameObject createCardObject(Carte temp)
+    {
+        GameObject cardTemp;
+        Transform t = Instantiate(PlacementCarte, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+        cardTemp = t.gameObject;
+        TextMesh[] cout = cardTemp.GetComponentsInChildren<TextMesh>();
+        cout[0].text = temp.CoutBois.ToString();
+        cout[1].text = temp.CoutBle.ToString();
+        cout[2].text = temp.CoutGem.ToString();
+        if (temp.TypeCarte == "Permanents")
+        {
+            cout[3].text = temp.perm.Armure.ToString();
+            cout[4].text = temp.perm.Attaque.ToString();
+            cout[5].text = temp.perm.Vie.ToString();
+        }
+        return cardTemp;
+    }
+    //remet le nombre de worker au debut du tour
+    // si newWorker = true on rajouter un worker
+    private void setWorker(bool newWorker)
+    {
+        if (newWorker)
+            NbWorkerMax++;
+        NbWorker = NbWorkerMax;
+    }
+    private void setManaEnnemis(int ble, int bois,int gem)
+    {
+        NbBleEnnemis = ble;
+        NbBoisEnnemis = bois;
+        NbGemEnnemis = gem;
     }
     public int SetManaAjouter(Event events, int ressource)
     {
@@ -365,6 +453,29 @@ public class Jouer : MonoBehaviour {
             ++NoCarte;
         }
     }
+    private void placerCarte(GameObject carte,PosZoneCombat[] zone)
+    {
+        int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(zone);
+        Vector3 temp = carte.transform.position;
+        this.transform.position = ZoneCombatEnnemie[PlacementZoneCombat].Pos;
+        int Emplacement = TrouverEmplacementCarteJoueur(temp, zone);        
+    }
+    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
+    {
+        int Emplacement = 0;
+        for (int i = 0; i < Zone.Length; ++i)
+        {
+            if (PosCarte.Equals(Zone[i].Pos))
+            {
+                return Emplacement;
+            }
+            else
+            {
+                ++Emplacement;
+            }
+        }
+        return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
+    }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
@@ -375,20 +486,73 @@ public class Jouer : MonoBehaviour {
         string message = null;
         do
         {
-            message = recevoirResultat();
+            recevoirResultat();
         } while (message == null);
         return message;
     }
     private string recevoirResultat()
     {
-        byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
-        int bytesRead = connexionServeur.sck.Receive(buff);
-        byte[] formatted = new byte[bytesRead];
-        for (int i = 0; i < bytesRead; i++)
+            byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+            int bytesRead = connexionServeur.sck.Receive(buff);
+            byte[] formatted = new byte[bytesRead];
+
+            for (int i = 0; i < bytesRead; i++)
+            {
+                formatted[i] = buff[i];
+            }
+            string strData = Encoding.ASCII.GetString(formatted);
+            return strData;
+    }
+    private void recevoirResultatNonBloquant()
+    {
+        try
         {
-            formatted[i] = buff[i];
+            StateObject state = new StateObject();
+            state.workSocket = connexionServeur.sck;
+
+            byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+            connexionServeur.sck.BeginReceive(buff, 0, buff.Length, 0, new AsyncCallback(ReceiveCallback),state);
+         }
+        catch (Exception e) { Console.WriteLine(e.ToString()); }       
+    }
+    private void ReceiveCallback(IAsyncResult result)
+    {
+        StateObject state = (StateObject) result.AsyncState;
+        Socket client = state.workSocket;
+        int lenght =client.EndReceive(result);
+        if (lenght > 0)
+        {
+            // There might be more data, so store the data received so far.
+            state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, lenght));
+            //  Get the rest of the data.
+            client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                new AsyncCallback(ReceiveCallback), state);
         }
-        string strData = Encoding.ASCII.GetString(formatted);
-        return strData;
+        else
+            if (state.sb.Length > 1)
+                reponse = state.sb.ToString();
+    }
+    private Carte ReceiveCarte(Socket client)
+    {
+        Carte carte = null;
+        try
+        {
+            byte[] buffer = new byte[client.SendBufferSize];
+            int bytesRead = client.Receive(buffer);
+            byte[] formatted = new byte[bytesRead];
+            BinaryFormatter receive = new BinaryFormatter();
+
+            for (int i = 0; i < bytesRead; i++)
+            {
+                formatted[i] = buffer[i];
+            }
+            using (var recstream = new MemoryStream(formatted))
+            {
+                carte = receive.Deserialize(recstream) as Carte;
+            }
+
+        }
+        catch { Console.Write("Erreur de telechargement des données"); }
+        return carte;
     }
 }
