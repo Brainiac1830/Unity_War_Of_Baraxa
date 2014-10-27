@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 
-public class Script_Lobby : MonoBehaviour
+public class script_Lobby : MonoBehaviour
 {
     public GUIStyle warOfBaraxa;
     public GUIStyle GUIBox;
@@ -18,8 +18,8 @@ public class Script_Lobby : MonoBehaviour
     {
         DeckChoisis = false;
         envoyerMessage("recevoir Deck");
-        string message =lire();
-        NomDeck = message.Split(new char[] {','});
+        string message = lire();
+        NomDeck = message.Split(new char[] { ',' });
     }
     void OnApplicationQuit()
     {
@@ -45,18 +45,18 @@ public class Script_Lobby : MonoBehaviour
 
         GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.3f), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
         GUI.Box(new Rect((Screen.width / 2) - (Screen.width * 0.4f), Screen.height * 0.3f, Screen.width * 0.8f, Screen.height * 0.6f), "Liste des decks", GUIBox);
-        int y=0;
+        int y = 0;
         for (int i = 0; i < NomDeck.Length; ++i)
         {
-            if (GUI.Button(new Rect((Screen.width*0.15f)+(Screen.width*(i-y*5) * 0.15f),(Screen.height*0.4f)+(Screen.height*y*0.2f),Screen.width * 0.08f, Screen.height * 0.08f),NomDeck[i]))
-            { 
+            if (GUI.Button(new Rect((Screen.width * 0.15f) + (Screen.width * (i - y * 5) * 0.15f), (Screen.height * 0.4f) + (Screen.height * y * 0.2f), Screen.width * 0.08f, Screen.height * 0.08f), NomDeck[i]))
+            {
                 selected = NomDeck[i];
                 DeckChoisis = true;
             }
-            if (i+1 == (y + 1) * 5)
+            if (i + 1 == (y + 1) * 5)
                 y++;
         }
-        GUI.Label(new Rect((Screen.width * 0.55f),(Screen.height * 0.85f),Screen.width*0.4f,Screen.height *0.05f),"Deck choissis: " + selected);
+        GUI.Label(new Rect((Screen.width * 0.55f), (Screen.height * 0.85f), Screen.width * 0.4f, Screen.height * 0.05f), "Deck choissis: " + selected);
         if (DeckChoisis)
         {
             if (GUI.Button(new Rect(Screen.width * 0.25f, Screen.height * 0.91f, Screen.width * 0.15f, Screen.height * 0.07f), "Rejoindre", GUIButton))
@@ -69,7 +69,7 @@ public class Script_Lobby : MonoBehaviour
                 DeckChoisis = false;
             }
         }
-        else 
+        else
         {
             GUI.enabled = false;
             GUI.Button(new Rect(Screen.width * 0.25f, Screen.height * 0.91f, Screen.width * 0.15f, Screen.height * 0.07f), "Rejoindre", GUIButton);
@@ -108,3 +108,4 @@ public class Script_Lobby : MonoBehaviour
         return strData;
     }
 }
+

@@ -1,4 +1,9 @@
 ﻿using UnityEngine;
+using System.Text;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Net;
+using System.Net.Sockets;
 using System.Collections;
 using warsofbaraxa;
 
@@ -65,16 +70,24 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbBle -= System.Int32.Parse(Cout[0].text);
             Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
-
+            /*A MODIFIER*/
+            Carte carteTemp = new Carte (Emplacement, "carte" + Emplacement, "creature", System.Int32.Parse(Cout[1].text), System.Int32.Parse(Cout[0].text), System.Int32.Parse(Cout[2].text));
+            carteTemp.perm = new Permanent("creature", 1, 1, 1);
             if (Emplacement != -1)
             {
                 Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
                 Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+                envoyerMessage("Jouer Carte");
+                wait(1);
+                EnvoyerCarte(connexionServeur.sck, carteTemp);
             }
         }
 	}
 
-
+    public IEnumerator wait(int i)
+    {
+        yield return new WaitForSeconds(i);
+    }
 	void OnMouseOver(){
         //delay += Time.deltaTime;
         //// here the 2 is the time that you want before load the bar
@@ -88,4 +101,42 @@ public class JouerCarteBoard : MonoBehaviour {
         //delay = 0;
         //this.transform.localScale = new Vector3 (0.1f, 1.0f, 0.13f);
 	}
+    private void envoyerMessage(string message)
+    {
+        byte[] data = Encoding.ASCII.GetBytes(message);
+        connexionServeur.sck.Send(data);
+    }
+    private string lire()
+    {
+        string message = null;
+        do
+        {
+            recevoirResultat();
+        } while (message == null);
+        return message;
+    }
+    private string recevoirResultat()
+    {
+        byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+        int bytesRead = connexionServeur.sck.Receive(buff);
+        byte[] formatted = new byte[bytesRead];
+
+        for (int i = 0; i < bytesRead; i++)
+        {
+            formatted[i] = buff[i];
+        }
+        string strData = Encoding.ASCII.GetString(formatted);
+        return strData;
+    }
+    private void EnvoyerCarte(Socket client, Carte carte)
+    {
+        byte[] data;
+        BinaryFormatter b = new BinaryFormatter();
+        using (var stream = new MemoryStream())
+        {
+            b.Serialize(stream, carte);
+            data = stream.ToArray();
+        }
+        client.Send(data);
+    }
 }
