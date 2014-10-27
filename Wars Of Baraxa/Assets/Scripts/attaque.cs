@@ -20,11 +20,24 @@ public class attaque : MonoBehaviour {
 	void Update () {
         Attaquer();    
     }
-    public void peutAttaquer(Carte[] tab, GameObject [] style)
+
+    private bool Selectionable(GameObject style,PosZoneCombat[] Zone)
+    {
+        bool selectionable = false;
+        for (int i = 0; i < Zone.Length;++i)
+        {
+                if (style.transform.position.Equals(Zone[i].Pos))
+                {
+                    selectionable = true;
+                }
+        }
+            return selectionable;
+    }
+    public void peutAttaquer(Carte[] tab, GameObject [] style,PosZoneCombat[] Zone)
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i] != null && style[i] != null && !tab[i].perm.aAttaque && tab[i].perm.TypePerm == "creature")
+            if (tab[i] != null && style[i] != null && !tab[i].perm.aAttaque && tab[i].perm.TypePerm == "creature" && Selectionable(style[i],Zone))
             {
                 style[i].renderer.material.color = Color.green;
             }
@@ -75,14 +88,14 @@ public class attaque : MonoBehaviour {
     public void Attaquer()
     {
             //change le border pour une autre couleur
-        peutAttaquer(Jouer.tabCarteAllier, Jouer.styleCarteAllier);
+        peutAttaquer(Jouer.tabCarteAllier, Jouer.styleCarteAllier,Jouer.ZoneCombat);
         peutEtreAttaquer(Jouer.tabCarteEnnemis,Jouer.styleCarteEnnemis);
         Jouer script = GetComponent<Jouer>();
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit carte;
-            if (Physics.Raycast(ray, out carte) && !AttaquantClick)
+            if (Physics.Raycast(ray, out carte) && !AttaquantClick && Selectionable(GameObject.Find(carte.collider.gameObject.name),Jouer.ZoneCombat))
             {
                 carteAttaque = GameObject.Find(carte.collider.gameObject.name);
                 posAllier = getPosCarte(carteAttaque.name, Jouer.tabCarteAllier);

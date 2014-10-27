@@ -19,10 +19,6 @@ public class Loading_script : MonoBehaviour
     {
         envoyerMessage("trouver partie");
     }
-     void Awake()
-     {
-         envoyerMessage("trouver partie");
-     }
     void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
