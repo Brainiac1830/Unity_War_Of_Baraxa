@@ -335,13 +335,20 @@ public class Jouer : MonoBehaviour {
                 int pos = TrouverEmplacementCarteJoueur(zeCarteEnnemis.transform.position,ZoneCarteEnnemie);
                 ZoneCarteEnnemie[pos].EstOccupee = false;
                 placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
+                JouerCarteBoard a = (JouerCarteBoard)zeCarteEnnemis.GetComponent("JouerCarteBoard");
+                a.EstJouer = true;
+                a.EstEnnemie = true;
                 ReceiveMessage.message = "";
             break;
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
+                ReceiveMessage.message = "";
             break;
             case "Combat Creature":
-                
+                Carte attaque = createCarte(data,3);
+                Carte defenseur = createCarte(data, 14);
+                combat(attaque, defenseur,int.Parse(data[1]),int.Parse(data[2]));
+                ReceiveMessage.message = "";
             break;
         }
     }
@@ -349,35 +356,32 @@ public class Jouer : MonoBehaviour {
     {
         Carte zeCarte=null;
         zeCarte = new Carte(int.Parse(data[posDepart + 6]), data[posDepart + 5], data[posDepart + 4], data[posDepart + 3], int.Parse(data[posDepart]), int.Parse(data[posDepart + 1]), int.Parse(data[posDepart + 2]));
-        if (zeCarte.TypeCarte == "Permanents" || zeCarte.TypeCarte == "creature" || zeCarte.TypeCarte=="batiment")
+        if (zeCarte.TypeCarte == "Permanents" || zeCarte.TypeCarte == "creature" || zeCarte.TypeCarte == "batiment" || zeCarte.TypeCarte == "Permanent")
             zeCarte.perm = new Permanent(data[posDepart + 10], int.Parse(data[posDepart + 7]), int.Parse(data[posDepart + 8]), int.Parse(data[posDepart + 9]));
         return zeCarte;
     }
     private void combat(Carte attaquant, Carte ennemi,int posAllier,int posDefenseur)
     {
-        CombatCreature(attaquant.perm, ennemi.perm);
-        CombatCreature(ennemi.perm, attaquant.perm);
         setStat(attaquant.perm, new int[] { attaquant.perm.Attaque, attaquant.perm.Vie, attaquant.perm.Armure });
-        setStat(attaquant.perm, new int[] { ennemi.perm.Attaque, ennemi.perm.Vie, ennemi.perm.Armure });
+        setStat(ennemi.perm, new int[] { ennemi.perm.Attaque, ennemi.perm.Vie, ennemi.perm.Armure });
         recevoirDegat(attaquant, posAllier, true);
         recevoirDegat(attaquant, posDefenseur, false);
+        if (attaquant.perm.Vie <= 0)
+        {
+            GameObject temp = GameObject.Find(attaquant.NomCarte);
+            Destroy(temp);
+        }
+        else if (ennemi.perm.Vie <= 0)
+        {
+            GameObject temp = GameObject.Find(ennemi.NomCarte);
+            Destroy(temp);            
+        }
     }
     void setStat(Permanent perm, int[] stat)
     {
         perm.Attaque = stat[0];
         perm.Vie = stat[1];
         perm.Armure = stat[2];
-    }
-    private void CombatCreature(Permanent attaquant, Permanent defenseur)
-    {
-        if (defenseur.Armure - attaquant.Attaque >= 0)
-            defenseur.Armure -= attaquant.Attaque;
-        else
-        {
-            int attaque = attaquant.Attaque - defenseur.Armure;
-            defenseur.Armure = 0;
-            defenseur.Vie -= attaque;
-        }
     }
     public void recevoirDegat(Carte carte, int pos, bool allier)
     {
@@ -492,10 +496,10 @@ public class Jouer : MonoBehaviour {
     }
     private void placerCarte(GameObject carte,PosZoneCombat[] zone)
     {
-        int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(zone);
+        int PlacementZoneCombat = TrouverOuPlacerCarte(zone);
         Vector3 temp = carte.transform.position;
         carte.transform.position = ZoneCombatEnnemie[PlacementZoneCombat].Pos;
-        int Emplacement = TrouverEmplacementCarteJoueur(temp, zone);        
+        ZoneCombatEnnemie[PlacementZoneCombat].EstOccupee = true;
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {
