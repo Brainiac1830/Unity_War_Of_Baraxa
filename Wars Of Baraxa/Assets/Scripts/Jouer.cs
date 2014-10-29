@@ -59,11 +59,11 @@ public class Jouer : MonoBehaviour {
         InitZoneEnnemie();
         InitZoneCombatEnnemie();
         InitZoneCombatJoueur();
-	pos = 0;
-	card = null;
-        NbCarteEnMainJoueur = 5;
-	HpJoueur = 30;
-	HpEnnemi = 30;
+	    pos = 0;
+	    card = null;
+        NbCarteEnMainJoueur = 0;
+	    HpJoueur = 30;
+	    HpEnnemi = 30;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -80,6 +80,10 @@ public class Jouer : MonoBehaviour {
         joueur1 = new Joueur("player1");
         CarteDepart();
 	}
+    void OnDestroy()
+    {
+        t.Abort();
+    }
     void Awake()
     {
         string message = recevoirResultat();
@@ -137,7 +141,7 @@ public class Jouer : MonoBehaviour {
 
 	public void CarteDepart(){
         int pos = 0;
-        //float posi = 0;
+        float posi = 0;
 		while (NoCarte<7) {
              Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
              Transform Ennemis = Instantiate(PlacementCarte, ZoneCarteEnnemie[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
@@ -166,7 +170,7 @@ public class Jouer : MonoBehaviour {
                  child.tag = "textStats";
              }
              ++pos;
-             //posi += 1.5f;
+             posi += 1.5f;
              if (NoCarte == 2)
              {
                  tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 1, 1, 0);
@@ -352,16 +356,16 @@ public class Jouer : MonoBehaviour {
                 combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]));
                 ReceiveMessage.message = "";
             break;
-            case "Piger":
-                Carte tempPiger = createCarte(data, 1);
-                tempPiger.NomCarte = tempPiger.NomCarte.Insert(tempPiger.NomCarte.Length - 1, "ennemis");
-                GameObject zeCartePiger = GameObject.Find(tempPiger.NomCarte);
-                placerCarte(zeCartePiger, ZoneCarteEnnemie);
-                int emplacement = TrouverEmplacementCarteJoueur(zeCartePiger.transform.position, ZoneCarteEnnemie);
-                ZoneCarteEnnemie[emplacement].EstOccupee = true;
-                ReceiveMessage.message = "";
-                //A faire!
-            break;
+            //case "Piger":
+            //    Carte tempPiger = createCarte(data, 1);
+            //    tempPiger.NomCarte = tempPiger.NomCarte.Insert(tempPiger.NomCarte.Length - 1, "ennemis");
+            //    GameObject zeCartePiger = GameObject.Find(tempPiger.NomCarte);
+            //    placerCarte(zeCartePiger, ZoneCarteEnnemie);
+            //    int emplacement = TrouverEmplacementCarteJoueur(zeCartePiger.transform.position, ZoneCarteEnnemie);
+            //    ZoneCarteEnnemie[emplacement].EstOccupee = true;
+            //    ReceiveMessage.message = "";
+            //    //A faire!
+            //break;
         }
         if (data[0] == "vous avez gagné")
         {
@@ -529,6 +533,7 @@ public class Jouer : MonoBehaviour {
         int PlacementZoneCombat = TrouverOuPlacerCarte(zone);
         Vector3 temp = carte.transform.position;
         carte.transform.position = zone[PlacementZoneCombat].Pos;
+        zone[PlacementZoneCombat].EstOccupee = true;
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {
