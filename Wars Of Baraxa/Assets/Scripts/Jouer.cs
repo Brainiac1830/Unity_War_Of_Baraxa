@@ -335,7 +335,7 @@ public class Jouer : MonoBehaviour {
                 int pos = TrouverEmplacementCarteJoueur(zeCarteEnnemis.transform.position,ZoneCarteEnnemie);
                 ZoneCarteEnnemie[pos].EstOccupee = false;
                 placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
-                JouerCarteBoard a = (JouerCarteBoard)zeCarteEnnemis.GetComponent("JouerCarteBoard");
+                JouerCarteBoard a = zeCarteEnnemis.GetComponent<JouerCarteBoard>();
                 a.EstJouer = true;
                 a.EstEnnemie = true;
                 ReceiveMessage.message = "";
@@ -352,7 +352,7 @@ public class Jouer : MonoBehaviour {
                 ReceiveMessage.message = "";
             break;
             case "Piger":
-                //Carte temp2 = ReceiveCarte(connexionServeur.sck);
+                //Carte temp2 = createCarte(data)
                 //GameObject zeCarteEnnemis2 = createCardObject(temp2);
                 //placerCarte(zeCarteEnnemis2, ZoneCarteEnnemie);
                 //A faire!
@@ -519,9 +519,6 @@ public class Jouer : MonoBehaviour {
         Vector3 temp = carte.transform.position;
         carte.transform.position = zone[PlacementZoneCombat].Pos;
         int Emplacement = TrouverEmplacementCarteJoueur(temp, zone); // Pourquoi?
-        zone[PlacementZoneCombat].EstOccupee = true;
-        JouerCarteBoard JCB = carte.GetComponent<JouerCarteBoard>();
-        JCB.EstJouer = true; 
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {
