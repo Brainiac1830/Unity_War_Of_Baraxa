@@ -37,7 +37,6 @@ public class JouerCarteBoard : MonoBehaviour {
                 Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)].EstOccupee = false;
         }
     }
-
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte,PosZoneCombat[] Zone)
     {  
         int Emplacement = 0;
@@ -70,8 +69,8 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
             /*A MODIFIER*/
-            Carte carteTemp = new Carte (Emplacement, "carte" + Emplacement, "creature", System.Int32.Parse(Cout[1].text), System.Int32.Parse(Cout[0].text), System.Int32.Parse(Cout[2].text));
-            carteTemp.perm = new Permanent("creature", 1, 1, 1);
+            Carte carteTemp = new Carte (Emplacement, this.name, "Permanents", System.Int32.Parse(Cout[1].text), System.Int32.Parse(Cout[0].text), System.Int32.Parse(Cout[2].text));
+            carteTemp.perm = new Permanent("creature", int.Parse(Cout[4].text), int.Parse(Cout[5].text), int.Parse(Cout[3].text));
             if (Emplacement != -1)
             {
                 Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;

@@ -22,7 +22,7 @@ public class Jouer : MonoBehaviour {
     static public PosZoneCombat[] ZoneCarteEnnemie;
     public int NbCarteEnMainJoueur;
     public bool placerClick;
-	public Texture2D Test;
+    public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
     public Texture2D gem;
@@ -37,14 +37,14 @@ public class Jouer : MonoBehaviour {
     public int NbBleEnnemis;
     public int NbBoisEnnemis;
     public int NbGemEnnemis;
-	public int HpJoueur;
-	public int HpEnnemi;
-	public Transform PlacementCarte;
-	public GameObject card;
+    public int HpJoueur;
+    public int HpEnnemi;
+    public Transform PlacementCarte;
+    public GameObject card;
     public GameObject cardennemis;
     public JouerCarteBoard ScriptEnnemie;
-	public int NoCarte;
-	static public float pos;
+    public int NoCarte;
+    static public float pos;
     static public Carte[] tabCarteAllier;
     static public GameObject[] styleCarteAllier;
     static public Carte[] tabCarteEnnemis;
@@ -52,18 +52,18 @@ public class Jouer : MonoBehaviour {
     public bool MonTour;
 	//initialization
 	void Start () {
-		NoCarte = 0;
+	NoCarte = 0;
         ReceiveMessage = new ThreadLire();
         ReceiveMessage.workSocket = connexionServeur.sck;
         InitZoneJoueur();
         InitZoneEnnemie();
         InitZoneCombatEnnemie();
         InitZoneCombatJoueur();
-		pos = 0;
-		card = null;
+	pos = 0;
+	card = null;
         NbCarteEnMainJoueur = 5;
-		HpJoueur = 30;
-		HpEnnemi = 30;
+	HpJoueur = 30;
+	HpEnnemi = 30;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -315,6 +315,7 @@ public class Jouer : MonoBehaviour {
             case "Tour Commencer":
                 MonTour = true;
                 placerClick = false;
+                //max mana =5
                 if (NbWorkerMax < 5)
                     setWorker(true);
                 else
@@ -323,15 +324,27 @@ public class Jouer : MonoBehaviour {
                 ReceiveMessage.message = "";
             break;
             case "AjouterCarteEnnemis":
-                setManaEnnemis(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
-                wait(1);
-                Carte temp = ReceiveCarte(connexionServeur.sck);
-                GameObject zeCarteEnnemis = createCardObject(temp);
+                Carte temp=createCarte(data,1);
+                setManaEnnemis(NbBleEnnemis-int.Parse(data[1]),NbBoisEnnemis - int.Parse(data[2]),NbGemEnnemis - int.Parse(data[3]));
+                temp.NomCarte=temp.NomCarte.Insert(temp.NomCarte.Length - 1, "ennemis");
+                GameObject zeCarteEnnemis = GameObject.Find(temp.NomCarte);
+                int pos = TrouverEmplacementCarteJoueur(zeCarteEnnemis.transform.position,ZoneCarteEnnemie);
+                ZoneCarteEnnemie[pos].EstOccupee = false;
                 placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
+                JouerCarteBoard a = (JouerCarteBoard)zeCarteEnnemis.GetComponent("JouerCarteBoard");
+                a.EstJouer = true;
+                a.EstEnnemie = true;
                 ReceiveMessage.message = "";
             break;
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
+                ReceiveMessage.message = "";
+            break;
+            case "Combat Creature":
+                Carte attaque = createCarte(data,3);
+                Carte defenseur = createCarte(data, 14);
+                combat(attaque, defenseur,int.Parse(data[1]),int.Parse(data[2]));
+                ReceiveMessage.message = "";
             break;
             case "Piger":
                 Carte temp2 = ReceiveCarte(connexionServeur.sck);
@@ -341,29 +354,58 @@ public class Jouer : MonoBehaviour {
             break;
         }
     }
-
+    private Carte createCarte(string [] data,int posDepart)
+    {
+        Carte zeCarte=null;
+        zeCarte = new Carte(int.Parse(data[posDepart + 6]), data[posDepart + 5], data[posDepart + 4], data[posDepart + 3], int.Parse(data[posDepart]), int.Parse(data[posDepart + 1]), int.Parse(data[posDepart + 2]));
+        if (zeCarte.TypeCarte == "Permanents" || zeCarte.TypeCarte == "creature" || zeCarte.TypeCarte == "batiment" || zeCarte.TypeCarte == "Permanent")
+            zeCarte.perm = new Permanent(data[posDepart + 10], int.Parse(data[posDepart + 7]), int.Parse(data[posDepart + 8]), int.Parse(data[posDepart + 9]));
+        return zeCarte;
+    }
+    private void combat(Carte attaquant, Carte ennemi,int posAllier,int posDefenseur)
+    {
+        setStat(attaquant.perm, new int[] { attaquant.perm.Attaque, attaquant.perm.Vie, attaquant.perm.Armure });
+        setStat(ennemi.perm, new int[] { ennemi.perm.Attaque, ennemi.perm.Vie, ennemi.perm.Armure });
+        recevoirDegat(attaquant, posAllier, true);
+        recevoirDegat(attaquant, posDefenseur, false);
+        if (attaquant.perm.Vie <= 0)
+        {
+            GameObject temp = GameObject.Find(attaquant.NomCarte);
+            Destroy(temp);
+        }
+        else if (ennemi.perm.Vie <= 0)
+        {
+            GameObject temp = GameObject.Find(ennemi.NomCarte);
+            Destroy(temp);            
+        }
+    }
+    void setStat(Permanent perm, int[] stat)
+    {
+        perm.Attaque = stat[0];
+        perm.Vie = stat[1];
+        perm.Armure = stat[2];
+    }
+    public void recevoirDegat(Carte carte, int pos, bool allier)
+    {
+        GameObject t = null;
+        if (allier)
+        {
+            t = GameObject.Find("armure" + pos);
+            t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
+            t = GameObject.Find("vie" + pos);
+            t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();
+        }
+        else
+        {
+            t = GameObject.Find("armureEnnemis" + pos);
+            t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
+            t = GameObject.Find("vieEnnemis" + pos);
+            t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();
+        }
+    }
     public IEnumerator wait(int i)
     {
         yield return new WaitForSeconds(i);
-    }
-    private GameObject createCardObject(Carte temp)
-    {
-        GameObject cardTemp;
-        Transform t = Instantiate(PlacementCarte, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-        cardTemp = t.gameObject;
-        JouerCarteBoard JCB = cardTemp.GetComponent<JouerCarteBoard>();
-        JCB.EstEnnemie = true;
-        TextMesh[] cout = cardTemp.GetComponentsInChildren<TextMesh>();
-        cout[0].text = temp.CoutBois.ToString();
-        cout[1].text = temp.CoutBle.ToString();
-        cout[2].text = temp.CoutGem.ToString();
-        if (temp.TypeCarte == "Permanents")
-        {
-            cout[3].text = temp.perm.Armure.ToString();
-            cout[4].text = temp.perm.Attaque.ToString();
-            cout[5].text = temp.perm.Vie.ToString();
-        }
-        return cardTemp;
     }
     //remet le nombre de worker au debut du tour
     // si newWorker = true on rajouter un worker
@@ -448,9 +490,7 @@ public class Jouer : MonoBehaviour {
             {
                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
                 tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
-                setValue(NoCarte, t, true);
-
-                
+                setValue(NoCarte, t, true);              
             }
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
             styleCarteAllier[NoCarte] = card;
@@ -459,14 +499,13 @@ public class Jouer : MonoBehaviour {
     }
     private void placerCarte(GameObject carte,PosZoneCombat[] zone)
     {
-        int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(zone);
+        int PlacementZoneCombat = TrouverOuPlacerCarte(zone);
         Vector3 temp = carte.transform.position;
-        this.transform.position = zone[PlacementZoneCombat].Pos;
+        carte.transform.position = zone[PlacementZoneCombat].Pos;
         int Emplacement = TrouverEmplacementCarteJoueur(temp, zone); // Pourquoi?
         zone[PlacementZoneCombat].EstOccupee = true;
         JouerCarteBoard JCB = carte.GetComponent<JouerCarteBoard>();
-        JCB.EstJouer = true;
-        
+        JCB.EstJouer = true; 
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {
@@ -511,35 +550,6 @@ public class Jouer : MonoBehaviour {
             string strData = Encoding.ASCII.GetString(formatted);
             return strData;
     }
-    private void recevoirResultatNonBloquant()
-    {
-        try
-        {
-            StateObject state = new StateObject();
-            state.workSocket = connexionServeur.sck;
-
-            byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
-            connexionServeur.sck.BeginReceive(buff, 0, buff.Length, 0, new AsyncCallback(ReceiveCallback),state);
-         }
-        catch (Exception e) { Console.WriteLine(e.ToString()); }       
-    }
-    private void ReceiveCallback(IAsyncResult result)
-    {
-        StateObject state = (StateObject) result.AsyncState;
-        Socket client = state.workSocket;
-        int lenght =client.EndReceive(result);
-        if (lenght > 0)
-        {
-            // There might be more data, so store the data received so far.
-            state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, lenght));
-            //  Get the rest of the data.
-            client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReceiveCallback), state);
-        }
-        else
-            if (state.sb.Length > 1)
-                reponse = state.sb.ToString();
-    }
     private Carte ReceiveCarte(Socket client)
     {
         Carte carte = null;
@@ -560,7 +570,7 @@ public class Jouer : MonoBehaviour {
             }
 
         }
-        catch { Console.Write("Erreur de telechargement des données"); }
+        catch(TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
         return carte;
     }
 }
