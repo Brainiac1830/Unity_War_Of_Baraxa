@@ -18,6 +18,7 @@ public class menu_Script : MonoBehaviour {
  public GUIStyle GUIBox;
  public GUIStyle GUIButton;
  public GUIStyle Background;
+ public GUIStyle Logo;
  void OnApplicationQuit()
  {
      envoyerMessage("deconnection");
@@ -40,18 +41,19 @@ public class menu_Script : MonoBehaviour {
 	}
     public void OnGUI(){
 	GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
+    GUI.Box(new Rect(Screen.width * 0.2f, 0, Screen.width - 350, Screen.height - 300), "", Logo);
 	test.fontSize = Screen.width/26;
-	warOfBaraxa.fontSize = Screen.width/10;
-	GUI.Label(new Rect((Screen.width/2) - (Screen.width * 0.6f/2), Screen.height * 0.1f,Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
+	//warOfBaraxa.fontSize = Screen.width/10;
+	//GUI.Label(new Rect((Screen.width/2) - (Screen.width * 0.6f/2), Screen.height * 0.1f,Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
 
 	if(!quitter){
-		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.40f,Screen.width * 0.3f, Screen.height * 0.05f), "Trouver une partie", test)){
+		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.47f,Screen.width * 0.3f, Screen.height * 0.05f), "Trouver une partie", test)){
 			Application.LoadLevel("Lobby");
 		}
-		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.50f,Screen.width * 0.3f ,Screen.height * 0.05f), "Profile", test)){
+		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.57f,Screen.width * 0.3f ,Screen.height * 0.05f), "Profile", test)){
 			Application.LoadLevel("Profile");
 		}
-		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.60f,Screen.width * 0.3f, Screen.height * 0.05f), "Quitter", test)){
+		if(GUI.Button(new Rect((Screen.width/2) - (Screen.width * 0.3f/2), Screen.height * 0.67f,Screen.width * 0.3f, Screen.height * 0.05f), "Quitter", test)){
 			quitter = true;
 		}
 	}

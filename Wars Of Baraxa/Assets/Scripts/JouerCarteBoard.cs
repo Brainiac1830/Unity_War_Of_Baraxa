@@ -19,7 +19,6 @@ public class JouerCarteBoard : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
         Cout = GetComponentsInChildren<TextMesh>();
 	}
 	

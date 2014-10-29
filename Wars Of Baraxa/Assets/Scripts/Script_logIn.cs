@@ -17,6 +17,7 @@ public class Script_logIn : MonoBehaviour {
     bool showBox = false;
 
 //GUIStyle
+    public GUIStyle Logo;
     public GUIStyle textArea;
     public GUIStyle buttons;
     public GUIStyle text;
@@ -51,19 +52,19 @@ public void OnGUI() {
     if (!showBox)
     {
         //Titre
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
+        //GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
         //Alias
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.40f / 2), Screen.height * 0.40f, Screen.width * 0.10f, Screen.height * 0.05f), "Alias", text);
-        alias = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.40f, Screen.width * 0.25f, Screen.height * 0.05f), alias, 20, textArea);
+        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.40f / 2), Screen.height * 0.47f, Screen.width * 0.10f, Screen.height * 0.05f), "Alias", text);
+        alias = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.47f, Screen.width * 0.25f, Screen.height * 0.05f), alias, 20, textArea);
         //Mot de passe
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.47f, Screen.width * 0.20f, Screen.height * 0.05f), "Mot de passe", text);
-        password = GUI.PasswordField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.47f, Screen.width * 0.25f, Screen.height * 0.05f), password, "*"[0], 20, textArea);
+        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.54f, Screen.width * 0.20f, Screen.height * 0.05f), "Mot de passe", text);
+        password = GUI.PasswordField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.54f, Screen.width * 0.25f, Screen.height * 0.05f), password, "*"[0], 20, textArea);
 
         //Si veut se connecter a un compte
         if (!nouveauCompte)
         {
             //Tente de se connecter avec les informations fournis
-            if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.54f, Screen.width * 0.12f, Screen.height * 0.06f), "Connecter", buttons))
+            if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.62f, Screen.width * 0.12f, Screen.height * 0.06f), "Connecter", buttons))
             {
                 //Conditions d'erreurs
                 if (alias == "" || password == "")
@@ -82,7 +83,7 @@ public void OnGUI() {
 
             }
             //Change l'interface pour pouvoir créer un compte
-            if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.54f, Screen.width * 0.12f, Screen.height * 0.06f), "Créer", buttons))
+            if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.62f, Screen.width * 0.12f, Screen.height * 0.06f), "Créer", buttons))
             {
                 nouveauCompte = true;
             }
@@ -91,14 +92,14 @@ public void OnGUI() {
         if (nouveauCompte)
         {
             //Prenom
-            GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.43f / 2), Screen.height * 0.54f, Screen.width * 0.10f, Screen.height * 0.05f), "Prenom", text);
-            prenom = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.54f, Screen.width * 0.25f, Screen.height * 0.05f), prenom, 25, textArea);
+            GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.43f / 2), Screen.height * 0.62f, Screen.width * 0.10f, Screen.height * 0.05f), "Prenom", text);
+            prenom = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.62f, Screen.width * 0.25f, Screen.height * 0.05f), prenom, 25, textArea);
             //Nom
-            GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.40f / 2), Screen.height * 0.61f, Screen.width * 0.10f, Screen.height * 0.05f), "Nom", text);
-            nom = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.61f, Screen.width * 0.25f, Screen.height * 0.05f), nom, 25, textArea);
+            GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.40f / 2), Screen.height * 0.68f, Screen.width * 0.10f, Screen.height * 0.05f), "Nom", text);
+            nom = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.68f, Screen.width * 0.25f, Screen.height * 0.05f), nom, 25, textArea);
 
             //Si on click sur "RETOUR" on retourne a la connection d'un compte existant
-            if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.68f, Screen.width * 0.12f, Screen.height * 0.05f), "Retour", buttons))
+            if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.75f, Screen.width * 0.12f, Screen.height * 0.05f), "Retour", buttons))
             {
                 alias = "";
                 password = "";
@@ -107,7 +108,7 @@ public void OnGUI() {
                 nouveauCompte = false;
             }
             //Si on click sur "CRÉER" on tente de créer le compte selon les informations données (vérifications)
-            if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.68f, Screen.width * 0.12f, Screen.height * 0.05f), "Créer", buttons))
+            if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.75f, Screen.width * 0.12f, Screen.height * 0.05f), "Créer", buttons))
             {
                 if (alias == "" || password == "" || nom == "" || prenom == "")
                 {

@@ -324,6 +324,7 @@ public class Jouer : MonoBehaviour {
                     setWorker(true);
                 else
                     setWorker(false);
+                PigerCarte();
 
                 ReceiveMessage.message = "";
             break;
@@ -352,9 +353,13 @@ public class Jouer : MonoBehaviour {
                 ReceiveMessage.message = "";
             break;
             case "Piger":
-                //Carte temp2 = createCarte(data)
-                //GameObject zeCarteEnnemis2 = createCardObject(temp2);
-                //placerCarte(zeCarteEnnemis2, ZoneCarteEnnemie);
+                Carte tempPiger = createCarte(data, 1);
+                tempPiger.NomCarte = tempPiger.NomCarte.Insert(tempPiger.NomCarte.Length - 1, "ennemis");
+                GameObject zeCartePiger = GameObject.Find(tempPiger.NomCarte);
+                placerCarte(zeCartePiger, ZoneCarteEnnemie);
+                int emplacement = TrouverEmplacementCarteJoueur(zeCartePiger.transform.position, ZoneCarteEnnemie);
+                ZoneCarteEnnemie[emplacement].EstOccupee = true;
+                ReceiveMessage.message = "";
                 //A faire!
             break;
         }
@@ -366,6 +371,11 @@ public class Jouer : MonoBehaviour {
         {
             Application.LoadLevel("Menu");
         }
+    }
+    private string SetCarteString(Carte temp)
+    {
+                   /*0                    1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
+        return temp.CoutBle + "," + temp.CoutBois + "," + temp.CoutGem + "," + temp.Habilete + "," + temp.TypeCarte + "," + temp.NomCarte + "," + temp.NoCarte + "," + temp.perm.Attaque + "," + temp.perm.Vie + "," + temp.perm.Armure + "," + temp.perm.TypePerm;
     }
     private void changeName(Carte attaque, Carte defense)
     {
@@ -511,6 +521,7 @@ public class Jouer : MonoBehaviour {
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
             styleCarteAllier[NoCarte] = card;
             ++NoCarte;
+            envoyerMessage("Piger," + SetCarteString(tabCarteAllier[NoCarte]));
         }
     }
     private void placerCarte(GameObject carte,PosZoneCombat[] zone)
@@ -518,7 +529,6 @@ public class Jouer : MonoBehaviour {
         int PlacementZoneCombat = TrouverOuPlacerCarte(zone);
         Vector3 temp = carte.transform.position;
         carte.transform.position = zone[PlacementZoneCombat].Pos;
-        int Emplacement = TrouverEmplacementCarteJoueur(temp, zone); // Pourquoi?
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {

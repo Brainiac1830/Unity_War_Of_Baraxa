@@ -5,7 +5,7 @@ using System.Text;
 using System.Net;
 
 public class profile_Script : MonoBehaviour {
-
+    public GUIStyle Logo;
     public GUIStyle warOfBaraxa;
     public GUIStyle text;
     public GUIStyle GUIButton;
@@ -34,15 +34,14 @@ public class profile_Script : MonoBehaviour {
         warOfBaraxa.fontSize = Screen.width / 10;
         text.fontSize = Screen.width / 25;
         GUIButton.fontSize = Screen.width / 38;
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
-
+        //GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
         //Victoires
-        GUI.Label(new Rect(Screen.width * 0.2f, Screen.height * 0.3f, Screen.width * 0.10f, Screen.height * 0.05f), "Victoires :", text);
-        GUI.TextField(new Rect(Screen.width * 0.35f, Screen.height * 0.3f, Screen.width * 0.03f, Screen.height * 0.05f), victoire, text);
+        GUI.Label(new Rect(Screen.width * 0.2f, Screen.height * 0.47f, Screen.width * 0.10f, Screen.height * 0.05f), "Victoires :", text);
+        GUI.TextField(new Rect(Screen.width * 0.35f, Screen.height * 0.47f, Screen.width * 0.03f, Screen.height * 0.05f), victoire, text);
 
         //Défaites
-        GUI.Label(new Rect(Screen.width * 0.6f, Screen.height * 0.3f, Screen.width * 0.10f, Screen.height * 0.05f), "Defaites :", text);
-        GUI.TextField(new Rect(Screen.width * 0.75f, Screen.height * 0.3f, Screen.width * 0.03f, Screen.height * 0.05f), defaite, text);
+        GUI.Label(new Rect(Screen.width * 0.6f, Screen.height * 0.47f, Screen.width * 0.10f, Screen.height * 0.05f), "Defaites :", text);
+        GUI.TextField(new Rect(Screen.width * 0.75f, Screen.height * 0.47f, Screen.width * 0.03f, Screen.height * 0.05f), defaite, text);
 
         //Rechercher un joueur
         GUI.Button(new Rect(Screen.width * 0.3f, Screen.height * 0.9f, Screen.width * 0.15f, Screen.height * 0.07f), "Rechercher", GUIButton);

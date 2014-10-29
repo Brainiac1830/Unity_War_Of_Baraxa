@@ -166,7 +166,7 @@ public class attaque : MonoBehaviour {
     }
     private string SetCarteString(Carte temp)
     {
-        /*0                 1               2                   3                   4               5                   6                     7                 8                   9               10*/
+                  /*0                   1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
         return temp.CoutBle + "," + temp.CoutBois + "," + temp.CoutGem + "," + temp.Habilete + "," + temp.TypeCarte + "," + temp.NomCarte + "," + temp.NoCarte + "," + temp.perm.Attaque + "," + temp.perm.Vie + "," + temp.perm.Armure + "," + temp.perm.TypePerm;
     }
 

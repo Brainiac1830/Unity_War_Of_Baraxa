@@ -6,6 +6,7 @@ using System.Collections;
 
 public class Script_Lobby : MonoBehaviour
 {
+    public GUIStyle Logo;
     public GUIStyle warOfBaraxa;
     public GUIStyle GUIBox;
     public GUIStyle GUIButton;
@@ -43,7 +44,7 @@ public class Script_Lobby : MonoBehaviour
         GUIBox.fontSize = Screen.width / 30;
         GUIButton.fontSize = Screen.width / 30;
 
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.3f), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
+        //GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.3f), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
         GUI.Box(new Rect((Screen.width / 2) - (Screen.width * 0.4f), Screen.height * 0.3f, Screen.width * 0.8f, Screen.height * 0.6f), "Liste des decks", GUIBox);
         int y = 0;
         for (int i = 0; i < NomDeck.Length; ++i)
