@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 
-public class script_Lobby : MonoBehaviour
+public class Script_Lobby : MonoBehaviour
 {
     public GUIStyle warOfBaraxa;
     public GUIStyle GUIBox;

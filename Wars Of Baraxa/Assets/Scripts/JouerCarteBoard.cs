@@ -31,11 +31,10 @@ public class JouerCarteBoard : MonoBehaviour {
     {
         if (EstJouer)
         {
-            Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)].EstOccupee = false;
-        }
-        else
-        {
-            Jouer.ZoneCarteJoueur[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur)].EstOccupee = false;
+            if(EstEnnemie)
+                Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombatEnnemie)].EstOccupee = false;
+            else
+                Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)].EstOccupee = false;
         }
     }
 
