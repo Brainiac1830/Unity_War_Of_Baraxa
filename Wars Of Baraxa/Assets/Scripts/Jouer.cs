@@ -352,9 +352,9 @@ public class Jouer : MonoBehaviour {
                 ReceiveMessage.message = "";
             break;
             case "Piger":
-                Carte temp2 = ReceiveCarte(connexionServeur.sck);
-                GameObject zeCarteEnnemis2 = createCardObject(temp2);
-                placerCarte(zeCarteEnnemis2, ZoneCarteEnnemie);
+                //Carte temp2 = ReceiveCarte(connexionServeur.sck);
+                //GameObject zeCarteEnnemis2 = createCardObject(temp2);
+                //placerCarte(zeCarteEnnemis2, ZoneCarteEnnemie);
                 //A faire!
             break;
         }
