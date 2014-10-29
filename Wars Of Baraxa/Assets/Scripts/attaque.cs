@@ -150,6 +150,10 @@ public class attaque : MonoBehaviour {
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.tabCarteAllier[posAllier]);
+                    if (script.HpJoueur <= 0 || script.HpEnnemi <= 0)
+                    {
+                        Application.LoadLevel("Menu");
+                    }
 
                     Attaquant = null;
                 }

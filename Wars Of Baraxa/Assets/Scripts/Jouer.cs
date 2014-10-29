@@ -299,13 +299,15 @@ public class Jouer : MonoBehaviour {
 	    }
         if (!MonTour)
         {
-            if (t==null || !t.IsAlive)
+            if (t == null || !t.IsAlive)
             {
                 t = new Thread(ReceiveMessage.doWork);
                 t.Start();
             }
-            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { ',' }));
-            Thread.Sleep(1000);
+            attaque s = GetComponent<attaque>();
+            s.enabled = false; 
+            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { ',' }));           
+            Thread.Sleep(200);
         }
     }
     private void traiterMessagePartie(string[] data)
@@ -319,6 +321,8 @@ public class Jouer : MonoBehaviour {
             case "Tour Commencer":
                 MonTour = true;
                 placerClick = false;
+                attaque s = GetComponent<attaque>();
+                s.enabled = true; 
                 //max mana =5
                 if (NbWorkerMax < 5)
                     setWorker(true);
@@ -347,10 +351,24 @@ public class Jouer : MonoBehaviour {
             case "Combat Creature":
                 Carte attaque = createCarte(data,3);
                 Carte defenseur = createCarte(data, 14);
-                combat(attaque, defenseur,int.Parse(data[1]),int.Parse(data[2]));
+                changeName(attaque, defenseur);
+                combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]));
                 ReceiveMessage.message = "";
             break;
         }
+        if (data[0] == "vous avez gagné")
+        {
+            Application.LoadLevel("Menu");
+        }
+        else if(data[0] == "vous avez perdu")
+        {
+            Application.LoadLevel("Menu");
+        }
+    }
+    private void changeName(Carte attaque, Carte defense)
+    {
+        attaque.NomCarte = attaque.NomCarte.Insert(attaque.NomCarte.Length - 1, "ennemis");
+        defense.NomCarte = defense.NomCarte.Replace("ennemis", "");
     }
     private Carte createCarte(string [] data,int posDepart)
     {
@@ -362,8 +380,6 @@ public class Jouer : MonoBehaviour {
     }
     private void combat(Carte attaquant, Carte ennemi,int posAllier,int posDefenseur)
     {
-        setStat(attaquant.perm, new int[] { attaquant.perm.Attaque, attaquant.perm.Vie, attaquant.perm.Armure });
-        setStat(ennemi.perm, new int[] { ennemi.perm.Attaque, ennemi.perm.Vie, ennemi.perm.Armure });
         recevoirDegat(attaquant, posAllier, true);
         recevoirDegat(attaquant, posDefenseur, false);
         if (attaquant.perm.Vie <= 0)
