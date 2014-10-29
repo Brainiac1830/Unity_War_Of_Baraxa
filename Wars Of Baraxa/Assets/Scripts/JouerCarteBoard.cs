@@ -31,13 +31,10 @@ public class JouerCarteBoard : MonoBehaviour {
     {
         if (EstJouer)
         {
-            if(TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)!=-1)
-            Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)].EstOccupee = false;
-        }
-        else
-        {
-            if (TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur) !=-1)
-            Jouer.ZoneCarteJoueur[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur)].EstOccupee = false;
+            if(EstEnnemie)
+                Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombatEnnemie)].EstOccupee = false;
+            else
+                Jouer.ZoneCombat[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat)].EstOccupee = false;
         }
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte,PosZoneCombat[] Zone)
