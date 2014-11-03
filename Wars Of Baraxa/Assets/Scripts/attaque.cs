@@ -134,7 +134,7 @@ public class attaque : MonoBehaviour {
                             kill(carteDefense);
                         string attaquant = SetCarteString(Jouer.tabCarteAllier[posAllier]);
                         string ennemis = SetCarteString(Jouer.tabCarteEnnemis[posDefenseur]);
-                        envoyerMessage("Attaquer Creature,"+posAllier+","+posDefenseur+","+attaquant+","+ennemis);
+                        envoyerMessage("Attaquer Creature."+posAllier+"."+posDefenseur+"."+attaquant+"."+ennemis);
                         Attaquant = null;
                         carteAttaque = null;
                         Defenseur = null;
@@ -167,7 +167,7 @@ public class attaque : MonoBehaviour {
     private string SetCarteString(Carte temp)
     {
                   /*0                   1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
-        return temp.CoutBle + "," + temp.CoutBois + "," + temp.CoutGem + "," + temp.Habilete + "," + temp.TypeCarte + "," + temp.NomCarte + "," + temp.NoCarte + "," + temp.perm.Attaque + "," + temp.perm.Vie + "," + temp.perm.Armure + "," + temp.perm.TypePerm;
+        return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
     }
 
     private void EnvoyerCarte(Socket client, Carte carte)

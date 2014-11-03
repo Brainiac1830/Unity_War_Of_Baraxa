@@ -15,7 +15,7 @@ public class Jouer : MonoBehaviour {
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    string reponse = "";
+    bool gameFini = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public PosZoneCombat[] ZoneCombatEnnemie;
@@ -49,7 +49,7 @@ public class Jouer : MonoBehaviour {
     static public GameObject[] styleCarteAllier;
     static public Carte[] tabCarteEnnemis;
     static public GameObject[] styleCarteEnnemis;
-    public bool MonTour;
+    static public bool MonTour;
 	//initialization
 	void Start () {
 	NoCarte = 0;
@@ -173,48 +173,52 @@ public class Jouer : MonoBehaviour {
              posi += 1.5f;
              if (NoCarte == 2)
              {
-                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 1, 1, 0);
+                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", "rapide", 1, 1, 0);
                  tabCarteAllier[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
-                 setValue(NoCarte, t,true);
+                 setHabilete(tabCarteAllier[NoCarte]);
+                 setValue(NoCarte, NoCarte, t, true);
 
-                 tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis"+NoCarte, "Permanent", 0, 0, 0);
+                 tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis" + NoCarte, "Permanent", "provocation", 0, 0, 0);
                  tabCarteEnnemis[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
-                 setValue(NoCarte, Ennemis,false);
+                 setHabilete(tabCarteEnnemis[NoCarte]);
+                 setValue(NoCarte, NoCarte, Ennemis, false);
              }
              else
              {
                  tabCarteAllier[NoCarte] = new Carte(1,"card"+ NoCarte, "Permanent", 0, 0, 0);
                  tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
-                 setValue(NoCarte, t,true);
+                 setHabilete(tabCarteAllier[NoCarte]);
+                 setValue(NoCarte, NoCarte, t, true);
 
                  tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis" + NoCarte, "Permanent", 0, 0, 0);
                  tabCarteEnnemis[NoCarte].perm = new Permanent("creature", 1, 1, 1);
-                 setValue(NoCarte, Ennemis,false);
+                 setHabilete(tabCarteEnnemis[NoCarte]);
+                 setValue(NoCarte,NoCarte, Ennemis,false);
              }
              styleCarteAllier[NoCarte] = card;
              styleCarteEnnemis[NoCarte] = cardennemis;
              ++NoCarte;
         }
 	}
-    private void setValue(int i,Transform t,bool allier)
+    private void setValue(int i,int pos,Transform t,bool allier)
     {
         if (allier)
         {
-            t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBois.ToString();
-            t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutBle.ToString();
-            t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].CoutGem.ToString();
-            t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Attaque.ToString();
-            t.Find("armure" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Armure.ToString();
-            t.Find("vie" + i).GetComponent<TextMesh>().text = tabCarteAllier[i].perm.Vie.ToString();
+            t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutBois.ToString();
+            t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutBle.ToString();
+            t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutGem.ToString();
+            t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Attaque.ToString();
+            t.Find("armure" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Armure.ToString();
+            t.Find("vie" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Vie.ToString();
         }
         else 
         {
-            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBois.ToString();
-            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
-            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
-            t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Attaque.ToString();
-            t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Armure.ToString();
-            t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Vie.ToString();            
+            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].CoutBois.ToString();
+            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].CoutBle.ToString();
+            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].CoutGem.ToString();
+            t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.Attaque.ToString();
+            t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.Armure.ToString();
+            t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.Vie.ToString();            
         }
     }
 	// Update is called once per frame
@@ -281,7 +285,7 @@ public class Jouer : MonoBehaviour {
                 joueur1.nbBle = NbBle;
                 joueur1.nbBois = NbBois;
                 joueur1.nbGem = NbGem;
-                envoyerMessage("Ajouter Mana," + NbBle + "," + NbBois + "," + NbGem);
+                envoyerMessage("Ajouter Mana." + NbBle + "." + NbBois + "." + NbGem);
 		    }
 	    }
 	    else{
@@ -299,15 +303,16 @@ public class Jouer : MonoBehaviour {
 	    }
         if (!MonTour)
         {
-            if (t == null || !t.IsAlive)
+            if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
+                gameFini = true;
+            if (t == null || !t.IsAlive && !gameFini)
             {
                 t = new Thread(ReceiveMessage.doWork);
                 t.Start();
             }
             attaque s = GetComponent<attaque>();
             s.enabled = false; 
-            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { ',' }));           
-            Thread.Sleep(200);
+            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));           
         }
     }
     private void traiterMessagePartie(string[] data)
@@ -376,10 +381,20 @@ public class Jouer : MonoBehaviour {
             Application.LoadLevel("Menu");
         }
     }
+    private void setpeutAttaquer()
+    {
+        for (int i = 0; i < ZoneCombat.Length; ++i)
+        {
+            if (ZoneCombat[i].EstOccupee)
+            { 
+                
+            }
+        }
+    }
     private string SetCarteString(Carte temp)
     {
                    /*0                    1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
-        return temp.CoutBle + "," + temp.CoutBois + "," + temp.CoutGem + "," + temp.Habilete + "," + temp.TypeCarte + "," + temp.NomCarte + "," + temp.NoCarte + "," + temp.perm.Attaque + "," + temp.perm.Vie + "," + temp.perm.Armure + "," + temp.perm.TypePerm;
+        return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
     }
     private void changeName(Carte attaque, Carte defense)
     {
@@ -510,22 +525,31 @@ public class Jouer : MonoBehaviour {
             }
 
             //à modifier (Verifier si la carte est un batiment ou creature ou spell)
-            if (NoCarte == 2)
-            {
-                tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
-                tabCarteAllier[NoCarte].perm = new Permanent("batiment", 0, 2, 1);
-                setValue(NoCarte, t, true);
-            }
-            else
-            {
-                tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", 0, 0, 0);
-                tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
-                setValue(NoCarte, t, true);              
-            }
+            tabCarteAllier[OuPlacerCarte] = new Carte(1, "card" + NoCarte, "Permanent", "provocation", 0, 0, 0);
+            tabCarteAllier[OuPlacerCarte].perm = new Permanent("creature", 30, 1, 1);
+            /*set habilete*/
+            setHabilete(tabCarteAllier[OuPlacerCarte]);
+            setValue(NoCarte,OuPlacerCarte, t, true);              
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
-            styleCarteAllier[NoCarte] = card;
+            styleCarteAllier[OuPlacerCarte] = card;
             ++NoCarte;
-            envoyerMessage("Piger," + SetCarteString(tabCarteAllier[NoCarte]));
+            envoyerMessage("Piger." + SetCarteString(tabCarteAllier[OuPlacerCarte]));
+        }
+    }
+    private void setHabilete(Carte card)
+    {
+        if (card.Habilete != "" && card.Habilete != null)
+        {
+            string[] data = card.Habilete.Split(new char[] {','});
+            for (int i = 0; i < data.Length; ++i)
+            {
+                if (card.esthabileteNormal(data[i]))
+                    card.setHabileteNormal(data[i]);
+                else
+                { 
+                    /*set habilete special*/
+                }
+            }
         }
     }
     private void placerCarte(GameObject carte,PosZoneCombat[] zone)
