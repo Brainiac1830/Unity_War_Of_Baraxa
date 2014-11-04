@@ -38,19 +38,19 @@ public class attaque : MonoBehaviour {
         }
             return selectionable;
     }
-    public void peutAttaquer(Carte[] tab, GameObject [] style,PosZoneCombat[] Zone)
+    public void peutAttaquer(PosZoneCombat[] tab, GameObject [] style)
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i] != null && style[i] != null && !tab[i].perm.aAttaque && tab[i].perm.TypePerm == "creature" && Selectionable(style[i],Zone))
+            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "creature" && Selectionable(style[i], tab))
             {
                 style[i].renderer.material.color = Color.green;
             }
-            else if (tab[i] != null && style[i] != null)
+            else if (tab[i].carte != null && style[i] != null)
                 style[i].renderer.material.color = Color.white;
         }
     }
-    public void peutEtreAttaquer(Carte[] tab, GameObject [] style,PosZoneCombat[] Zone)
+    public void peutEtreAttaquer(PosZoneCombat[] tab, GameObject [] style)
     {
         const int taunt = 1;
         int[] peutEtreAttaquer = new int[tab.Length];
@@ -59,9 +59,9 @@ public class attaque : MonoBehaviour {
         {
             for (int i = 0;i < tab.Length; ++i)
             {
-                if (peutEtreAttaquer[i] == taunt && Selectionable(style[i],Zone))
+                if (peutEtreAttaquer[i] == taunt && Selectionable(style[i], tab))
                     style[i].renderer.material.color = Color.red;
-                else if (tab[i] != null && style[i] != null)
+                else if (tab[i].carte != null && style[i] != null)
                     style[i].renderer.material.color = Color.white;
             }
         }
@@ -69,20 +69,20 @@ public class attaque : MonoBehaviour {
         {
             for (int i = 0; i < tab.Length; ++i)
             {
-                if (tab[i] != null && style[i] != null && Selectionable(style[i], Zone))
+                if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.estInvisible && Selectionable(style[i], tab))
                     style[i].renderer.material.color = Color.red;
                 else if (tab[i] != null && style[i] != null)
                     style[i].renderer.material.color = Color.white;
             }
         }
     }
-    public bool foundTaunt(Carte[] tab,int[] peutEtreAttaquer)
+    public bool foundTaunt(PosZoneCombat[] tab,int[] peutEtreAttaquer)
     {
         const int taunt = 1;
         bool esttaunt = false;
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i] != null && tab[i].perm.estTaunt)
+            if (tab[i].carte != null && tab[i].carte.perm.estTaunt)
             {
                 esttaunt = true;
                 peutEtreAttaquer[i] = taunt;
@@ -93,9 +93,8 @@ public class attaque : MonoBehaviour {
     public void Attaquer()
     {
             //change le border pour une autre couleur
-        peutAttaquer(Jouer.tabCarteAllier, Jouer.styleCarteAllier,Jouer.ZoneCombat);
-        peutEtreAttaquer(Jouer.tabCarteEnnemis,Jouer.styleCarteEnnemis,Jouer.ZoneCombatEnnemie);
-        Jouer script = GetComponent<Jouer>();
+        peutAttaquer(Jouer.ZoneCombat, Jouer.styleCarteAlliercombat);
+        peutEtreAttaquer(Jouer.ZoneCombatEnnemie,Jouer.styleCarteEnnemisCombat);
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -103,66 +102,109 @@ public class attaque : MonoBehaviour {
             if (Physics.Raycast(ray, out carte) && !AttaquantClick && Selectionable(GameObject.Find(carte.collider.gameObject.name),Jouer.ZoneCombat))
             {
                 carteAttaque = GameObject.Find(carte.collider.gameObject.name);
-                posAllier = getPosCarte(carteAttaque.name, Jouer.tabCarteAllier);
-                if (posAllier != -1 && !Jouer.tabCarteAllier[posAllier].perm.aAttaque && Jouer.tabCarteAllier[posAllier].perm.TypePerm == "creature")
+                posAllier = getPosCarte(carteAttaque.name, Jouer.ZoneCombat);
+                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "creature")
                 {
                     AttaquantClick = true;
-                    int[] stat = getStat(Jouer.tabCarteAllier[posAllier].perm);
+                    int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
                     Attaquant = new Permanent("creature", stat[0], stat[1],stat[2]);                   
                 }
             }
             else if (Physics.Raycast(ray, out carte) && AttaquantClick)
             {
+                bool taunt = false;
                 carteDefense = GameObject.Find(carte.collider.gameObject.name);
+                if (foundTaunt(Jouer.ZoneCombatEnnemie,new int[7]))
+                    taunt = true;
                 if (Selectionable(GameObject.Find(carte.collider.gameObject.name), Jouer.ZoneCombatEnnemie))
                 {
-                    posDefenseur = getPosCarte(carteDefense.name, Jouer.tabCarteEnnemis);
-                    if (posDefenseur != -1 && carteDefense.name != "hero ennemis")
+                    int pos = TrouverEmplacementCarteJoueur(carte.collider.gameObject.transform.position, Jouer.ZoneCombatEnnemie);
+                    if (taunt)
                     {
-                        int[] stat = getStat(Jouer.tabCarteEnnemis[posDefenseur].perm);
-                        AttaquantClick = false;
-                        Defenseur = new Permanent("creature", stat[0], stat[1], stat[2]);
-                        CombatCreature(Attaquant, Defenseur);
-                        CombatCreature(Defenseur, Attaquant);
-                        setStat(Jouer.tabCarteAllier[posAllier].perm, new int[] { Attaquant.Attaque, Attaquant.Vie, Attaquant.Armure });
-                        setStat(Jouer.tabCarteEnnemis[posDefenseur].perm, new int[] { Defenseur.Attaque, Defenseur.Vie, Defenseur.Armure });
-                        recevoirDegat(Jouer.tabCarteAllier[posAllier], posAllier, true);
-                        recevoirDegat(Jouer.tabCarteEnnemis[posDefenseur], posDefenseur, false);
-                        if (Attaquant.Vie <= 0)
-                            kill(carteAttaque);
-                        if (Defenseur.Vie <= 0)
-                            kill(carteDefense);
-                        string attaquant = SetCarteString(Jouer.tabCarteAllier[posAllier]);
-                        string ennemis = SetCarteString(Jouer.tabCarteEnnemis[posDefenseur]);
-                        envoyerMessage("Attaquer Creature."+posAllier+"."+posDefenseur+"."+attaquant+"."+ennemis);
-                        Attaquant = null;
-                        carteAttaque = null;
-                        Defenseur = null;
-                        carteDefense = null;
-                        Jouer.tabCarteAllier[posAllier].perm.aAttaque = true;
+                        if(pos != -1 &&Jouer.ZoneCombatEnnemie[pos].carte.perm.estTaunt)
+                            attaqueSomething();
+                    }
+                    else if(!Jouer.ZoneCombatEnnemie[pos].carte.perm.estInvisible)
+                    {
+                        attaqueSomething();
                     }
                 }
-                else if (carteDefense.name == "hero ennemis")
+                if (carteDefense!= null && carteDefense.name == "hero ennemis")
                 {
-                    script.HpEnnemi = CombatJoueur(Attaquant.Attaque, script.HpEnnemi);
-                    Jouer.tabCarteAllier[posAllier].perm.aAttaque = true;
+                    Jouer script = GetComponent<Jouer>();
+                    script.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, script.HpEnnemi);
+                    Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
                     AttaquantClick = false;
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
-                    EnvoyerCarte(connexionServeur.sck, Jouer.tabCarteAllier[posAllier]);
+                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
                     if (script.HpJoueur <= 0 || script.HpEnnemi <= 0)
                     {
                         Application.LoadLevel("Menu");
                     }
 
                     Attaquant = null;
-                }
+                } 
             }
         }
         else if (Input.GetMouseButtonDown(1) && AttaquantClick )
         {
             AttaquantClick = false;
         }
+    }
+    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
+    {
+        int Emplacement = 0;
+        for (int i = 0; i < Zone.Length; ++i)
+        {
+            if (PosCarte.Equals(Zone[i].Pos))
+            {
+                return Emplacement;
+            }
+            else
+            {
+                ++Emplacement;
+            }
+        }
+        return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
+    }
+    private void attaqueSomething()
+    {
+        posDefenseur = getPosCarte(carteDefense.name, Jouer.ZoneCombatEnnemie);
+        if (posDefenseur != -1 && carteDefense.name != "hero ennemis")
+        {
+            int[] stat = getStat(Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm);
+            AttaquantClick = false;
+            Defenseur = new Permanent("creature", stat[0], stat[1], stat[2]);
+            CombatCreature(Attaquant, Defenseur);
+            CombatCreature(Defenseur, Attaquant);
+            setStat(Jouer.ZoneCombat[posAllier].carte.perm, new int[] { Attaquant.Attaque, Attaquant.Vie, Attaquant.Armure });
+            setStat(Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm, new int[] { Defenseur.Attaque, Defenseur.Vie, Defenseur.Armure });
+            recevoirDegat(Jouer.ZoneCombat[posAllier].carte, posAllier, true);
+            recevoirDegat(Jouer.ZoneCombatEnnemie[posDefenseur].carte, posDefenseur, false);
+            string attaquant = SetCarteString(Jouer.ZoneCombat[posAllier].carte);
+            string ennemis = SetCarteString(Jouer.ZoneCombatEnnemie[posDefenseur].carte);
+            if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
+                Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
+            else
+                Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
+
+            if (Attaquant.Vie <= 0)
+            {
+                kill(carteAttaque);
+                Jouer.ZoneCombat[posAllier].carte = null;
+            }
+            if (Defenseur.Vie <= 0)
+            {
+                kill(carteDefense);
+                Jouer.ZoneCombatEnnemie[posDefenseur].carte = null;
+            }
+            envoyerMessage("Attaquer Creature." + posAllier + "." + posDefenseur + "." + attaquant + "." + ennemis);
+            Attaquant = null;
+            carteAttaque = null;
+            Defenseur = null;
+            carteDefense = null;
+        }      
     }
     private string SetCarteString(Carte temp)
     {
@@ -185,11 +227,11 @@ public class attaque : MonoBehaviour {
     {
         yield return new WaitForSeconds(i);
     }
-    private int getPosCarte(string nom,Carte[] tab)
+    private int getPosCarte(string nom,PosZoneCombat[] tab)
     { 
         for (int i =0; i<tab.Length;++i)
         {
-            if(tab[i].NomCarte == nom)
+            if(tab[i].carte != null && tab[i].carte.NomCarte == nom)
                 return i;
         }
         return -1;
@@ -200,17 +242,21 @@ public class attaque : MonoBehaviour {
     }
     private void CombatCreature(Permanent attaquant, Permanent defenseur)
     {
-        if (defenseur.Armure - attaquant.Attaque >= 0)
-            defenseur.Armure -= attaquant.Attaque;
+        int attaque = attaquant.Attaque;
+        if (defenseur.Armure - attaque >= 0)
+            defenseur.Armure -= attaque;
         else
         {
-            int attaque = attaquant.Attaque - defenseur.Armure;
+            int difference = attaque - defenseur.Armure;
             defenseur.Armure = 0;
-            defenseur.Vie -= attaque;
+            defenseur.Vie -= difference;
         }
     }
-    private int CombatJoueur(int attaque, int vie)
+    private int CombatJoueur(Carte carte, int vie)
     {
+        int attaque = carte.perm.Attaque;
+        if (carte.perm.estAttaquePuisante)
+            attaque *= 2;
         return vie - attaque;
     }
     int[] getStat(Permanent perm)
@@ -230,19 +276,23 @@ public class attaque : MonoBehaviour {
     public void recevoirDegat(Carte carte,int pos,bool allier)
     {
         GameObject t = null;
-        if (allier)
+        if (carte != null)
         {
-            t = GameObject.Find("armure" + pos);
-            t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
-            t = GameObject.Find("vie" + pos);
-            t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();
-        }
-        else 
-        {
-            t = GameObject.Find("armureEnnemis" + pos);
-            t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
-            t = GameObject.Find("vieEnnemis" + pos);
-            t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();            
+            string position = carte.NomCarte.Substring(carte.NomCarte.Length - 1, 1);
+            if (allier)
+            {
+                t = GameObject.Find("armure" + position);
+                t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
+                t = GameObject.Find("vie" + position);
+                t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();
+            }
+            else
+            {
+                t = GameObject.Find("armureEnnemis" + position);
+                t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
+                t = GameObject.Find("vieEnnemis" + position);
+                t.GetComponent<TextMesh>().text = carte.perm.Vie.ToString();
+            }
         }
     }
     private void envoyerMessage(string message)

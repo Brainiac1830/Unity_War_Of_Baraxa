@@ -52,8 +52,18 @@ public class JouerCarteBoard : MonoBehaviour {
         }
         return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
     }
-	void OnMouseDown(){
-        if (Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+    private int getNbCarteZone(PosZoneCombat[] zone)
+    {
+        int nbCarte=0;
+        for (int i = 0; i < zone.Length; ++i)
+        {
+            if (zone[i] != null && zone[i].EstOccupee)
+                ++nbCarte;
+        }
+        return nbCarte;
+    }
+    void OnMouseDown(){
+        if (getNbCarteZone(Jouer.ZoneCombat)<Jouer.ZoneCombat.Length&&Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
             int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
             Vector3 temp = this.transform.position;
@@ -67,16 +77,15 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbBle -= System.Int32.Parse(Cout[0].text);
             Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
-            /*A MODIFIER*/
-            Carte carteTemp = new Carte (Emplacement, this.name, "Permanents", System.Int32.Parse(Cout[1].text), System.Int32.Parse(Cout[0].text), System.Int32.Parse(Cout[2].text));
-            carteTemp.perm = new Permanent("creature", int.Parse(Cout[4].text), int.Parse(Cout[5].text), int.Parse(Cout[3].text));
             if (Emplacement != -1)
             {
                 Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
                 Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+                Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
+                Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
                 envoyerMessage("Jouer Carte");
                 wait(1);
-                EnvoyerCarte(connexionServeur.sck, carteTemp);
+                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
             }
         }
 	}
