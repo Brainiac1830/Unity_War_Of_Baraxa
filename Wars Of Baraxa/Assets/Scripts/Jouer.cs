@@ -47,7 +47,7 @@ public class Jouer : MonoBehaviour {
     public JouerCarteBoard ScriptEnnemie;
     public int NoCarte;
     static public float pos;
-    static public Carte[] tabCarteAllier;
+    static public Deck tabCarteAllier;
     static public GameObject[] styleCarteAllier;
     static public Carte[] tabCarteEnnemis;
     static public GameObject[] styleCarteEnnemis;
@@ -76,7 +76,6 @@ public class Jouer : MonoBehaviour {
         NbWorker = NbWorkerMax;
         placerClick = false;
         //deck
-        tabCarteAllier = new Carte[40];
         styleCarteAllier = new GameObject[40];
         //deck ennemis
         tabCarteEnnemis = new Carte[40];
@@ -85,14 +84,33 @@ public class Jouer : MonoBehaviour {
         styleCarteAlliercombat = new GameObject[7];
         styleCarteEnnemisCombat = new GameObject[7];
         joueur1 = new Joueur("player1");
+        instantiateCardAllies();
         CarteDepart();
 	}
     void OnDestroy()
     {
-        t.Abort();
+        if(t != null)
+            t.Abort();
+    }
+    public void instantiateCardAllies()
+    {
+        for (int i = 0; i < styleCarteAllier.Length; ++i)
+        {
+            Transform cards = Instantiate(PlacementCarte, new Vector3(0,0,-5), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+            foreach (Transform child in cards)
+            {
+                child.name = child.name+i;
+                child.tag = "textStats";
+            }
+            styleCarteAllier[i] = cards.gameObject;
+            styleCarteAllier[i].name = "card" + i;
+            setValue(i, i, cards, true);
+            tabCarteAllier.CarteDeck[NoCarte] = setHabilete(tabCarteAllier.CarteDeck[NoCarte]);
+        }
     }
     void Awake()
     {
+        tabCarteAllier = ReceiveDeck(connexionServeur.sck);
         string message = recevoirResultat();
         if (message == "Premier Joueur")
             MonTour = true;
@@ -149,28 +167,17 @@ public class Jouer : MonoBehaviour {
 	public void CarteDepart(){
         int pos = 0;
         float posi = 0;
-		while (NoCarte<7) {
-             Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+		while (NoCarte<4) {
              Transform Ennemis = Instantiate(PlacementCarte, ZoneCarteEnnemie[pos].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-
              ZoneCarteJoueur[pos].EstOccupee = true;
              ZoneCarteEnnemie[pos].EstOccupee = true;
 
-
-             card = t.gameObject;
              cardennemis = Ennemis.gameObject;
 
              ScriptEnnemie = Ennemis.GetComponent<JouerCarteBoard>();
              ScriptEnnemie.EstEnnemie = true;
 
-             card.name = "card" + NoCarte.ToString();
              cardennemis.name = "cardennemis" + NoCarte.ToString();
-
-             foreach (Transform  child in t)
-             {
-                 child.name = child.name + NoCarte;
-                 child.tag = "textStats";
-             }
              foreach (Transform child in Ennemis)
              {
                  child.name = child.name+"Ennemis" + NoCarte;
@@ -178,29 +185,23 @@ public class Jouer : MonoBehaviour {
              }
              if (NoCarte == 2)
              {
-                 tabCarteAllier[NoCarte] = new Carte(1, "card" + NoCarte, "Permanent", "attaque puissante", 1, 1, 0);
-                 tabCarteAllier[NoCarte].perm = new Permanent("creature", 1, 2, 1);
-
                  tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis" + NoCarte, "Permanent", "attaque puissante", 0, 0, 0);
                  tabCarteEnnemis[NoCarte].perm = new Permanent("creature", 0, 2, 1);
              }
              else
              {
-                 tabCarteAllier[NoCarte] = new Carte(1,"card"+ NoCarte, "Permanent","", 0, 0, 0);
-                 tabCarteAllier[NoCarte].perm = new Permanent("creature", 30, 1, 1);
-
                  tabCarteEnnemis[NoCarte] = new Carte(1, "cardennemis" + NoCarte, "Permanent","", 0, 0, 0);
                  tabCarteEnnemis[NoCarte].perm = new Permanent("creature", 1, 1, 1);
              }
-             tabCarteAllier[NoCarte]=setHabilete(tabCarteAllier[NoCarte]);
-             setValue(NoCarte, NoCarte, t, true);
+             ZoneCarteJoueur[NoCarte].carte = tabCarteAllier.CarteDeck[NoCarte];
+             styleCarteAllier[NoCarte] = styleCarteAllier[NoCarte];
+             styleCarteAllier[NoCarte].gameObject.transform.position = ZoneCarteJoueur[NoCarte].Pos;
+
              
              tabCarteEnnemis[NoCarte]=setHabilete(tabCarteEnnemis[NoCarte]);
              setValue(NoCarte, NoCarte, Ennemis, false);
 
-             styleCarteAllier[NoCarte] = card;
              styleCarteEnnemis[NoCarte] = cardennemis;
-             ZoneCarteJoueur[pos].carte = tabCarteAllier[pos];
              ZoneCarteEnnemie[pos].carte = tabCarteEnnemis[pos];
              ++pos;
              posi += 1.5f;
@@ -211,14 +212,17 @@ public class Jouer : MonoBehaviour {
     {
         if (allier)
         {
-            t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutBois.ToString();
-            t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutBle.ToString();
-            t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].CoutGem.ToString();
-            t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Attaque.ToString();
-            t.Find("armure" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Armure.ToString();
-            t.Find("vie" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.Vie.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].Habilete;
-            t.Find("type" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.TypePerm;
+            t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].CoutBois.ToString();
+            t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].CoutBle.ToString();
+            t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].CoutGem.ToString();
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].Habilete;
+            if (tabCarteAllier.CarteDeck[pos].perm != null)
+            {
+                t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].perm.Attaque.ToString();
+                t.Find("armure" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].perm.Armure.ToString();
+                t.Find("vie" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].perm.Vie.ToString();
+                t.Find("type" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[pos].perm.TypePerm;
+            }
         }
         else 
         {
@@ -229,7 +233,7 @@ public class Jouer : MonoBehaviour {
             t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.Armure.ToString();
             t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.Vie.ToString();
             t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].Habilete;
-            t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = tabCarteAllier[pos].perm.TypePerm.ToString(); 
+            t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[pos].perm.TypePerm.ToString(); 
         }
     }
 	// Update is called once per frame
@@ -375,16 +379,15 @@ public class Jouer : MonoBehaviour {
                 combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]));
                 ReceiveMessage.message = "";
             break;
-            //case "Piger":
-            //    Carte tempPiger = createCarte(data, 1);
-            //    tempPiger.NomCarte = tempPiger.NomCarte.Insert(tempPiger.NomCarte.Length - 1, "ennemis");
-            //    GameObject zeCartePiger = GameObject.Find(tempPiger.NomCarte);
-            //    placerCarte(zeCartePiger, ZoneCarteEnnemie);
-            //    int emplacement = TrouverEmplacementCarteJoueur(zeCartePiger.transform.position, ZoneCarteEnnemie);
-            //    ZoneCarteEnnemie[emplacement].EstOccupee = true;
-            //    ReceiveMessage.message = "";
-            //    //A faire!
-            //break;
+            /*case "Ennemis pige":
+                Carte tempPiger = createCarte(data, 1);
+                tempPiger.NomCarte = tempPiger.NomCarte.Insert(tempPiger.NomCarte.Length - 1, "ennemis");
+                GameObject zeCartePiger = GameObject.Find(tempPiger.NomCarte);
+                placerCarte(zeCartePiger, ZoneCarteEnnemie);
+                JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
+                pigerScript.EstEnnemie = true;
+                ReceiveMessage.message = "";
+           break;*/
         }
         if (data[0] == "vous avez gagné")
         {
@@ -528,32 +531,18 @@ public class Jouer : MonoBehaviour {
             }
         }
 
-        if(NbCarteEnMainJoueur == 7)
+        if(NbCarteEnMainJoueur >= 7)
         {
             //Faire afficher la carte au joueur mais elle disparait puisque la main est pleine
         }
         else
         {
-            int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);
-            Transform t = Instantiate(PlacementCarte, ZoneCarteJoueur[OuPlacerCarte].Pos, Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-            card = t.gameObject;
-            card.name = "card" + NoCarte.ToString();
-            foreach (Transform child in t)
-            {
-                child.name = child.name + NoCarte;
-                child.tag = "textStats";
-            }
-
-            //à modifier (Verifier si la carte est un batiment ou creature ou spell)
-            tabCarteAllier[OuPlacerCarte] = new Carte(1, "card" + NoCarte, "Permanent", "", 0, 0, 0);
-            tabCarteAllier[OuPlacerCarte].perm = new Permanent("creature", 30, 1, 1);
-            /*set habilete*/
-            setHabilete(tabCarteAllier[OuPlacerCarte]);
-            setValue(NoCarte,OuPlacerCarte, t, true);              
+            int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);           
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
+            ZoneCarteJoueur[OuPlacerCarte].carte = tabCarteAllier.CarteDeck[NoCarte];
             styleCarteAllier[OuPlacerCarte] = card;
             ++NoCarte;
-            envoyerMessage("Piger." + SetCarteString(tabCarteAllier[OuPlacerCarte]));
+            //envoyerMessage("Piger." + SetCarteString(ZoneCarteJoueur[OuPlacerCarte].carte));
         }
     }
     private Carte setHabilete(Carte card)
@@ -645,5 +634,28 @@ public class Jouer : MonoBehaviour {
         }
         catch(TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
         return carte;
+    }
+    private Deck ReceiveDeck(Socket client)
+    {
+        Deck zeDeck = null;
+        try
+        {
+            byte[] buffer = new byte[client.SendBufferSize];
+            int bytesRead = client.Receive(buffer);
+            byte[] formatted = new byte[bytesRead];
+            BinaryFormatter receive = new BinaryFormatter();
+
+            for (int i = 0; i < bytesRead; i++)
+            {
+                formatted[i] = buffer[i];
+            }
+            using (var recstream = new MemoryStream(formatted))
+            {
+                zeDeck = receive.Deserialize(recstream) as Deck;
+            }
+
+        }
+        catch (TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
+        return zeDeck;
     }
 }

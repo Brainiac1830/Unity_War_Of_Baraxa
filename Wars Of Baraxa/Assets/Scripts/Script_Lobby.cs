@@ -62,6 +62,7 @@ public class Script_Lobby : MonoBehaviour
         {
             if (GUI.Button(new Rect(Screen.width * 0.25f, Screen.height * 0.91f, Screen.width * 0.15f, Screen.height * 0.07f), "Rejoindre", GUIButton))
             {
+                envoyerMessage("trouver partie,"+ selected);
                 Application.LoadLevel("Loading");
             }
             if (GUI.Button(new Rect((Screen.width * 0.75f), (Screen.height * 0.83f), Screen.width * 0.08f, Screen.height * 0.05f), "annuler"))

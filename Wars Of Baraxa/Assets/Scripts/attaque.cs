@@ -18,7 +18,6 @@ public class attaque : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         AttaquantClick = false;
-        Normal = Jouer.styleCarteAllier[0].renderer.material.color;
     }
 	
 	// Update is called once per frame

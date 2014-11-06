@@ -24,7 +24,6 @@ public class Loading_script : MonoBehaviour
     }
     void Awake()
     {
-        envoyerMessage("trouver partie");
     }
     void OnApplicationQuit()
     {
