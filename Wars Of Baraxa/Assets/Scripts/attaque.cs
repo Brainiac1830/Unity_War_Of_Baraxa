@@ -41,7 +41,7 @@ public class attaque : MonoBehaviour {
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "creature" && Selectionable(style[i], tab))
+            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab))
             {
                 style[i].renderer.material.color = Color.green;
             }
@@ -101,12 +101,12 @@ public class attaque : MonoBehaviour {
             if (Physics.Raycast(ray, out carte) && !AttaquantClick && Selectionable(GameObject.Find(carte.collider.gameObject.name),Jouer.ZoneCombat))
             {
                 carteAttaque = GameObject.Find(carte.collider.gameObject.name);
-                posAllier = getPosCarte(carteAttaque.name, Jouer.ZoneCombat);
-                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "creature")
+                posAllier = TrouverEmplacementCarteJoueur(carteAttaque.transform.position, Jouer.ZoneCombat);
+                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature")
                 {
                     AttaquantClick = true;
                     int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
-                    Attaquant = new Permanent("creature", stat[0], stat[1],stat[2]);                   
+                    Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);                   
                 }
             }
             else if (Physics.Raycast(ray, out carte) && AttaquantClick)
@@ -117,7 +117,7 @@ public class attaque : MonoBehaviour {
                     taunt = true;
                 if (Selectionable(GameObject.Find(carte.collider.gameObject.name), Jouer.ZoneCombatEnnemie))
                 {
-                    int pos = TrouverEmplacementCarteJoueur(carte.collider.gameObject.transform.position, Jouer.ZoneCombatEnnemie);
+                    int pos = TrouverEmplacementCarteJoueur(carte.transform.position, Jouer.ZoneCombatEnnemie);
                     if (taunt)
                     {
                         if(pos != -1 &&Jouer.ZoneCombatEnnemie[pos].carte.perm.estTaunt)
@@ -151,36 +151,20 @@ public class attaque : MonoBehaviour {
             AttaquantClick = false;
         }
     }
-    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
-    {
-        int Emplacement = 0;
-        for (int i = 0; i < Zone.Length; ++i)
-        {
-            if (PosCarte.Equals(Zone[i].Pos))
-            {
-                return Emplacement;
-            }
-            else
-            {
-                ++Emplacement;
-            }
-        }
-        return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
-    }
     private void attaqueSomething()
     {
-        posDefenseur = getPosCarte(carteDefense.name, Jouer.ZoneCombatEnnemie);
+        posDefenseur = TrouverEmplacementCarteJoueur(carteDefense.transform.position, Jouer.ZoneCombatEnnemie);
         if (posDefenseur != -1 && carteDefense.name != "hero ennemis")
         {
             int[] stat = getStat(Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm);
             AttaquantClick = false;
-            Defenseur = new Permanent("creature", stat[0], stat[1], stat[2]);
+            Defenseur = new Permanent("Creature", stat[0], stat[1], stat[2]);
             CombatCreature(Attaquant, Defenseur);
             CombatCreature(Defenseur, Attaquant);
             setStat(Jouer.ZoneCombat[posAllier].carte.perm, new int[] { Attaquant.Attaque, Attaquant.Vie, Attaquant.Armure });
             setStat(Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm, new int[] { Defenseur.Attaque, Defenseur.Vie, Defenseur.Armure });
-            recevoirDegat(Jouer.ZoneCombat[posAllier].carte, posAllier, true);
-            recevoirDegat(Jouer.ZoneCombatEnnemie[posDefenseur].carte, posDefenseur, false);
+            recevoirDegat(Jouer.ZoneCombat[posAllier].carte,carteAttaque, true);
+            recevoirDegat(Jouer.ZoneCombatEnnemie[posDefenseur].carte,carteDefense, false);
             string attaquant = SetCarteString(Jouer.ZoneCombat[posAllier].carte);
             string ennemis = SetCarteString(Jouer.ZoneCombatEnnemie[posDefenseur].carte);
             if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
@@ -226,14 +210,21 @@ public class attaque : MonoBehaviour {
     {
         yield return new WaitForSeconds(i);
     }
-    private int getPosCarte(string nom,PosZoneCombat[] tab)
-    { 
-        for (int i =0; i<tab.Length;++i)
+    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
+    {
+        int Emplacement = 0;
+        for (int i = 0; i < Zone.Length; ++i)
         {
-            if(tab[i].carte != null && tab[i].carte.NomCarte == nom)
-                return i;
+            if (PosCarte.Equals(Zone[i].Pos))
+            {
+                return Emplacement;
+            }
+            else
+            {
+                ++Emplacement;
+            }
         }
-        return -1;
+        return -1; // -1 pour savoir qu'il ne trouve aucune position (techniquement il devrais toujours retourner un pos valide)
     }
     private void kill(GameObject carteTemp)
     {
@@ -272,14 +263,14 @@ public class attaque : MonoBehaviour {
         perm.Vie = stat[1];
         perm.Armure = stat[2];
     }
-    public void recevoirDegat(Carte carte,int pos,bool allier)
+    public void recevoirDegat(Carte carte,GameObject card,bool allier)
     {
         GameObject t = null;
         if (carte != null)
         {
-            string position = carte.NomCarte.Substring(carte.NomCarte.Length - 1, 1);
             if (allier)
             {
+                string position = card.name.Substring(card.name.IndexOf("d") + 1, card.name.Length - (card.name.IndexOf("d") + 1));
                 t = GameObject.Find("armure" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vie" + position);
@@ -287,6 +278,7 @@ public class attaque : MonoBehaviour {
             }
             else
             {
+                string position = card.name.Substring(card.name.IndexOf("s") + 1, card.name.Length - (card.name.IndexOf("s") + 1));
                 t = GameObject.Find("armureEnnemis" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vieEnnemis" + position);

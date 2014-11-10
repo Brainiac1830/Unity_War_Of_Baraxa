@@ -1,0 +1,58 @@
+Initialize engine version: 4.5.4f1 (e036f44c54c9)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA Quadro 2000 (ID=0xdd8)
+    Vendor:   NVIDIA
+    VRAM:     977 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Oracle.DataAccess.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Oracle.DataAccess.dll into Unity Child Domain
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\warsofbaraxa.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\warsofbaraxa.dll into Unity Child Domain
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\WarsOfBaraxaBD.dll (this message is harmless)
+Loading C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\WarsOfBaraxaBD.dll into Unity Child Domain
+- Completed reload, in  0.106 seconds
+desktop: 1680x1050 60Hz; virtual: 1680x1050 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\System.dll (this message is harmless)
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\Boo.Lang.dll (this message is harmless)
+UnloadTime: 0.327718 ms
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\System.Configuration.dll (this message is harmless)
+Platform assembly: C:\Users\201240453\Desktop\GitHub\Unity_War_Of_Baraxa\Wars Of Baraxa\test2_Data\Managed\System.Xml.dll (this message is harmless)
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 104.
+Total: 0.693597 ms (FindLiveObjects: 0.009707 ms CreateObjectMapping: 0.008703 ms MarkObjects: 0.243696 ms  DeleteObjects: 0.055902 ms)
+
+UnloadTime: 0.265454 ms
+Unloading 1 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 110.
+Total: 0.579783 ms (FindLiveObjects: 0.005021 ms CreateObjectMapping: 0.008368 ms MarkObjects: 0.246374 ms  DeleteObjects: 0.007029 ms)
+
+UnloadTime: 0.427807 ms
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 108.
+Total: 0.861975 ms (FindLiveObjects: 0.008033 ms CreateObjectMapping: 0.013055 ms MarkObjects: 0.352154 ms  DeleteObjects: 0.010042 ms)
+
+UnloadTime: 0.255412 ms
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 7 unused Assets to reduce memory usage. Loaded Objects now: 118.
+Total: 0.654431 ms (FindLiveObjects: 0.005690 ms CreateObjectMapping: 0.008368 ms MarkObjects: 0.310645 ms  DeleteObjects: 0.031801 ms)
+
+UnloadTime: 0.259429 ms
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 4 unused Assets to reduce memory usage. Loaded Objects now: 172.
+Total: 0.668156 ms (FindLiveObjects: 0.011046 ms CreateObjectMapping: 0.009372 ms MarkObjects: 0.276501 ms  DeleteObjects: 0.023432 ms)
+

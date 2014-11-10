@@ -83,7 +83,7 @@ public class JouerCarteBoard : MonoBehaviour {
                 Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
                 Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
                 Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
-                envoyerMessage("Jouer Carte");
+                envoyerMessage("Jouer Carte."+this.name);
                 wait(1);
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
             }
