@@ -65,11 +65,6 @@ public class JouerCarteBoard : MonoBehaviour {
     void OnMouseDown(){
         if (getNbCarteZone(Jouer.ZoneCombat)<Jouer.ZoneCombat.Length&&Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
-            int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
-            Vector3 temp = this.transform.position;
-            this.transform.position = Jouer.ZoneCombat[PlacementZoneCombat].Pos;
-            EstJouer = true;
-            int Emplacement = TrouverEmplacementCarteJoueur(temp, Jouer.ZoneCarteJoueur);
             Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.joueur1.nbGem -= System.Int32.Parse(Cout[2].text);
@@ -77,15 +72,31 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbBle -= System.Int32.Parse(Cout[0].text);
             Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
-            if (Emplacement != -1)
+            if (Cout[8].text != "Sort")
             {
-                Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
-                Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
-                Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
-                Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
-                envoyerMessage("Jouer Carte."+this.name);
-                wait(1);
-                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
+                int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
+                Vector3 temp = this.transform.position;
+                this.transform.position = Jouer.ZoneCombat[PlacementZoneCombat].Pos;
+                EstJouer = true;
+                int Emplacement = TrouverEmplacementCarteJoueur(temp, Jouer.ZoneCarteJoueur);
+                if (Emplacement != -1)
+                {
+                    Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
+                    Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+                    Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
+                    Jouer.ZoneCarteJoueur[Emplacement].carte = null;
+                    Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
+                    envoyerMessage("Jouer Carte." + this.name);
+                    wait(1);
+                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
+                }
+            }
+            else
+            {
+                /*faire habileté de la carte*/
+
+                /*détruire la carte*/
+                Destroy(this);
             }
         }
 	}

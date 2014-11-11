@@ -301,25 +301,25 @@ public class Jouer : MonoBehaviour {
 	    GUI.Label(new Rect(Screen.width*0.14f,Screen.height*0.07f,Screen.width*0.09f,Screen.height*0.07f),"Gem: " + NbGemEnnemis.ToString());
 	    if(!placerClick && MonTour){
 		    //BLE
-	        if(GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),ble)){
-                NbBle = SetManaAjouter(e, NbBle);
+	        if(GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),ble)){
+                NbBle = SetManaAjouter(e, NbBle,"ble");
 		    }
-		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
+		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.04f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
 		    //BOIS
-		    if(GUI.Button(new Rect((Screen.width/1.17f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),bois)){
-                NbBois = SetManaAjouter(e, NbBois);
+		    if(GUI.Button(new Rect((Screen.width/1.17f), Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),bois)){
+                NbBois = SetManaAjouter(e, NbBois,"bois");
 		    }
-		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
+		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.04f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
 		    //GEM
-		    if(GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),gem)){
-                NbGem = SetManaAjouter(e, NbGem);
+		    if(GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),gem)){
+                NbGem = SetManaAjouter(e, NbGem,"gem");
 		    }
-		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
+		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.04f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
 		    //WORKER
-		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.24f,Screen.width*0.25f, Screen.height*0.10f),Worker);
-		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());
+		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.26f,Screen.width*0.25f, Screen.height*0.10f),Worker);
+		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.17f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());
 		
-		    if(GUI.Button(new Rect(Screen.width/1.12f,Screen.height/1.24f,Screen.width*0.1f, Screen.height*0.1f),"Placer") && NbWorker==0){
+		    if(GUI.Button(new Rect(Screen.width/1.12f,Screen.height/1.26f,Screen.width*0.1f, Screen.height*0.1f),"Placer") && NbWorker==0){
 			    placerClick=true;
                 joueur1.nbBle = NbBle;
                 joueur1.nbBois = NbBois;
@@ -535,15 +535,28 @@ public class Jouer : MonoBehaviour {
         NbBoisEnnemis = bois;
         NbGemEnnemis = gem;
     }
-    public int SetManaAjouter(Event events, int ressource)
+    public int SetManaAjouter(Event events, int ressource, string typeRessource)
     {
 	    if(events.button==0 && NbWorker>0){
 		    ressource++;
 		    NbWorker--;
 	    }
-	    else if(events.button==1 && ressource!=0 && NbWorker< NbWorkerMax){
-		    ressource--;
-		    NbWorker++;
+	    else if(events.button==1 && ressource!=0){
+            if (typeRessource == "ble" && joueur1.nbBle <= ressource-1)
+            {
+                ressource--;
+                NbWorker++;
+            }
+            else if (typeRessource == "bois" && joueur1.nbBois <= ressource - 1)
+            {
+                ressource--;
+                NbWorker++;                
+            }
+            else if (typeRessource == "gem" && joueur1.nbGem <= ressource - 1)
+            {
+                ressource--;
+                NbWorker++;                
+            }
 	    }
 	    return ressource;
     }
