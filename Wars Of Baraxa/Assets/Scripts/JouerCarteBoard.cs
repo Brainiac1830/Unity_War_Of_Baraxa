@@ -69,8 +69,8 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.joueur1.nbGem -= System.Int32.Parse(Cout[2].text);
 
-            Jouer.NbBle -= System.Int32.Parse(Cout[0].text);
-            Jouer.NbBois -= System.Int32.Parse(Cout[1].text);
+            Jouer.NbBle -= System.Int32.Parse(Cout[1].text);
+            Jouer.NbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
             if (Cout[8].text != "Sort")
             {

@@ -116,7 +116,7 @@ public class Jouer : MonoBehaviour {
             styleCarteAllier[i] = cards.gameObject;
             styleCarteAllier[i].name = "card" + i;
             setValue(i, cards, true);
-            tabCarteAllier.CarteDeck[NoCarte] = setHabilete(tabCarteAllier.CarteDeck[NoCarte]);
+            tabCarteAllier.CarteDeck[i] = setHabilete(tabCarteAllier.CarteDeck[i]);
         }
     }
     public void instantiateCardEnnemis()
@@ -139,9 +139,17 @@ public class Jouer : MonoBehaviour {
         for (int i = 0; i < tab.Length; ++i)
         {
             /*besoin du unity engine car il ne sest pas quel prendre entre celle de unityengine et celle de sysytem c#*/
-            int temp = UnityEngine.Random.Range(0, tab.Length - (1 + i));
-            tab[i] = tabNombre[temp];
-            tabNombre.RemoveAt(temp);
+            if (i == 0)
+            {
+                tab[i] = 26;
+                tabNombre.RemoveAt(26);
+            }
+            else
+            {
+                int temp = UnityEngine.Random.Range(0, tab.Length - (1 + i));
+                tab[i] = tabNombre[temp];
+                tabNombre.RemoveAt(temp);
+            }
         }
     }
     void Awake()
@@ -223,8 +231,46 @@ public class Jouer : MonoBehaviour {
              posi += 1.5f;
              ++NoCarte;
         }
+        ++NoCarte;
         noCarteEnnemis = NoCarte;
 	}
+    private void setValueFromCard(int i,Transform t, Carte card, bool allier)
+    {
+        if (allier)
+        {
+            t.Find("coutBois" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
+            t.Find("coutBle" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
+            t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            if (card.perm != null)
+            {
+                t.Find("attaque" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
+                t.Find("armure" + i).GetComponent<TextMesh>().text = card.perm.Armure.ToString();
+                t.Find("vie" + i).GetComponent<TextMesh>().text = card.perm.Vie.ToString();
+                t.Find("type" + i).GetComponent<TextMesh>().text = card.perm.TypePerm;
+            }
+            else if (card.TypeCarte == "Sort")
+                t.Find("type" + i).GetComponent<TextMesh>().text = card.TypeCarte;
+        }
+        else
+        {
+            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
+            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
+            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            if (card.perm != null)
+            {
+                t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
+                t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Armure.ToString();
+                t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Vie.ToString();
+                t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.perm.TypePerm;
+            }
+            else if (card.TypeCarte == "Sort")
+                t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
+        }    
+    }
     private void setValue(int i,Transform t,bool allier)
     {
         if (allier)
@@ -233,6 +279,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutGem.ToString();
             t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].Habilete;
+            t.Find("Nom" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].NomCarte;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].perm.Attaque.ToString();
@@ -249,6 +296,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
             t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].Habilete;
+            t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].NomCarte;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Attaque.ToString();
@@ -329,16 +377,16 @@ public class Jouer : MonoBehaviour {
 	    }
 	    else{
 		    GUI.enabled=false;
-		    GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),ble);
-		    GUI.Button(new Rect((Screen.width/1.17f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),bois);
-		    GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.10f, Screen.width*0.05f, Screen.height*0.07f),gem);
+		    GUI.Button(new Rect(Screen.width/1.27f, Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),ble);
+		    GUI.Button(new Rect((Screen.width/1.17f), Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),bois);
+		    GUI.Button(new Rect((Screen.width/1.08f), Screen.height/1.12f, Screen.width*0.05f, Screen.height*0.07f),gem);
 		
 		    GUI.enabled=true;
-		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
-		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.02f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
-		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.02f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
-		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.24f,Screen.width*0.25f, Screen.height*0.10f),Worker);
-		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.15f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());		
+		    GUI.Label(new Rect(Screen.width/1.27f, Screen.height/1.04f,Screen.width*0.09f, Screen.height*0.07f), "Blé: "+ NbBle.ToString());
+		    GUI.Label(new Rect(Screen.width/1.17f, Screen.height/1.04f, Screen.width*0.09f, Screen.height*0.07f), "Bois: " + NbBois.ToString());
+		    GUI.Label(new Rect(Screen.width/1.08f, Screen.height/1.04f,Screen.width*0.09f, Screen.height*0.07f), "Gem: " + NbGem.ToString());
+		    GUI.Label(new Rect(Screen.width/1.3f,Screen.height/1.26f,Screen.width*0.25f, Screen.height*0.10f),Worker);
+		    GUI.Label(new Rect(Screen.width/1.23f,Screen.height/1.17f,Screen.width*0.15f, Screen.height*0.1f),"Worker: " + NbWorker.ToString());		
 	    }
         if (!MonTour)
         {
@@ -395,7 +443,7 @@ public class Jouer : MonoBehaviour {
 
                 int posCombat=placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
                 tabCarteEnnemis[int.Parse(nombre)] = temp;
-                setValue(int.Parse(nombre),zeCarteEnnemis.transform,false);
+                setValueFromCard(int.Parse(nombre), zeCarteEnnemis.transform,temp, false);
 
                 ZoneCombatEnnemie[posCombat].carte = temp;
                 styleCarteEnnemisCombat[posCombat] = zeCarteEnnemis;
@@ -409,10 +457,12 @@ public class Jouer : MonoBehaviour {
                 ReceiveMessage.message = "";
             break;
             case "Combat Creature":
-                Carte attaque = createCarte(data,3);
-                Carte defenseur = createCarte(data, 14);
-                changeName(attaque, defenseur);
-                combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]));
+                Carte attaque = createCarte(data,5);
+                Carte defenseur = createCarte(data, 16);
+                int num=data[3].IndexOf("d");
+                data[3] = data[3].Insert(num+1, "ennemis");
+                data[4] = data[4].Replace("ennemis", "");
+                combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]),data[3],data[4]);
                 ReceiveMessage.message = "";
             break;
             case "Ennemis pige":
@@ -460,12 +510,6 @@ public class Jouer : MonoBehaviour {
                    /*0                    1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
         return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
     }
-    private void changeName(Carte attaque, Carte defense)
-    {
-        int num=attaque.NomCarte.IndexOf("d");
-        attaque.NomCarte = attaque.NomCarte.Insert(num, "ennemis");
-        defense.NomCarte = defense.NomCarte.Replace("ennemis", "");
-    }
     private Carte createCarte(string [] data,int posDepart)
     {
         Carte zeCarte=null;
@@ -474,18 +518,18 @@ public class Jouer : MonoBehaviour {
             zeCarte.perm = new Permanent(data[posDepart + 10], int.Parse(data[posDepart + 7]), int.Parse(data[posDepart + 8]), int.Parse(data[posDepart + 9]));
         return zeCarte;
     }
-    private void combat(Carte attaquant, Carte ennemi,int posAllier,int posDefenseur)
+    private void combat(Carte attaquant, Carte ennemi,int posAllier,int posDefenseur,string nomAttaquant,string nomDefenseur)
     {
-        recevoirDegat(attaquant, posAllier, true);
-        recevoirDegat(ennemi, posDefenseur, false);
+        recevoirDegat(attaquant, posAllier, false, nomAttaquant);
+        recevoirDegat(ennemi, posDefenseur, true, nomDefenseur);
         if (attaquant.perm.Vie <= 0)
         {
-            GameObject temp = GameObject.Find(attaquant.NomCarte);
+            GameObject temp = GameObject.Find(nomAttaquant);
             Destroy(temp);
         }
         if (ennemi.perm.Vie <= 0)
         {
-            GameObject temp = GameObject.Find(ennemi.NomCarte);
+            GameObject temp = GameObject.Find(nomDefenseur);
             Destroy(temp);            
         }
     }
@@ -495,14 +539,15 @@ public class Jouer : MonoBehaviour {
         perm.Vie = stat[1];
         perm.Armure = stat[2];
     }
-    public void recevoirDegat(Carte carte, int pos, bool allier)
+    public void recevoirDegat(Carte carte, int pos, bool allier,string nom)
     {
         GameObject t = null;
         if (carte != null)
         {
-            string position = carte.NomCarte.Substring(carte.NomCarte.Length - 1, 1);
             if (allier)
             {
+                int posi = nom.IndexOf("d");
+                string position = nom.Substring(posi+1, nom.Length-(posi+1));
                 t = GameObject.Find("armure" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vie" + position);
@@ -510,6 +555,8 @@ public class Jouer : MonoBehaviour {
             }
             else
             {
+                int posi = nom.IndexOf("s");
+                string position = nom.Substring(posi+1, nom.Length-(posi+1));
                 t = GameObject.Find("armureEnnemis" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vieEnnemis" + position);
@@ -593,7 +640,7 @@ public class Jouer : MonoBehaviour {
 
         if(NbCarteEnMainJoueur >= 7)
         {
-            //Faire afficher la carte au joueur mais elle disparait puisque la main est pleine
+            
         }
         else
         {
@@ -612,11 +659,16 @@ public class Jouer : MonoBehaviour {
             string[] data = card.Habilete.Split(new char[] {','});
             for (int i = 0; i < data.Length; ++i)
             {
-                if (card.esthabileteNormal(data[i]))
-                    card.setHabileteNormal(data[i]);
+                string trimmer = data[i].Trim();
+                if (card.esthabileteNormal(data[i].Trim()))
+                    card.setHabileteNormal(data[i].Trim());
                 else
-                { 
-                    /*set habilete special*/
+                {
+                    string[] zeSpecialHability = data[i].Split(new char[] {' '});
+                    for (int y = 0; y < zeSpecialHability.Length; ++y)
+                    { 
+                        
+                    }
                 }
             }
         }
