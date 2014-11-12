@@ -107,6 +107,47 @@ public class Jouer : MonoBehaviour {
         initOrdrePige(ordrePige);
         CarteDepart();
 	}
+    private string formaterHabilete(string texte)
+    {
+        string temp="";
+        const int maxcaractere=21;
+        string[] tab = texte.Split(new char[] {','});
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            if (tab[i].Length > maxcaractere)
+            {
+                int longueur=0;
+                string[] mot = tab[i].Split(new char[] { ' ' });
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (longueur + mot[y].Length+1 > maxcaractere)
+                    {
+                        mot[y - 1] += "\n";
+                        longueur = 0;
+                    }
+                    else
+                        longueur += mot[y].Length+1;
+                         
+                }
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (y!=0 && mot[y-1].IndexOf('\n') != -1)
+                    {
+                        temp += mot[y];
+                    }
+                    else if (y == 0)
+                        temp += mot[y];
+                    else
+                        temp += " " + mot[y];
+                }
+            }
+            else 
+            {
+                temp += tab[i] + "\n";
+            }
+        }
+            return temp;
+    }
     void OnDestroy()
     {
         if(t != null)
@@ -150,8 +191,8 @@ public class Jouer : MonoBehaviour {
             /*besoin du unity engine car il ne sest pas quel prendre entre celle de unityengine et celle de sysytem c#*/
             if (i == 0)
             {
-                tab[i] = 26;
-                tabNombre.RemoveAt(26);
+                tab[i] = 20;
+                tabNombre.RemoveAt(20);
             }
             else
             {
@@ -250,7 +291,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
             if (card.perm != null)
             {
@@ -267,7 +308,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text =formaterHabilete(card.Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
             if (card.perm != null)
             {
@@ -287,7 +328,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteAllier.CarteDeck[i].Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].NomCarte;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
@@ -304,7 +345,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteEnnemis[i].Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].NomCarte;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
