@@ -36,6 +36,11 @@ public class Jouer : MonoBehaviour {
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
+    
+    public static int attaqueBonus;
+    public static int armureBonus;
+    public static int vieBonus;
+
     public int NbWorkerMax;
     public int NbWorker;
     public int NbBleEnnemis;
@@ -84,6 +89,10 @@ public class Jouer : MonoBehaviour {
         NbWorkerMax = 2;
         NbWorker = NbWorkerMax;
         placerClick = false;
+        //stat bonus
+        attaqueBonus = 0;
+        armureBonus = 0;
+        vieBonus = 0;
         //deck
         styleCarteAllier = new GameObject[40];
         //deck ennemis
@@ -99,6 +108,47 @@ public class Jouer : MonoBehaviour {
         initOrdrePige(ordrePige);
         CarteDepart();
 	}
+    private string formaterHabilete(string texte)
+    {
+        string temp="";
+        const int maxcaractere=21;
+        string[] tab = texte.Split(new char[] {','});
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            if (tab[i].Length > maxcaractere)
+            {
+                int longueur=0;
+                string[] mot = tab[i].Split(new char[] { ' ' });
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (longueur + mot[y].Length+1 > maxcaractere)
+                    {
+                        mot[y - 1] += "\n";
+                        longueur = 0;
+                    }
+                    else
+                        longueur += mot[y].Length+1;
+                         
+                }
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (y!=0 && mot[y-1].IndexOf('\n') != -1)
+                    {
+                        temp += mot[y];
+                    }
+                    else if (y == 0)
+                        temp += mot[y];
+                    else
+                        temp += " " + mot[y];
+                }
+            }
+            else 
+            {
+                temp += tab[i] + "\n";
+            }
+        }
+            return temp;
+    }
     void OnDestroy()
     {
         if(t != null)
@@ -142,8 +192,8 @@ public class Jouer : MonoBehaviour {
             /*besoin du unity engine car il ne sest pas quel prendre entre celle de unityengine et celle de sysytem c#*/
             if (i == 0)
             {
-                tab[i] = 26;
-                tabNombre.RemoveAt(26);
+                tab[i] = 20;
+                tabNombre.RemoveAt(20);
             }
             else
             {
@@ -242,7 +292,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
             t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
@@ -260,7 +310,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text =formaterHabilete(card.Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
             t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
@@ -281,7 +331,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteAllier.CarteDeck[i].Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].NomCarte;
             t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteAllier.CarteDeck[i].NomCarte, typeof(Sprite)) as Sprite;
 
@@ -300,7 +350,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteEnnemis[i].Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].NomCarte;
             t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteEnnemis[i].NomCarte, typeof(Sprite)) as Sprite;
             if (tabCarteAllier.CarteDeck[i].perm != null)
@@ -408,6 +458,30 @@ public class Jouer : MonoBehaviour {
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));           
         }
     }
+    private void setSpecialHability(string[] data)
+    {
+        if (data[0] == "Ajoute")
+        {
+            setManaBonus(data);
+        }
+    }
+    private void setManaBonus(string[] data)
+    {
+        int num = getNumBonus(data[1]);
+        string sorteMana = data[2];
+        if (sorteMana == "bois")
+            NbBoisEnnemis += num;
+        else if (sorteMana == "gem")
+            NbGemEnnemis += num;
+        else if (sorteMana == "ble")
+            NbBleEnnemis += num;
+    }
+    private int getNumBonus(string laplace)
+    {
+        char[] tab = { ' ', '+' };
+        string nombre = laplace.Trim(tab);
+        return int.Parse(nombre);
+    }
     private void traiterMessagePartie(string[] data)
     {
         switch(data[0])
@@ -435,6 +509,10 @@ public class Jouer : MonoBehaviour {
                 Carte temp=createCarte(data,2);
                 temp=setHabilete(temp);
                 setManaEnnemis(NbBleEnnemis-int.Parse(data[2]),NbBoisEnnemis - int.Parse(data[3]),NbGemEnnemis - int.Parse(data[4]));
+                if (temp.perm.specialhability)
+                {
+                    setSpecialHability(temp.perm.habilityspecial.Split(new char[] {' '}));
+                }
                 /*trouver le back de carte pour prendre son nom e tla detruire pour contruire un prefab de devant de carte avec les stats de la carte*/
                 GameObject temps = trouverBackCard();
                 int place = TrouverEmplacementCarteJoueur(temps.transform.position, ZoneCarteEnnemie);
@@ -671,14 +749,19 @@ public class Jouer : MonoBehaviour {
                 else
                 {
                     string[] zeSpecialHability = data[i].Split(new char[] {' '});
-                    for (int y = 0; y < zeSpecialHability.Length; ++y)
-                    { 
-                        
+                    if (getHabilete(zeSpecialHability[0]))
+                    {
+                        card.perm.specialhability = true;
+                        card.perm.habilityspecial = data[i];
                     }
                 }
             }
         }
         return card;
+    }
+    private bool getHabilete(string mot)
+    {
+        return mot == "Donne" || mot == "Ajoute";
     }
     private int placerCarte(GameObject carte,PosZoneCombat[] zone)
     {
@@ -776,4 +859,6 @@ public class Jouer : MonoBehaviour {
         catch (TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
         return zeDeck;
     }
+
+
 }
