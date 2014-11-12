@@ -106,7 +106,8 @@ public class attaque : MonoBehaviour {
                 {
                     AttaquantClick = true;
                     int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
-                    Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);                   
+                    Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);
+                    
                 }
             }
             else if (Physics.Raycast(ray, out carte) && AttaquantClick)
@@ -132,7 +133,10 @@ public class attaque : MonoBehaviour {
                 {
                     Jouer script = GetComponent<Jouer>();
                     script.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, script.HpEnnemi);
-                    Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
+                    if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
+                        Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
+                    else
+                        Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
                     AttaquantClick = false;
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
@@ -182,7 +186,7 @@ public class attaque : MonoBehaviour {
                 kill(carteDefense);
                 Jouer.ZoneCombatEnnemie[posDefenseur].carte = null;
             }
-            envoyerMessage("Attaquer Creature." + posAllier + "." + posDefenseur + "." + attaquant + "." + ennemis);
+            envoyerMessage("Attaquer Creature." + posAllier + "." + posDefenseur + "."+carteAttaque.name+"."+carteDefense.name+"." + attaquant + "." + ennemis);
             Attaquant = null;
             carteAttaque = null;
             Defenseur = null;
