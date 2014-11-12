@@ -1,8 +1,9 @@
 fileFormatVersion: 2
-guid: a446b611b46d5c844a5b787ed0136bb9
+guid: 5dddfc694cf043043822e59593876f70
 TextureImporter:
   fileIDToRecycleName:
-    21300000: cardback
+    21300000: bonobo rouge 1
+    21300002: bonobo rouge
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -23,7 +24,7 @@ TextureImporter:
   generateCubemap: 0
   seamlessCubemap: 0
   textureFormat: -1
-  maxTextureSize: 1024
+  maxTextureSize: 256
   textureSettings:
     filterMode: -1
     aniso: 1

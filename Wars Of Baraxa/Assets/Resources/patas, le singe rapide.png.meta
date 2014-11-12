@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: a446b611b46d5c844a5b787ed0136bb9
+guid: 3a112d70a4c045d4c899634ca03174ad
 TextureImporter:
   fileIDToRecycleName:
-    21300000: cardback
+    21300000: patas, le singe rapide
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -38,7 +38,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: .5, y: .5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 33
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
