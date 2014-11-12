@@ -35,6 +35,11 @@ public class Jouer : MonoBehaviour {
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
+    
+    public static int attaqueBonus;
+    public static int armureBonus;
+    public static int vieBonus;
+
     public int NbWorkerMax;
     public int NbWorker;
     public int NbBleEnnemis;
@@ -83,6 +88,10 @@ public class Jouer : MonoBehaviour {
         NbWorkerMax = 2;
         NbWorker = NbWorkerMax;
         placerClick = false;
+        //stat bonus
+        attaqueBonus = 0;
+        armureBonus = 0;
+        vieBonus = 0;
         //deck
         styleCarteAllier = new GameObject[40];
         //deck ennemis
@@ -402,6 +411,30 @@ public class Jouer : MonoBehaviour {
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));           
         }
     }
+    private void setSpecialHability(string[] data)
+    {
+        if (data[0] == "Ajoute")
+        {
+            setManaBonus(data);
+        }
+    }
+    private void setManaBonus(string[] data)
+    {
+        int num = getNumBonus(data[1]);
+        string sorteMana = data[2];
+        if (sorteMana == "bois")
+            NbBoisEnnemis += num;
+        else if (sorteMana == "gem")
+            NbGemEnnemis += num;
+        else if (sorteMana == "ble")
+            NbBleEnnemis += num;
+    }
+    private int getNumBonus(string laplace)
+    {
+        char[] tab = { ' ', '+' };
+        string nombre = laplace.Trim(tab);
+        return int.Parse(nombre);
+    }
     private void traiterMessagePartie(string[] data)
     {
         switch(data[0])
@@ -429,6 +462,10 @@ public class Jouer : MonoBehaviour {
                 Carte temp=createCarte(data,2);
                 temp=setHabilete(temp);
                 setManaEnnemis(NbBleEnnemis-int.Parse(data[2]),NbBoisEnnemis - int.Parse(data[3]),NbGemEnnemis - int.Parse(data[4]));
+                if (temp.perm.specialhability)
+                {
+                    setSpecialHability(temp.perm.habilityspecial.Split(new char[] {' '}));
+                }
                 /*trouver le back de carte pour prendre son nom e tla detruire pour contruire un prefab de devant de carte avec les stats de la carte*/
                 GameObject temps = trouverBackCard();
                 int place = TrouverEmplacementCarteJoueur(temps.transform.position, ZoneCarteEnnemie);
@@ -665,14 +702,19 @@ public class Jouer : MonoBehaviour {
                 else
                 {
                     string[] zeSpecialHability = data[i].Split(new char[] {' '});
-                    for (int y = 0; y < zeSpecialHability.Length; ++y)
-                    { 
-                        
+                    if (getHabilete(zeSpecialHability[0]))
+                    {
+                        card.perm.specialhability = true;
+                        card.perm.habilityspecial = data[i];
                     }
                 }
             }
         }
         return card;
+    }
+    private bool getHabilete(string mot)
+    {
+        return mot == "Donne" || mot == "Ajoute";
     }
     private int placerCarte(GameObject carte,PosZoneCombat[] zone)
     {
