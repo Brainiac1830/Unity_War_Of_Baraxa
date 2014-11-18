@@ -32,6 +32,7 @@ public class Jouer : MonoBehaviour {
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
+    public SpriteRenderer ImageCarte;
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
@@ -285,6 +286,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
             t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
             {
                 t.Find("attaque" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
@@ -302,6 +304,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
             t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text =formaterHabilete(card.Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
             {
                 t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
@@ -322,6 +325,8 @@ public class Jouer : MonoBehaviour {
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutGem.ToString();
             t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteAllier.CarteDeck[i].Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].NomCarte;
+            t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteAllier.CarteDeck[i].NomCarte, typeof(Sprite)) as Sprite;
+
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].perm.Attaque.ToString();
@@ -339,6 +344,7 @@ public class Jouer : MonoBehaviour {
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
             t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteEnnemis[i].Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].NomCarte;
+            t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteEnnemis[i].NomCarte, typeof(Sprite)) as Sprite;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Attaque.ToString();
