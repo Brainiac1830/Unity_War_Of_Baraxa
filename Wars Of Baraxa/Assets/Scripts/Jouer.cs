@@ -68,7 +68,7 @@ public class Jouer : MonoBehaviour {
     static public bool MonTour;
 	//initialization
 	void Start () {
-	NoCarte = 0;
+	    NoCarte = 0;
         ReceiveMessage = new ThreadLire();
         ReceiveMessage.workSocket = connexionServeur.sck;
         InitZoneJoueur();
@@ -190,17 +190,9 @@ public class Jouer : MonoBehaviour {
         for (int i = 0; i < tab.Length; ++i)
         {
             /*besoin du unity engine car il ne sest pas quel prendre entre celle de unityengine et celle de sysytem c#*/
-            if (i == 0)
-            {
-                tab[i] = 20;
-                tabNombre.RemoveAt(20);
-            }
-            else
-            {
                 int temp = UnityEngine.Random.Range(0, tab.Length - (1 + i));
                 tab[i] = tabNombre[temp];
                 tabNombre.RemoveAt(temp);
-            }
         }
     }
     void Awake()
@@ -448,10 +440,13 @@ public class Jouer : MonoBehaviour {
         {
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
-            if (t == null || !t.IsAlive && !gameFini)
+            if (!gameFini && ReceiveMessage.message=="")
             {
-                t = new Thread(ReceiveMessage.doWork);
-                t.Start();
+                if (t == null || !t.IsAlive)
+                {
+                    t = new Thread(ReceiveMessage.doWork);
+                    t.Start();
+                }
             }
             attaque s = GetComponent<attaque>();
             s.enabled = false; 
@@ -510,9 +505,7 @@ public class Jouer : MonoBehaviour {
                 temp=setHabilete(temp);
                 setManaEnnemis(NbBleEnnemis-int.Parse(data[2]),NbBoisEnnemis - int.Parse(data[3]),NbGemEnnemis - int.Parse(data[4]));
                 if (temp.perm.specialhability)
-                {
                     setSpecialHability(temp.perm.habilityspecial.Split(new char[] {' '}));
-                }
                 /*trouver le back de carte pour prendre son nom e tla detruire pour contruire un prefab de devant de carte avec les stats de la carte*/
                 GameObject temps = trouverBackCard();
                 int place = TrouverEmplacementCarteJoueur(temps.transform.position, ZoneCarteEnnemie);
@@ -539,6 +532,12 @@ public class Jouer : MonoBehaviour {
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
                 ReceiveMessage.message = "";
+                if (HpJoueur <= 0)
+                {
+                    gameFini = true;
+                    ReceiveMessage.message = "";
+                    Application.LoadLevel("Menu");                   
+                }
             break;
             case "Combat Creature":
                 Carte attaque = createCarte(data,5);
@@ -559,15 +558,13 @@ public class Jouer : MonoBehaviour {
                 ++noCarteEnnemis;
                 ReceiveMessage.message = "";
            break;
+           case "Carte manquante":
+                HpEnnemi = 0;
+                gameFini = true;
+           break;
         }
-        if (data[0] == "vous avez gagné")
-        {
+        if(data[0] == "Carte manquante")
             Application.LoadLevel("Menu");
-        }
-        else if(data[0] == "vous avez perdu")
-        {
-            Application.LoadLevel("Menu");
-        }
     }
     private GameObject trouverBackCard()
     {
@@ -714,6 +711,7 @@ public class Jouer : MonoBehaviour {
     private void PigerCarte()
     {
         NbCarteEnMainJoueur = 0;
+        //compte le nombre de carte en main
         for(int i=0;i<ZoneCarteJoueur.Length;++i)
         {
             if(ZoneCarteJoueur[i].EstOccupee == true)
@@ -721,18 +719,34 @@ public class Jouer : MonoBehaviour {
                 ++NbCarteEnMainJoueur;
             }
         }
-
-        if(NbCarteEnMainJoueur >= 7)
+        /*il n'y a plus de carte*/
+        if(NoCarte >=40)
         {
-            
+            envoyerMessage("Carte manquante");
+            //afficher vous avez perdu
+            Application.LoadLevel("Menu");
         }
+        /*main pleine*/
+        else if(NbCarteEnMainJoueur >= 7)
+        {
+            //on montre la carte
+            styleCarteAllier[ordrePige[NoCarte]].transform.position =new Vector3(-7,-1.2f,1);
+            //on la detruit
+            Destroy(styleCarteAllier[ordrePige[NoCarte]],2.0f);
+            tabCarteAllier.CarteDeck[ordrePige[NoCarte]] = null;
+            ++NoCarte;
+        }
+            /*on peut piger*/
         else
         {
+            //on trouve ou mettre la carte dans la main
             int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);           
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
+            //on la place
             ZoneCarteJoueur[OuPlacerCarte].carte = tabCarteAllier.CarteDeck[ordrePige[NoCarte]];
             styleCarteAllier[ordrePige[NoCarte]].gameObject.transform.position = ZoneCarteJoueur[OuPlacerCarte].Pos;
             ++NoCarte;
+            //on envoye au serveur qu'on a piger
             envoyerMessage("Piger");
         }
     }
@@ -835,6 +849,17 @@ public class Jouer : MonoBehaviour {
         }
         catch(TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
         return carte;
+    }
+    private void EnvoyerCarte(Socket client, Carte carte)
+    {
+        byte[] data;
+        BinaryFormatter b = new BinaryFormatter();
+        using (var stream = new MemoryStream())
+        {
+            b.Serialize(stream, carte);
+            data = stream.ToArray();
+        }
+        client.Send(data);
     }
     private Deck ReceiveDeck(Socket client)
     {

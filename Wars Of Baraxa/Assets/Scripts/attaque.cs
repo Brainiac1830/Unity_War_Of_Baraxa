@@ -89,6 +89,17 @@ public class attaque : MonoBehaviour {
         }
         return esttaunt;
     }
+    public bool foundTaunt(PosZoneCombat[] tab)
+    {
+        const int taunt = 1;
+        bool esttaunt = false;
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            if (tab[i].carte != null && tab[i].carte.perm.estTaunt)
+                esttaunt = true;
+        }
+        return esttaunt;
+    }
     public void Attaquer()
     {
             //change le border pour une autre couleur
@@ -129,7 +140,7 @@ public class attaque : MonoBehaviour {
                         attaqueSomething();
                     }
                 }
-                if (carteDefense!= null && carteDefense.name == "hero ennemis")
+                if (carteDefense!= null && carteDefense.name == "hero ennemis" && !foundTaunt(Jouer.ZoneCombatEnnemie))
                 {
                     Jouer script = GetComponent<Jouer>();
                     script.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, script.HpEnnemi);
@@ -141,6 +152,7 @@ public class attaque : MonoBehaviour {
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
+
                     if (script.HpJoueur <= 0 || script.HpEnnemi <= 0)
                     {
                         Application.LoadLevel("Menu");

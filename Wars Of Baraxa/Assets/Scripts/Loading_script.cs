@@ -34,9 +34,7 @@ public class Loading_script : MonoBehaviour
     {
         string message = lire();
         if (message == "Partie Commencer")
-        {
             Application.LoadLevel("Board");
-        }
 
         envoyerMessage("oui");
     }

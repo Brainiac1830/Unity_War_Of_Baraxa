@@ -59,10 +59,7 @@ public class profile_Script : MonoBehaviour {
     private string lire()
     {
         string message = null;
-        do
-        {
-            message = recevoirResultat();
-        } while (message == null);
+        message = recevoirResultat();
         return message;
     }
     private string recevoirResultat()
