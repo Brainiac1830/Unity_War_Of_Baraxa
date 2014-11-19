@@ -36,7 +36,6 @@ public class Jouer : MonoBehaviour {
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
-    
     public static int attaqueBonus;
     public static int armureBonus;
     public static int vieBonus;
@@ -48,6 +47,8 @@ public class Jouer : MonoBehaviour {
     public int NbGemEnnemis;
     public int HpJoueur;
     public int HpEnnemi;
+    public int nbCarteAllier;
+    public int nbCarteEnnemis;
     public Transform PlacementCarte;
     public Transform carteBack;
     public GameObject card;
@@ -89,6 +90,8 @@ public class Jouer : MonoBehaviour {
         NbCarteEnMainJoueur = 0;
         HpJoueur = 30;
         HpEnnemi = 30;
+        nbCarteAllier = 40;
+        nbCarteEnnemis = 40;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -271,6 +274,8 @@ public class Jouer : MonoBehaviour {
              styleCarteEnnemis[NoCarte] = cardennemis;
              ZoneCarteEnnemie[pos].carte = tabCarteEnnemis[pos];
              ++pos;
+             --nbCarteAllier;
+             --nbCarteEnnemis;
              posi += 1.5f;
              ++NoCarte;
         }
@@ -375,9 +380,11 @@ public class Jouer : MonoBehaviour {
 	    e=Event.current;
 
 		//Héro Joueur
-		GUI.Label(new Rect(Screen.width*0.045f,Screen.height*0.72f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
+		GUI.Label(new Rect(Screen.width*0.045f,Screen.height*0.76f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
+        GUI.Label(new Rect(Screen.width * 0.045f, Screen.height * 0.73f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteAllier.ToString());
 		//Héro Ennemi
-        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.0001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
+        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
+        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.03f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteEnnemis.ToString());
 
         //BTN EndTurn
         if (placerClick && MonTour)
@@ -568,6 +575,7 @@ public class Jouer : MonoBehaviour {
                 JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
                 pigerScript.EstEnnemie = true;
                 ++noCarteEnnemis;
+                --nbCarteEnnemis;
                 ReceiveMessage.message = "";
            break;
            case "Carte manquante":
@@ -766,6 +774,7 @@ public class Jouer : MonoBehaviour {
             //on envoye au serveur qu'on a piger
             envoyerMessage("Piger");
         }
+        --nbCarteAllier;
     }
     private Carte setHabilete(Carte card)
     {

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using warsofbaraxa;
 public class attaque : MonoBehaviour {
     bool AttaquantClick;
+    public Texture2D taunt;
     Permanent Attaquant;
     Permanent Defenseur;
     GameObject carteAttaque;
