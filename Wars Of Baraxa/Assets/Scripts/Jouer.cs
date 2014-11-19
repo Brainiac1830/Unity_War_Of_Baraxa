@@ -16,7 +16,9 @@ public class Jouer : MonoBehaviour {
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    bool gameFini = false;
+    public bool gameFini = false;
+    public bool  EstGagnant = false;
+    public bool  EstPerdant = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -36,6 +38,9 @@ public class Jouer : MonoBehaviour {
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
+
+    public GUIStyle GUIBox;
+    public GUIStyle GUIButton;
     public static int attaqueBonus;
     public static int armureBonus;
     public static int vieBonus;
@@ -386,6 +391,28 @@ public class Jouer : MonoBehaviour {
         GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
         GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.03f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteEnnemis.ToString());
 
+        if(gameFini)
+        {
+            GUIBox.fontSize = Screen.width / 30;
+            GUIButton.fontSize = Screen.width / 40;
+            if (EstGagnant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez gagné", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+            else if(EstPerdant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez perdu", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+        }
+
         //BTN EndTurn
         if (placerClick && MonTour)
         {
@@ -496,19 +523,19 @@ public class Jouer : MonoBehaviour {
     }
     private void traiterMessagePartie(string[] data)
     {
-        switch(data[0])
+        switch (data[0])
         {
             case "AjouterManaEnnemis":
-                setManaEnnemis(int.Parse(data[1]),int.Parse(data[2]),int.Parse(data[3]));
+                setManaEnnemis(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
                 ReceiveMessage.message = "";
-            break;
+                break;
             case "Tour Commencer":
                 MonTour = true;
                 placerClick = false;
-                resetArmor(ZoneCombat,styleCarteAlliercombat,true);
-                resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
+                resetArmor(ZoneCombat, styleCarteAlliercombat, true);
+                resetArmor(ZoneCombatEnnemie, styleCarteEnnemisCombat, false);
                 attaque s = GetComponent<attaque>();
-                s.enabled = true; 
+                s.enabled = true;
                 //max mana =5
                 if (NbWorkerMax < 5)
                     setWorker(true);
@@ -518,13 +545,13 @@ public class Jouer : MonoBehaviour {
                 PigerCarte();
 
                 ReceiveMessage.message = "";
-            break;
+                break;
             case "AjouterCarteEnnemis":
-                Carte temp=createCarte(data,2);
-                temp=setHabilete(temp);
-                setManaEnnemis(NbBleEnnemis-int.Parse(data[2]),NbBoisEnnemis - int.Parse(data[3]),NbGemEnnemis - int.Parse(data[4]));
+                Carte temp = createCarte(data, 2);
+                temp = setHabilete(temp);
+                setManaEnnemis(NbBleEnnemis - int.Parse(data[2]), NbBoisEnnemis - int.Parse(data[3]), NbGemEnnemis - int.Parse(data[4]));
                 if (temp.perm.specialhability)
-                    setSpecialHability(temp.perm.habilityspecial.Split(new char[] {' '}));
+                    setSpecialHability(temp.perm.habilityspecial.Split(new char[] { ' ' }));
                 /*trouver le back de carte pour prendre son nom e tla detruire pour contruire un prefab de devant de carte avec les stats de la carte*/
                 GameObject temps = trouverBackCard();
                 int place = TrouverEmplacementCarteJoueur(temps.transform.position, ZoneCarteEnnemie);
@@ -537,9 +564,9 @@ public class Jouer : MonoBehaviour {
                 int index = zeCarteEnnemis.name.IndexOf("s");
                 string nombre = zeCarteEnnemis.name.Substring(index + 1, zeCarteEnnemis.name.Length - (index + 1));
 
-                int posCombat=placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
+                int posCombat = placerCarte(zeCarteEnnemis, ZoneCombatEnnemie);
                 tabCarteEnnemis[int.Parse(nombre)] = temp;
-                setValueFromCard(int.Parse(nombre), zeCarteEnnemis.transform,temp, false);
+                setValueFromCard(int.Parse(nombre), zeCarteEnnemis.transform, temp, false);
 
                 ZoneCombatEnnemie[posCombat].carte = temp;
                 styleCarteEnnemisCombat[posCombat] = zeCarteEnnemis;
@@ -547,28 +574,29 @@ public class Jouer : MonoBehaviour {
                 a.EstJouer = true;
                 a.EstEnnemie = true;
                 ReceiveMessage.message = "";
-            break;
+                break;
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
                 ReceiveMessage.message = "";
                 if (HpJoueur <= 0)
                 {
                     gameFini = true;
+                    EstPerdant = true;
                     ReceiveMessage.message = "";
-                    Application.LoadLevel("Menu");                   
+                    //Application.LoadLevel("Menu");                   
                 }
-            break;
+                break;
             case "Combat Creature":
-                Carte attaque = createCarte(data,5);
+                Carte attaque = createCarte(data, 5);
                 Carte defenseur = createCarte(data, 16);
-                int num=data[3].IndexOf("d");
-                data[3] = data[3].Insert(num+1, "ennemis");
+                int num = data[3].IndexOf("d");
+                data[3] = data[3].Insert(num + 1, "ennemis");
                 data[4] = data[4].Replace("ennemis", "");
-                combat(attaque, defenseur,int.Parse(data[2]),int.Parse(data[1]),data[3],data[4]);
+                combat(attaque, defenseur, int.Parse(data[2]), int.Parse(data[1]), data[3], data[4]);
                 ReceiveMessage.message = "";
-            break;
+                break;
             case "Ennemis pige":
-                Transform t = Instantiate(carteBack, new Vector3(0,0,-100), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+                Transform t = Instantiate(carteBack, new Vector3(0, 0, -100), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
                 GameObject zeCartePiger = t.gameObject;
                 zeCartePiger.name = "cardbackennemis" + noCarteEnnemis;
                 placerCarte(zeCartePiger, ZoneCarteEnnemie);
@@ -577,17 +605,18 @@ public class Jouer : MonoBehaviour {
                 ++noCarteEnnemis;
                 --nbCarteEnnemis;
                 ReceiveMessage.message = "";
-           break;
-           case "Carte manquante":
+                break;
+            case "Carte manquante":
                 HpEnnemi = 0;
                 gameFini = true;
-           break;
+                break;
         }
         if (data[0] == "Carte manquante")
         {
-            Application.LoadLevel("Menu");
+            EstGagnant = true;
         }
     }
+
     private GameObject trouverBackCard()
     {
         GameObject game = null;
@@ -749,7 +778,8 @@ public class Jouer : MonoBehaviour {
         {
             envoyerMessage("Carte manquante");
             //afficher vous avez perdu
-            Application.LoadLevel("Menu");
+            EstPerdant = true;
+            //Application.LoadLevel("Menu");
         }
         /*main pleine*/
         else if(NbCarteEnMainJoueur >= 7)
