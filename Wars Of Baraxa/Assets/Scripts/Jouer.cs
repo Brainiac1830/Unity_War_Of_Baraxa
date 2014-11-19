@@ -66,20 +66,29 @@ public class Jouer : MonoBehaviour {
     static public GameObject[] styleCarteEnnemis;
 
     static public bool MonTour;
+    void Awake()
+    {
+        tabCarteAllier = ReceiveDeck(connexionServeur.sck);
+        string message = recevoirResultat();
+        if (message == "Premier Joueur")
+            MonTour = true;
+        else
+            MonTour = false;   
+    }
 	//initialization
 	void Start () {
-	    NoCarte = 0;
+        NoCarte = 0;
         ReceiveMessage = new ThreadLire();
         ReceiveMessage.workSocket = connexionServeur.sck;
         InitZoneJoueur();
         InitZoneEnnemie();
         InitZoneCombatEnnemie();
         InitZoneCombatJoueur();
-	    pos = 0;
-	    card = null;
+        pos = 0;
+        card = null;
         NbCarteEnMainJoueur = 0;
-	    HpJoueur = 30;
-	    HpEnnemi = 30;
+        HpJoueur = 30;
+        HpEnnemi = 30;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -106,7 +115,7 @@ public class Jouer : MonoBehaviour {
         instantiateCardAllies();
         instantiateCardEnnemis();
         initOrdrePige(ordrePige);
-        CarteDepart();
+        CarteDepart(); 
 	}
     private string formaterHabilete(string texte)
     {
@@ -194,15 +203,6 @@ public class Jouer : MonoBehaviour {
                 tab[i] = tabNombre[temp];
                 tabNombre.RemoveAt(temp);
         }
-    }
-    void Awake()
-    {
-        tabCarteAllier = ReceiveDeck(connexionServeur.sck);
-        string message = recevoirResultat();
-        if (message == "Premier Joueur")
-            MonTour = true;
-        else
-            MonTour = false;
     }
     public void InitZoneJoueur()
     {
@@ -316,6 +316,16 @@ public class Jouer : MonoBehaviour {
                 t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
         }    
     }
+    private void changestatFromCard(GameObject t, Carte card)
+    {
+        if (card != null && card.perm != null && t != null)
+        {
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+            stat[3].text = card.perm.Armure.ToString();
+            stat[4].text = card.perm.Attaque.ToString();
+            stat[5].text = card.perm.Vie.ToString();
+        }
+    }
     private void setValue(int i,Transform t,bool allier)
     {
         if (allier)
@@ -376,8 +386,8 @@ public class Jouer : MonoBehaviour {
             {
                 envoyerMessage("Fin De Tour");
                 MonTour = false;
-                resetArmor(ZoneCombat);
-                resetArmor(ZoneCombatEnnemie);
+                resetArmor(ZoneCombat,styleCarteAlliercombat,true);
+                resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
             }
         }
         else
@@ -488,6 +498,8 @@ public class Jouer : MonoBehaviour {
             case "Tour Commencer":
                 MonTour = true;
                 placerClick = false;
+                resetArmor(ZoneCombat,styleCarteAlliercombat,true);
+                resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
                 attaque s = GetComponent<attaque>();
                 s.enabled = true; 
                 //max mana =5
@@ -563,8 +575,10 @@ public class Jouer : MonoBehaviour {
                 gameFini = true;
            break;
         }
-        if(data[0] == "Carte manquante")
+        if (data[0] == "Carte manquante")
+        {
             Application.LoadLevel("Menu");
+        }
     }
     private GameObject trouverBackCard()
     {
@@ -688,12 +702,15 @@ public class Jouer : MonoBehaviour {
 	    }
 	    return ressource;
     }
-    private void resetArmor(PosZoneCombat [] tab)
+    private void resetArmor(PosZoneCombat [] tab,GameObject[] style,bool allier)
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if(tab[i] !=null && tab[i].carte !=null && tab[i].carte.perm != null)
-            tab[i].carte.perm.Armure = tab[i].carte.perm.getBasicArmor();
+            if (tab[i] != null && tab[i].carte != null && tab[i].carte.perm != null)
+            {
+                tab[i].carte.perm.Armure = tab[i].carte.perm.getBasicArmor();
+                changestatFromCard(style[i], tab[i].carte);
+            }
         }
     }
 
