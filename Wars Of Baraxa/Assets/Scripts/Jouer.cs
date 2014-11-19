@@ -16,7 +16,9 @@ public class Jouer : MonoBehaviour {
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    bool gameFini = false;
+    public bool gameFini = false;
+    public bool  EstGagnant = false;
+    public bool  EstPerdant = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -36,6 +38,9 @@ public class Jouer : MonoBehaviour {
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
+
+    public GUIStyle GUIBox;
+    public GUIStyle GUIButton;
     
     public static int attaqueBonus;
     public static int armureBonus;
@@ -369,6 +374,28 @@ public class Jouer : MonoBehaviour {
 		//Héro Ennemi
         GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.0001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
 
+        if(gameFini)
+        {
+            GUIBox.fontSize = Screen.width / 30;
+            GUIButton.fontSize = Screen.width / 40;
+            if (EstGagnant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez gagné", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+            else if(EstPerdant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez perdu", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+        }
+
         //BTN EndTurn
         if (placerClick && MonTour)
         {
@@ -535,8 +562,9 @@ public class Jouer : MonoBehaviour {
                 if (HpJoueur <= 0)
                 {
                     gameFini = true;
+                    EstPerdant = true;
                     ReceiveMessage.message = "";
-                    Application.LoadLevel("Menu");                   
+                    //Application.LoadLevel("Menu");                   
                 }
             break;
             case "Combat Creature":
@@ -563,8 +591,9 @@ public class Jouer : MonoBehaviour {
                 gameFini = true;
            break;
         }
-        if(data[0] == "Carte manquante")
-            Application.LoadLevel("Menu");
+        if (data[0] == "Carte manquante")
+            EstGagnant = true;
+            //Application.LoadLevel("Menu");
     }
     private GameObject trouverBackCard()
     {
@@ -724,7 +753,8 @@ public class Jouer : MonoBehaviour {
         {
             envoyerMessage("Carte manquante");
             //afficher vous avez perdu
-            Application.LoadLevel("Menu");
+            EstPerdant = true;
+            //Application.LoadLevel("Menu");
         }
         /*main pleine*/
         else if(NbCarteEnMainJoueur >= 7)

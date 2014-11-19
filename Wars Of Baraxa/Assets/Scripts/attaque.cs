@@ -155,7 +155,9 @@ public class attaque : MonoBehaviour {
 
                     if (script.HpJoueur <= 0 || script.HpEnnemi <= 0)
                     {
-                        Application.LoadLevel("Menu");
+                        script.EstGagnant = true;
+                        script.gameFini = true;
+                        //Application.LoadLevel("Menu");
                     }
 
                     Attaquant = null;
