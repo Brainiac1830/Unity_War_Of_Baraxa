@@ -81,6 +81,12 @@ public class Jouer : MonoBehaviour {
         else
             MonTour = false;   
     }
+
+    void OnApplicationQuit()
+    {
+        envoyerMessage("deconnection");
+    }
+
 	//initialization
 	void Start () {
         NoCarte = 0;
@@ -397,16 +403,16 @@ public class Jouer : MonoBehaviour {
             GUIButton.fontSize = Screen.width / 35;
             if (EstGagnant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n Vous avez gagné", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
                 }
             }
             else if(EstPerdant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n Vous avez perdu", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
                 }
