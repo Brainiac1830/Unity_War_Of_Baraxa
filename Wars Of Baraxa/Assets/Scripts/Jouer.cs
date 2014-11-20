@@ -393,19 +393,19 @@ public class Jouer : MonoBehaviour {
 
         if(gameFini)
         {
-            GUIBox.fontSize = Screen.width / 30;
-            GUIButton.fontSize = Screen.width / 40;
+            GUIBox.fontSize = Screen.width / 25;
+            GUIButton.fontSize = Screen.width / 35;
             if (EstGagnant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez gagné", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n Vous avez gagné", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
                 }
             }
             else if(EstPerdant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVous avez perdu", GUIBox);
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n Vous avez perdu", GUIBox);
                 if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Retour au menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
