@@ -819,7 +819,7 @@ public class Jouer : MonoBehaviour {
                 else
                 {
                     string[] zeSpecialHability = data[i].Split(new char[] {' '});
-                    if (getHabilete(zeSpecialHability[0]))
+                    if (getHabilete(zeSpecialHability[0]) && card != null && card.perm != null)
                     {
                         card.perm.specialhability = true;
                         card.perm.habilityspecial = data[i];
