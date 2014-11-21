@@ -41,7 +41,7 @@ public class attaque : MonoBehaviour {
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab))
+            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab) && tab[i].carte.perm.estEndormi == 0)
             {
                 style[i].renderer.material.color = Color.green;
             }
@@ -131,8 +131,7 @@ public class attaque : MonoBehaviour {
                 }
                 if (carteDefense!= null && carteDefense.name == "hero ennemis")
                 {
-                    Jouer script = GetComponent<Jouer>();
-                    script.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, script.HpEnnemi);
+                    Jouer.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, Jouer.HpEnnemi);
                     if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
                         Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
                     else
@@ -141,7 +140,7 @@ public class attaque : MonoBehaviour {
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
-                    if (script.HpJoueur <= 0 || script.HpEnnemi <= 0)
+                    if (Jouer.HpJoueur <= 0 || Jouer.HpEnnemi <= 0)
                     {
                         Application.LoadLevel("Menu");
                     }
