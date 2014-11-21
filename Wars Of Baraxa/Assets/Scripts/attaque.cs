@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using warsofbaraxa;
 public class attaque : MonoBehaviour {
     bool AttaquantClick;
+    public Texture2D taunt;
     Permanent Attaquant;
     Permanent Defenseur;
     GameObject carteAttaque;
@@ -89,6 +90,17 @@ public class attaque : MonoBehaviour {
         }
         return esttaunt;
     }
+    public bool foundTaunt(PosZoneCombat[] tab)
+    {
+        const int taunt = 1;
+        bool esttaunt = false;
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            if (tab[i].carte != null && tab[i].carte.perm.estTaunt)
+                esttaunt = true;
+        }
+        return esttaunt;
+    }
     public void Attaquer()
     {
             //change le border pour une autre couleur
@@ -129,7 +141,7 @@ public class attaque : MonoBehaviour {
                         attaqueSomething();
                     }
                 }
-                if (carteDefense!= null && carteDefense.name == "hero ennemis")
+                if (carteDefense!= null && carteDefense.name == "hero ennemis" && !foundTaunt(Jouer.ZoneCombatEnnemie))
                 {
                     Jouer.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, Jouer.HpEnnemi);
                     if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
@@ -140,9 +152,11 @@ public class attaque : MonoBehaviour {
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
+
                     if (Jouer.HpJoueur <= 0 || Jouer.HpEnnemi <= 0)
                     {
-                        Application.LoadLevel("Menu");
+                        script.EstGagnant = true;
+                        script.gameFini = true;
                     }
 
                     Attaquant = null;

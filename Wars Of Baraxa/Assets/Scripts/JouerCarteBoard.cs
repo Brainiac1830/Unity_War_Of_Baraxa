@@ -15,7 +15,11 @@ public class JouerCarteBoard : MonoBehaviour
     public bool EstJouer = false;
     public bool EstEnnemie = false;
 
-
+    GameObject target;
+    GameObject spell;
+    Transform clonetransform;
+    GameObject cloneCarte;
+    bool estClone;
     TextMesh[] Cout;
 
 
@@ -33,7 +37,7 @@ public class JouerCarteBoard : MonoBehaviour
 
     void OnDestroy()
     {
-        if (EstJouer)
+        if (EstJouer && !estClone)
         {
             if (EstEnnemie)
                 Jouer.ZoneCombatEnnemie[TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombatEnnemie)].EstOccupee = false;
@@ -845,21 +849,30 @@ public class JouerCarteBoard : MonoBehaviour
     {
         yield return new WaitForSeconds(i);
     }
-    void OnMouseOver()
-    {
-        //delay += Time.deltaTime;
-        //// here the 2 is the time that you want before load the bar
-        //if(delay >=0.5f){
-        //    //this.transform.position = new Vector3 (0,-1.50f, 6.0f);
-        //    this.transform.localScale = new Vector3(0.2f,0.2f,0.2f);
-        //}
-    }
 
-    void OnMouseExit()
-    {
-        //delay = 0;
-        //this.transform.localScale = new Vector3 (0.1f, 1.0f, 0.13f);
-    }
+    void OnMouseOver(){
+        delay += Time.deltaTime;
+        //// here the 2 is the time that you want before load the bar
+        if(delay >=1f && cloneCarte == null &&  !estClone){
+           //create clone
+            clonetransform = Instantiate(this.gameObject.transform) as Transform;
+            clonetransform.tag = "clone";
+            cloneCarte = clonetransform.gameObject;
+            cloneCarte.GetComponent<JouerCarteBoard>().estClone = true;
+           //grossir
+            cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
+           //changer de position
+            cloneCarte.transform.position = new Vector3(6.5f,-0.5f, 1);
+         }
+	}
+
+	void OnMouseExit(){
+        delay = 0;
+        if (cloneCarte != null)
+        {
+            Destroy(cloneCarte);
+        }
+       }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);

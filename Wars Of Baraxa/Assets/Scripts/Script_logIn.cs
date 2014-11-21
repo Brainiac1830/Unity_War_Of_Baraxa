@@ -15,6 +15,8 @@ public class Script_logIn : MonoBehaviour {
     public string messageErreur="";
     bool nouveauCompte = false;
     bool showBox = false;
+    bool hitReturn = false;
+    bool enTrainDeConnecter = false;
 
 //GUIStyle
     public GUIStyle Logo;
@@ -46,15 +48,29 @@ public class Script_logIn : MonoBehaviour {
 public void OnGUI() {
 	GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
 	warOfBaraxa.fontSize = Screen.width / 10;
-	text.fontSize = Screen.width/42;
+	text.fontSize = Screen.width/35;
 	textArea.fontSize = Screen.width/42;
 	buttons.fontSize = Screen.width/42;
     if (!showBox)
     {
+        /*Bonton enter pour log in*/
+        if (Event.current.keyCode == KeyCode.Return)
+            hitReturn = true;
+
+        if (hitReturn && !enTrainDeConnecter && !nouveauCompte)
+        {
+            connect();
+            hitReturn = false;
+        }
+        else if (hitReturn && !enTrainDeConnecter)
+        {
+            Creer();
+            hitReturn = false;
+        }
         //Titre
         //GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
         //Alias
-        GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.40f / 2), Screen.height * 0.47f, Screen.width * 0.10f, Screen.height * 0.05f), "Alias", text);
+        GUI.Label(new Rect(Screen.width *0.29f, Screen.height * 0.47f, Screen.width * 0.10f, Screen.height * 0.05f), "Alias", text);
         alias = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.47f, Screen.width * 0.25f, Screen.height * 0.05f), alias, 20, textArea);
         //Mot de passe
         GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.54f, Screen.width * 0.20f, Screen.height * 0.05f), "Mot de passe", text);
@@ -66,21 +82,7 @@ public void OnGUI() {
             //Tente de se connecter avec les informations fournis
             if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.62f, Screen.width * 0.12f, Screen.height * 0.06f), "Connecter", buttons))
             {
-                //Conditions d'erreurs
-                if (alias == "" || password == "")
-                {
-                    showBox = true;
-                    messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
-                }
-                else if (!estDansBd(alias,password)){
-                    showBox = true;
-                    messageErreur = "Votre alias ou votre mot de passe \n est invalide.";
-                }
-                else
-                {
-                    Application.LoadLevel("Menu");                    
-                }
-
+                connect();
             }
             //Change l'interface pour pouvoir créer un compte
             if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.62f, Screen.width * 0.12f, Screen.height * 0.06f), "Créer", buttons))
@@ -110,21 +112,7 @@ public void OnGUI() {
             //Si on click sur "CRÉER" on tente de créer le compte selon les informations données (vérifications)
             if (GUI.Button(new Rect((Screen.width * 0.564f) - (Screen.width * 0.12f / 2), Screen.height * 0.75f, Screen.width * 0.12f, Screen.height * 0.05f), "Créer", buttons))
             {
-                if (alias == "" || password == "" || nom == "" || prenom == "")
-                {
-                    showBox = true;
-                    messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
-                }
-                else if (getAliasBd(alias,password,nom,prenom))
-                {
-                    showBox = true;
-                    messageErreur = "\n Votre alias est deja utiliser.";
-                }
-                else 
-                {
-                    //manque a se connecter
-                    Application.LoadLevel("Menu"); 
-                }
+                Creer();
             }
         }
     }
@@ -164,6 +152,44 @@ public void OnGUI() {
             }
         }
 	}
+    private void Creer()
+    {
+        if (alias == "" || password == "" || nom == "" || prenom == "")
+        {
+            showBox = true;
+            messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
+        }
+        else if (getAliasBd(alias, password, nom, prenom))
+        {
+            showBox = true;
+            messageErreur = "\n Votre alias est deja utiliser.";
+        }
+        else
+        {
+            //manque a se connecter
+            enTrainDeConnecter = true;
+            Application.LoadLevel("Menu");
+        }        
+    }
+    private void connect()
+    {
+        //Conditions d'erreurs
+        if (alias == "" || password == "")
+        {
+            showBox = true;
+            messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
+        }
+        else if (!estDansBd(alias, password))
+        {
+            showBox = true;
+            messageErreur = "Votre alias ou votre mot de passe \n est invalide.";
+        }
+        else
+        {
+            enTrainDeConnecter = true;
+            Application.LoadLevel("Menu");
+        }               
+    }
     private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
         envoyerMessage(alias+","+mdp+","+nom+","+prenom);

@@ -17,6 +17,7 @@ public class script_TestingShit : MonoBehaviour {
 	public GameObject attaque;
 	public GameObject armure;
 	public GameObject vie;
+    public SpriteRenderer Image;
 	//variables bool
 	public bool tourne;
 	public bool standBy;
@@ -49,7 +50,6 @@ public class script_TestingShit : MonoBehaviour {
 		front = true;
 		standBy = false;
 		tourne = false;
-
 	}
 	
 	// Update is called once per frame

@@ -17,7 +17,9 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    bool gameFini = false;
+    public bool gameFini = false;
+    public bool  EstGagnant = false;
+    public bool  EstPerdant = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -33,9 +35,13 @@ public class Jouer : MonoBehaviour
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
+    public SpriteRenderer ImageCarte;
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
+
+    public GUIStyle GUIBox;
+    public GUIStyle GUIButton;
 
     public static int attaqueBonus;
     public static int armureBonus;
@@ -59,6 +65,8 @@ public class Jouer : MonoBehaviour
     public int NbGemEnnemis;
     public static int HpJoueur;
     public static int HpEnnemi;
+    public int nbCarteAllier;
+    public int nbCarteEnnemis;
     public Transform PlacementCarte;
     public Transform carteBack;
     public Transform carteBatiment;
@@ -79,9 +87,24 @@ public class Jouer : MonoBehaviour
     static public GameObject[] styleCarteEnnemis;
 
     static public bool MonTour;
-    //initialization
-    void Start()
+
+    void Awake()
     {
+        tabCarteAllier = ReceiveDeck(connexionServeur.sck);
+        string message = recevoirResultat();
+        if (message == "Premier Joueur")
+            MonTour = true;
+        else
+            MonTour = false;   
+    }
+
+    void OnApplicationQuit()
+    {
+        envoyerMessage("deconnection");
+    }
+
+	//initialization
+	void Start () {
         NoCarte = 0;
         ReceiveMessage = new ThreadLire();
         ReceiveMessage.workSocket = connexionServeur.sck;
@@ -94,6 +117,8 @@ public class Jouer : MonoBehaviour
         NbCarteEnMainJoueur = 0;
         HpJoueur = 30;
         HpEnnemi = 30;
+        nbCarteAllier = 40;
+        nbCarteEnnemis = 40;
         NbBle = 0;
         NbBois = 0;
         NbGem = 0;
@@ -120,7 +145,49 @@ public class Jouer : MonoBehaviour
         instantiateCardAllies();
         instantiateCardEnnemis();
         initOrdrePige(ordrePige);
-        CarteDepart();
+        CarteDepart(); 
+	}
+    private string formaterHabilete(string texte)
+    {
+        string temp="";
+        const int maxcaractere=21;
+        string[] tab = texte.Split(new char[] {','});
+        for (int i = 0; i < tab.Length; ++i)
+        {
+            if (tab[i].Length > maxcaractere)
+            {
+                int longueur=0;
+                string[] mot = tab[i].Split(new char[] { ' ' });
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (longueur + mot[y].Length+1 > maxcaractere)
+                    {
+                        mot[y - 1] += "\n";
+                        longueur = 0;
+                    }
+                    else
+                        longueur += mot[y].Length+1;
+                         
+                }
+                for (int y = 0; y < mot.Length; ++y)
+                {
+                    if (y!=0 && mot[y-1].IndexOf('\n') != -1)
+                    {
+                        temp += mot[y];
+                    }
+                    else if (y == 0)
+                        temp += mot[y];
+                    else
+                        temp += " " + mot[y];
+                }
+            }
+            else 
+            {
+                temp += tab[i] + "\n";
+            }
+        }
+            return temp;
+>>>>>>> origin/master
     }
     void OnDestroy()
     {
@@ -168,27 +235,10 @@ public class Jouer : MonoBehaviour
         for (int i = 0; i < tab.Length; ++i)
         {
             /*besoin du unity engine car il ne sest pas quel prendre entre celle de unityengine et celle de sysytem c#*/
-            if (i == 0)
-            {
-                tab[i] = 26;
-                tabNombre.RemoveAt(26);
-            }
-            else
-            {
                 int temp = UnityEngine.Random.Range(0, tab.Length - (1 + i));
                 tab[i] = tabNombre[temp];
                 tabNombre.RemoveAt(temp);
-            }
         }
-    }
-    void Awake()
-    {
-        tabCarteAllier = ReceiveDeck(connexionServeur.sck);
-        string message = recevoirResultat();
-        if (message == "Premier Joueur")
-            MonTour = true;
-        else
-            MonTour = false;
     }
     public void InitZoneJoueur()
     {
@@ -256,13 +306,14 @@ public class Jouer : MonoBehaviour
             ZoneCarteJoueur[NoCarte].carte = tabCarteAllier.CarteDeck[ordrePige[NoCarte]];
             styleCarteAllier[ordrePige[NoCarte]].gameObject.transform.position = ZoneCarteJoueur[NoCarte].Pos;
 
-            styleCarteEnnemis[NoCarte] = cardennemis;
-            ZoneCarteEnnemie[pos].carte = tabCarteEnnemis[pos];
-            ++pos;
-            posi += 1.5f;
-            ++NoCarte;
+             styleCarteEnnemis[NoCarte] = cardennemis;
+             ZoneCarteEnnemie[pos].carte = tabCarteEnnemis[pos];
+             ++pos;
+             --nbCarteAllier;
+             --nbCarteEnnemis;
+             posi += 1.5f;
+             ++NoCarte;
         }
-        ++NoCarte;
         noCarteEnnemis = NoCarte;
     }
     private void setValueFromCard(int i, Transform t, Carte card, bool allier)
@@ -272,8 +323,9 @@ public class Jouer : MonoBehaviour
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
             {
                 t.Find("attaque" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
@@ -289,8 +341,9 @@ public class Jouer : MonoBehaviour
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = card.Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text =formaterHabilete(card.Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
             if (card.perm != null)
             {
                 t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
@@ -302,15 +355,28 @@ public class Jouer : MonoBehaviour
                 t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
         }
     }
-    private void setValue(int i, Transform t, bool allier)
+
+    private void changestatFromCard(GameObject t, Carte card)
+    {
+        if (card != null && card.perm != null && t != null)
+        {
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+            stat[3].text = card.perm.Armure.ToString();
+            stat[4].text = card.perm.Attaque.ToString();
+            stat[5].text = card.perm.Vie.ToString();
+        }
+    }
+    private void setValue(int i,Transform t,bool allier)
     {
         if (allier)
         {
             t.Find("coutBois" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBois.ToString();
             t.Find("coutBle" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutBle.ToString();
             t.Find("coutGem" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].CoutGem.ToString();
-            t.Find("habilete" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].Habilete;
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteAllier.CarteDeck[i].Habilete);
             t.Find("Nom" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].NomCarte;
+            t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteAllier.CarteDeck[i].NomCarte, typeof(Sprite)) as Sprite;
+
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaque" + i).GetComponent<TextMesh>().text = tabCarteAllier.CarteDeck[i].perm.Attaque.ToString();
@@ -326,8 +392,9 @@ public class Jouer : MonoBehaviour
             t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBois.ToString();
             t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutBle.ToString();
             t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].CoutGem.ToString();
-            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].Habilete;
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = formaterHabilete(tabCarteEnnemis[i].Habilete);
             t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].NomCarte;
+            t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(tabCarteEnnemis[i].NomCarte, typeof(Sprite)) as Sprite;
             if (tabCarteAllier.CarteDeck[i].perm != null)
             {
                 t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].perm.Attaque.ToString();
@@ -349,10 +416,34 @@ public class Jouer : MonoBehaviour
         Event e;
         e = Event.current;
 
-        //Héro Joueur
-        GUI.Label(new Rect(Screen.width * 0.045f, Screen.height * 0.72f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpJoueur.ToString());
-        //Héro Ennemi
-        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.0001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
+	//Héro Joueur
+	GUI.Label(new Rect(Screen.width*0.045f,Screen.height*0.76f,Screen.width*1.0f, Screen.height*1.0f),"Vie: " + HpJoueur.ToString());
+        GUI.Label(new Rect(Screen.width * 0.045f, Screen.height * 0.73f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteAllier.ToString());
+	//Héro Ennemi
+        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
+        GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.03f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteEnnemis.ToString());
+
+        if(gameFini)
+        {
+            GUIBox.fontSize = Screen.width / 25;
+            GUIButton.fontSize = Screen.width / 35;
+            if (EstGagnant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+            else if(EstPerdant)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
+                {
+                    Application.LoadLevel("Menu");
+                }
+            }
+        }
 
         //BTN EndTurn
         if (placerClick && MonTour)
@@ -361,8 +452,8 @@ public class Jouer : MonoBehaviour
             {
                 envoyerMessage("Fin De Tour");
                 MonTour = false;
-                resetArmor(ZoneCombat);
-                resetArmor(ZoneCombatEnnemie);
+                resetArmor(ZoneCombat,styleCarteAlliercombat,true);
+                resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
             }
         }
         else
@@ -431,10 +522,13 @@ public class Jouer : MonoBehaviour
         {
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
-            if (t == null || !t.IsAlive && !gameFini)
+            if (!gameFini && ReceiveMessage.message=="")
             {
-                t = new Thread(ReceiveMessage.doWork);
-                t.Start();
+                if (t == null || !t.IsAlive)
+                {
+                    t = new Thread(ReceiveMessage.doWork);
+                    t.Start();
+                }
             }
             attaque s = GetComponent<attaque>();
             s.enabled = false;
@@ -476,6 +570,8 @@ public class Jouer : MonoBehaviour
             case "Tour Commencer":
                 MonTour = true;
                 placerClick = false;
+                resetArmor(ZoneCombat, styleCarteAlliercombat, true);
+                resetArmor(ZoneCombatEnnemie, styleCarteEnnemisCombat, false);
                 attaque s = GetComponent<attaque>();
                 s.enabled = true;
                 //max mana =5
@@ -496,6 +592,7 @@ public class Jouer : MonoBehaviour
                 {
                     setSpecialHability(temp.perm.habilityspecial.Split(new char[] { ' ' }));
                 }
+
                 /*trouver le back de carte pour prendre son nom e tla detruire pour contruire un prefab de devant de carte avec les stats de la carte*/
                 GameObject temps = trouverBackCard();
                 int place = TrouverEmplacementCarteJoueur(temps.transform.position, ZoneCarteEnnemie);
@@ -522,6 +619,12 @@ public class Jouer : MonoBehaviour
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
                 ReceiveMessage.message = "";
+                if (HpJoueur <= 0)
+                {
+                    gameFini = true;
+                    EstPerdant = true;
+                    ReceiveMessage.message = "";                  
+                }
                 break;
             case "Combat Creature":
                 Carte attaque = createCarte(data, 5);
@@ -540,6 +643,7 @@ public class Jouer : MonoBehaviour
                 JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
                 pigerScript.EstEnnemie = true;
                 ++noCarteEnnemis;
+                --nbCarteEnnemis;
                 ReceiveMessage.message = "";
                 break;
             case "spellwithtarget":
@@ -782,15 +886,17 @@ public class Jouer : MonoBehaviour
                 break;
 
         }
-        if (data[0] == "vous avez gagné")
+            case "Carte manquante":
+                HpEnnemi = 0;
+                gameFini = true;
+                break;
+        //}
+        if (data[0] == "Carte manquante")
         {
-            Application.LoadLevel("Menu");
-        }
-        else if (data[0] == "vous avez perdu")
-        {
-            Application.LoadLevel("Menu");
+            EstGagnant = true;
         }
     }
+
     private void checkIfDmgHeroes(string typeTarget, int dmg)
     {
         if (typeTarget == "placedecombat" || typeTarget == "ennemis")
@@ -966,6 +1072,9 @@ public class Jouer : MonoBehaviour
         return valide;
 
     }
+=======
+
+>>>>>>> origin/master
     private GameObject trouverBackCard()
     {
         GameObject game = null;
@@ -1090,12 +1199,16 @@ public class Jouer : MonoBehaviour
         }
         return ressource;
     }
-    private void resetArmor(PosZoneCombat[] tab)
+
+    private void resetArmor(PosZoneCombat [] tab,GameObject[] style,bool allier)
     {
         for (int i = 0; i < tab.Length; ++i)
         {
             if (tab[i] != null && tab[i].carte != null && tab[i].carte.perm != null)
+            {
                 tab[i].carte.perm.Armure = tab[i].carte.perm.getBasicArmor();
+                changestatFromCard(style[i], tab[i].carte);
+            }
         }
     }
 
@@ -1112,7 +1225,8 @@ public class Jouer : MonoBehaviour
 
     private void PigerCarte()
     {
-        NbCarteEnMainJoueur = 0;
+        NbCarteEnMainJoueur = 0;v
+	//compte le nombre de carte en main
         for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
         {
             if (ZoneCarteJoueur[i].EstOccupee == true)
@@ -1121,19 +1235,38 @@ public class Jouer : MonoBehaviour
             }
         }
 
-        if (NbCarteEnMainJoueur >= 7)
+        /*il n'y a plus de carte*/
+        if(NoCarte >=40)
         {
-
+            envoyerMessage("Carte manquante");
+            //afficher vous avez perdu
+            EstPerdant = true;
+            //Application.LoadLevel("Menu");
         }
+        /*main pleine*/
+        else if(NbCarteEnMainJoueur >= 7)
+        {
+            //on montre la carte
+            styleCarteAllier[ordrePige[NoCarte]].transform.position =new Vector3(-7,-1.2f,1);
+            //on la detruit
+            Destroy(styleCarteAllier[ordrePige[NoCarte]],2.0f);
+            tabCarteAllier.CarteDeck[ordrePige[NoCarte]] = null;
+            ++NoCarte;
+        }
+            /*on peut piger*/
         else
         {
-            int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);
+            //on trouve ou mettre la carte dans la main
+            int OuPlacerCarte = TrouverOuPlacerCarte(ZoneCarteJoueur);           
             ZoneCarteJoueur[OuPlacerCarte].EstOccupee = true;
+            //on la place
             ZoneCarteJoueur[OuPlacerCarte].carte = tabCarteAllier.CarteDeck[ordrePige[NoCarte]];
             styleCarteAllier[ordrePige[NoCarte]].gameObject.transform.position = ZoneCarteJoueur[OuPlacerCarte].Pos;
             ++NoCarte;
+            //on envoye au serveur qu'on a piger
             envoyerMessage("Piger");
         }
+        --nbCarteAllier;
     }
     private Carte setHabilete(Carte card)
     {
@@ -1147,8 +1280,9 @@ public class Jouer : MonoBehaviour
                     card.setHabileteNormal(data[i].Trim());
                 else
                 {
-                    string[] zeSpecialHability = data[i].Split(new char[] { ' ' });
-                    if (getHabilete(zeSpecialHability[0]) && card.TypeCarte != "Sort")
+
+                    string[] zeSpecialHability = data[i].Split(new char[] {' '});
+                    if (getHabilete(zeSpecialHability[0]) && card != null && card.perm != null)
                     {
                         card.perm.specialhability = true;
                         card.perm.habilityspecial = data[i];
@@ -1237,6 +1371,17 @@ public class Jouer : MonoBehaviour
         }
         catch (TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
         return carte;
+    }
+    private void EnvoyerCarte(Socket client, Carte carte)
+    {
+        byte[] data;
+        BinaryFormatter b = new BinaryFormatter();
+        using (var stream = new MemoryStream())
+        {
+            b.Serialize(stream, carte);
+            data = stream.ToArray();
+        }
+        client.Send(data);
     }
     private Deck ReceiveDeck(Socket client)
     {
