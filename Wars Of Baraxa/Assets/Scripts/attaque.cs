@@ -9,6 +9,7 @@ using warsofbaraxa;
 public class attaque : MonoBehaviour {
     bool AttaquantClick;
     public Texture2D taunt;
+    public AudioClip Attack;
     Permanent Attaquant;
     Permanent Defenseur;
     GameObject carteAttaque;
@@ -150,6 +151,7 @@ public class attaque : MonoBehaviour {
                     else
                         Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
                     AttaquantClick = false;
+                    audio.PlayOneShot(Attack);
                     envoyerMessage("Attaquer Joueur");
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
@@ -158,7 +160,6 @@ public class attaque : MonoBehaviour {
                     {
                         script.EstGagnant = true;
                         script.gameFini = true;
-                        //Application.LoadLevel("Menu");
                     }
 
                     Attaquant = null;
@@ -206,6 +207,7 @@ public class attaque : MonoBehaviour {
             carteAttaque = null;
             Defenseur = null;
             carteDefense = null;
+            audio.PlayOneShot(Attack);
         }      
     }
     private string SetCarteString(Carte temp)

@@ -39,6 +39,7 @@ public class Jouer : MonoBehaviour {
     public static int NbBois; // test avec static
     public static int NbGem; // test avec statics
 
+    public AudioClip AttackSound;
     public GUIStyle GUIBox;
     public GUIStyle GUIButton;
     public static int attaqueBonus;
@@ -403,16 +404,16 @@ public class Jouer : MonoBehaviour {
             GUIButton.fontSize = Screen.width / 35;
             if (EstGagnant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné!", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.45f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
                 }
             }
             else if(EstPerdant)
             {
-                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.40f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "  Menu", GUIButton))
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu!", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.45f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
                 }
@@ -584,12 +585,12 @@ public class Jouer : MonoBehaviour {
             case "Joueur attaquer":
                 HpJoueur = int.Parse(data[1]);
                 ReceiveMessage.message = "";
+                audio.PlayOneShot(AttackSound);
                 if (HpJoueur <= 0)
                 {
                     gameFini = true;
                     EstPerdant = true;
-                    ReceiveMessage.message = "";
-                    //Application.LoadLevel("Menu");                   
+                    ReceiveMessage.message = "";                   
                 }
                 break;
             case "Combat Creature":
@@ -599,6 +600,7 @@ public class Jouer : MonoBehaviour {
                 data[3] = data[3].Insert(num + 1, "ennemis");
                 data[4] = data[4].Replace("ennemis", "");
                 combat(attaque, defenseur, int.Parse(data[2]), int.Parse(data[1]), data[3], data[4]);
+                audio.PlayOneShot(AttackSound);
                 ReceiveMessage.message = "";
                 break;
             case "Ennemis pige":

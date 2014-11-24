@@ -10,7 +10,13 @@ MonoImporter:
   - Worker: {instanceID: 0}
   - PlayerChar: {instanceID: 0}
   - EnnemiChar: {instanceID: 0}
-  - CarteTest: {fileID: 100000, guid: e739df3c4d610274099492ea54f9fcb3, type: 2}
+  - ImageCarte: {instanceID: 0}
+  - AttackSound: {instanceID: 0}
+  - PlacementCarte: {instanceID: 0}
+  - carteBack: {instanceID: 0}
+  - card: {instanceID: 0}
+  - cardennemis: {instanceID: 0}
+  - ScriptEnnemie: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
