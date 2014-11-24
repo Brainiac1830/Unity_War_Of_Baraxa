@@ -34,7 +34,7 @@ public class Script_logIn : MonoBehaviour {
     void Awake()
     {
         connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.102"), 1234);
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.114"), 1234);
         try
         {
             connexionServeur.sck.Connect(localEndPoint);

@@ -157,8 +157,8 @@ public class attaque : MonoBehaviour {
 
                     if (Jouer.HpJoueur <= 0 || Jouer.HpEnnemi <= 0)
                     {
-                        script.EstGagnant = true;
-                        script.gameFini = true;
+                        Jouer.EstGagnant = true;
+                        Jouer.gameFini = true;
                     }
 
                     Attaquant = null;
