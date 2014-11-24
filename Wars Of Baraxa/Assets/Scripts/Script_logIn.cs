@@ -34,7 +34,7 @@ public class Script_logIn : MonoBehaviour {
     void Awake()
     {
         connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.102"), 1234);
         try
         {
             connexionServeur.sck.Connect(localEndPoint);
@@ -133,6 +133,24 @@ public void OnGUI() {
 	
 	// Update is called once per frame
 	void Update () {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            //Conditions d'erreurs
+            if (alias == "" || password == "")
+            {
+                showBox = true;
+                messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
+            }
+            else if (!estDansBd(alias, password))
+            {
+                showBox = true;
+                messageErreur = "Votre alias ou votre mot de passe \n est invalide.";
+            }
+            else
+            {
+                Application.LoadLevel("Menu");
+            }
+        }
 	}
     private void Creer()
     {

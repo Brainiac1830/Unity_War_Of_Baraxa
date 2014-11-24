@@ -8,29 +8,32 @@ using System.Collections;
 using warsofbaraxa;
 
 
-public class JouerCarteBoard : MonoBehaviour {
-	public float delay;
+public class JouerCarteBoard : MonoBehaviour
+{
+    public float delay;
     public Jouer Script_Jouer;
-    Permanent Target;
     public bool EstJouer = false;
     public bool EstEnnemie = false;
+
     GameObject target;
     GameObject spell;
     Transform clonetransform;
     GameObject cloneCarte;
     bool estClone;
     TextMesh[] Cout;
-    
 
 
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start()
+    {
         Cout = GetComponentsInChildren<TextMesh>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
 
     void OnDestroy()
     {
@@ -41,20 +44,24 @@ public class JouerCarteBoard : MonoBehaviour {
             else
             {
                 int PlacementZoneCombat = TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCombat);
-                Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = false;
-                if (Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
+
+                if (PlacementZoneCombat != -1)
                 {
-                    string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
-                    if (zeSpecialHability[0] == "Donne")
+                    Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = false;
+                    if (Jouer.ZoneCombat[PlacementZoneCombat] != null && Jouer.ZoneCombat[PlacementZoneCombat].carte!= null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm!= null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
                     {
-                        enleverBonusStat(zeSpecialHability);
+                        string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
+                        if (zeSpecialHability[0] == "Donne")
+                        {
+                            enleverBonusStat(zeSpecialHability);
+                        }
                     }
                 }
             }
         }
     }
-    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte,PosZoneCombat[] Zone)
-    {  
+    private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
+    {
         int Emplacement = 0;
         for (int i = 0; i < Zone.Length; ++i)
         {
@@ -71,7 +78,7 @@ public class JouerCarteBoard : MonoBehaviour {
     }
     private int getNbCarteZone(PosZoneCombat[] zone)
     {
-        int nbCarte=0;
+        int nbCarte = 0;
         for (int i = 0; i < zone.Length; ++i)
         {
             if (zone[i] != null && zone[i].EstOccupee)
@@ -80,54 +87,206 @@ public class JouerCarteBoard : MonoBehaviour {
         return nbCarte;
     }
 
-    private void spellSummon(string target, int nbCreatures, int[] stats)
+    private bool spellSummon(string target, int nbCreatures, int[] stats, PosZoneCombat[] zone)
     {
-
-    }
-    private void spellBurn(string target, int nbDegat, Carte zeTarget)
-    {
-    }
-    private void spellHeal(string target, int nbVie, Carte zeTarget)
-    {
-
-    }
-    private void spellSleep(string target, int nbTour, Carte zeTarget)
-    {
-
-    }
-    private void spellDestroy(string target, Carte zeTarget)
-    {
-
-    }
-    private void spellTransform(string target, int[] stats, Carte zeTarget)
-    {
-    }
-    private void spellBuff(string target, string habilete, Carte zeTarget)
-    {
-        int buffVie = 0; int buffAttaque = 0; int buffArmure = 0;
-        char[] pasDeLettres = { '+', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-        char[] pasDeChiffres = { '+', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        string[] sansEspace = habilete.Split(new char[] { ' ' });
-        for (int i = 1; i < sansEspace.Length; i++)
+        bool valide = false; int nbSummon = nbCreatures; int placeDisponnible = 0;
+        for (int i = 0; i < zone.Length; i++)
         {
-            if (sansEspace[i] == "et")
+            if (!zone[i].EstOccupee)
+                placeDisponnible++;
+        }
+        if (nbSummon > placeDisponnible)
+            nbSummon = placeDisponnible;
+
+        //Créer les summons
+        return !valide;
+    }
+    private bool spellBurn(string target, int nbDegat, Carte zeTarget, GameObject t, int posTarget)
+    {
+        bool valide = false;
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+            valide = true;
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+                if (zeTarget.perm.TypePerm == "Batiment")
+                    valide = true;
+
+        if (valide)
+        {
+            if ((zeTarget.perm.Armure - nbDegat) >= 0)
+                zeTarget.perm.Armure -= nbDegat;
+            else
             {
-                string buffHabilete = sansEspace[i + 1];
+                int difference = nbDegat - zeTarget.perm.Armure;
+                zeTarget.perm.Armure = 0;
+                zeTarget.perm.Vie -= difference;
+                if (zeTarget.perm.Vie <= 0)
+                {
+                    Destroy(t, 1);
+                    Jouer.ZoneCombatEnnemie[posTarget].EstOccupee = false;
+                    Jouer.ZoneCombatEnnemie[posTarget].carte = null;
+                    zeTarget = null;
+                }
             }
-            else if (sansEspace[i][0] == '+')
+
+            if (t != null && zeTarget != null)
             {
-                string nombre = sansEspace[i].Trim(pasDeLettres);
-                string attribut = sansEspace[i].Trim(pasDeChiffres);
-                if (attribut == "pV")
-                    buffVie = int.Parse(nombre);
-                else if (attribut == "pAtt")
-                    buffAttaque = int.Parse(nombre);
-                else if (attribut == "pArm")
-                    buffArmure = int.Parse(nombre);
+                TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+                stat[3].text = zeTarget.perm.Armure.ToString();
+                stat[5].text = zeTarget.perm.Vie.ToString();
             }
         }
+        return !valide;
     }
+    private bool spellHeal(string target, int nbVie, Carte zeTarget, GameObject t, int posTarget)
+    {
+        bool valide = false;
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+            valide = true;
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+                if (zeTarget.perm.TypePerm == "Batiment")
+                    valide = true;
 
+        if ((zeTarget.perm.Vie + nbVie) >= zeTarget.perm.basicVie)
+            zeTarget.perm.Vie = zeTarget.perm.basicVie;
+        else
+            zeTarget.perm.Vie += nbVie;
+
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+            stat[5].text = zeTarget.perm.Vie.ToString();
+
+        return !valide;
+    }
+    private bool spellSleep(string target, int nbTour, Carte zeTarget, GameObject t, int posTarget)
+    {
+        bool valide = false;
+        if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+
+        if (valide)
+        {
+            zeTarget.perm.estEndormi = nbTour;
+
+            //EnvoyerCarte(connexionServeur.sck, zeTarget);
+        }
+
+        return !valide;
+    }
+    private bool spellDestroy(string target, Carte zeTarget, GameObject t, int posTarget)
+    {
+        bool valide = false;
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+            valide = true;
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+                if (zeTarget.perm.TypePerm == "Batiment")
+                    valide = true;
+        if (valide)
+        {
+            Destroy(t, 1);
+            Jouer.ZoneCombatEnnemie[posTarget].EstOccupee = false;
+            zeTarget = null;
+        }
+        return !valide;
+    }
+    private bool spellTransform(string target, int[] stats, Carte zeTarget, GameObject t, int posTarget)
+    {
+        //Vie attaque armure
+        ////////////////////
+
+        bool valide = false;
+        if (target == "cible")
+            valide = true;
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+        if (valide)
+        {
+            zeTarget.perm.Vie = stats[0];
+            zeTarget.perm.Attaque = stats[1];
+            zeTarget.perm.Armure = stats[2];
+        }
+
+        if (t != null)
+        {
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+            stat[3].text = zeTarget.perm.Armure.ToString();
+            stat[4].text = zeTarget.perm.Attaque.ToString();
+            stat[5].text = zeTarget.perm.Vie.ToString();
+        }
+
+        return !valide;
+    }
+    private bool spellBuff(string target, Carte zeTarget, GameObject t, int posTarget)
+    {
+        bool valide = false;
+        string buffHabilete = "";
+        int buffVie = 0; int buffAttaque = 0; int buffArmure = 0;
+        if (target == "cible")
+            valide = true;
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesalliees")
+            if (zeTarget.perm.TypePerm == "Creature")
+                valide = true;
+        if (valide)
+        {
+            for (int i = 1; i < Jouer.texteHabileteSansEspace.Length; i++)
+            {
+                if (Jouer.texteHabileteSansEspace[i] == "et")
+                {
+                    if (Jouer.texteHabileteSansEspace[i + 2] == "double" || Jouer.texteHabileteSansEspace[i + 2] == "puissante")
+                        buffHabilete = Jouer.texteHabileteSansEspace[i + 1] + ' ' + Jouer.texteHabileteSansEspace[i + 2];
+                    else
+                        buffHabilete = Jouer.texteHabileteSansEspace[i + 1];
+                }
+                else if (Jouer.texteHabileteSansEspace[i][0] == '+')
+                {
+                    if (Jouer.texteHabileteSansEspace[i + 1] == "pV")
+                        buffVie = int.Parse(Jouer.texteHabileteSansEspace[i].Split(new char[] { '+' })[1]);
+                    else if (Jouer.texteHabileteSansEspace[i + 1] == "pAtt")
+                        buffAttaque = int.Parse(Jouer.texteHabileteSansEspace[i].Split(new char[] { '+' })[1]);
+                    else if (Jouer.texteHabileteSansEspace[i + 1] == "pArm")
+                        buffArmure = int.Parse(Jouer.texteHabileteSansEspace[i].Split(new char[] { '+' })[1]);
+                }
+            }
+
+            zeTarget.perm.Vie += buffVie;
+            zeTarget.perm.basicVie += buffVie;
+            zeTarget.perm.Attaque += buffAttaque;
+            zeTarget.perm.basicAttaque += buffAttaque;
+            zeTarget.perm.Armure += buffArmure;
+            zeTarget.perm.basicArmor += buffArmure;
+            if (buffHabilete == "provocateur")
+            {
+                if(!zeTarget.perm.estInvisible)
+                    zeTarget.perm.estTaunt = true;
+            }
+            else if (buffHabilete == "attaque puissante")
+            {
+                zeTarget.perm.estAttaquePuisante = true;
+            }
+            else if (buffHabilete == "attaque double")
+            {
+                zeTarget.perm.estAttaqueDouble = true;
+            }
+
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+
+            stat[3].text = zeTarget.perm.Armure.ToString();
+            stat[4].text = zeTarget.perm.Attaque.ToString();
+            stat[5].text = zeTarget.perm.Vie.ToString();
+            stat[7].text = zeTarget.Habilete.ToString();
+        }
+
+        return !valide;
+    }
 
     private bool Selectionable(GameObject style, PosZoneCombat[] Zone)
     {
@@ -143,22 +302,66 @@ public class JouerCarteBoard : MonoBehaviour {
     }
     private string trouverTypeTarget(string[] motsHabilete)
     {
-        string target = "";
-        for (int i = 0; i < motsHabilete.Length; i++)
+        string target = ""; int i = 0;
+        bool pasTrouver = true;
+        while (pasTrouver || i > motsHabilete.Length)
         {
-            if (isTarget(motsHabilete[i]))
+            if (motsHabilete[i] == "cible" || motsHabilete[i] == "creature" || motsHabilete[i] == "batiment" || motsHabilete[i] == "ennemis")
             {
-                if (motsHabilete[i] == "toutes" && motsHabilete[i + 1] == "les" && motsHabilete[i + 2] == "créatures")
-                    target = "toutes les créatures";
-                else if (motsHabilete[i] == "tous" && motsHabilete[i + 1] == "les" && motsHabilete[i + 2] == "ennemis")
-                    target = "tous les ennemis";
-                else if (motsHabilete[i] == "toutes" && motsHabilete[i + 1] == "vos" && motsHabilete[i + 2] == "créatures")
-                    target = "toutes vos créatures";
-                else
-                    target = motsHabilete[i];
+                target = motsHabilete[i];
+                pasTrouver = false;
             }
+            else if (motsHabilete[i] == "vos")
+            {
+                if (motsHabilete[i + 1] == "creatures" || motsHabilete[i + 1] == "batiments" || motsHabilete[i + 1] == " cartes")
+                {
+                    target = motsHabilete[i] + motsHabilete[i + 1];
+                    pasTrouver = false;
+                }
+            }
+            else if (motsHabilete[i] == "toutes")
+            {
+                if (motsHabilete[i + 1] == "les" && (motsHabilete[i + 2] == "cartes" || motsHabilete[i + 2] == "creatures"))
+                {
+                    if (i+3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemis" || motsHabilete[i+3] == "alliees"))
+                    {
+                        target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2] + motsHabilete[i + 3];
+                        pasTrouver = false;
+                    }
+                    else
+                    {
+                        target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2];
+                        pasTrouver = false;
+                    }
+                }
+            }
+            else if (motsHabilete[i] == "tous")
+            {
+                if (motsHabilete[i + 1] == "les" && motsHabilete[i + 2] == "batiments")
+                {
+                    target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2];
+                    pasTrouver = false;
+                }
+            }
+            else if (motsHabilete[i] == "heros")
+            {
+                if (motsHabilete[i + 1] == "ennemi")
+                {
+                    target = motsHabilete[i] + motsHabilete[i + 1];
+                    pasTrouver = false;
+                }
+            }
+            else if (motsHabilete[i] == "place")
+            {
+                if (motsHabilete[i + 1] == "de" && motsHabilete[i + 2] == "combat")
+                {
+                    target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2];
+                    pasTrouver = false;
+                }
+            }
+            ++i;
         }
-            return target;
+        return target;
     }
     private int trouverNbDegat(string[] motsHabilete)
     {
@@ -191,10 +394,10 @@ public class JouerCarteBoard : MonoBehaviour {
     {
         //Transforme votre cible en 0/1/0
         //Invoque 2 singes 1/0/0
-        int[] stats = {0,0,0};
+        int[] stats = { 0, 0, 0 };
         int vie = 0; int attaque = 0; int armure = 0;
 
-        string[] tabStat = motsHabilete[motsHabilete.Length - 1].Split(new char[] {'/'});
+        string[] tabStat = motsHabilete[motsHabilete.Length - 1].Split(new char[] { '/' });
         vie = int.Parse(tabStat[0]); attaque = int.Parse(tabStat[1]); armure = int.Parse(tabStat[2]);
         stats[0] = vie; stats[1] = attaque; stats[2] = armure;
 
@@ -211,7 +414,7 @@ public class JouerCarteBoard : MonoBehaviour {
     private string trouverTypeEffet(string[] motsHabilete)
     {
         string effet = "";
-        
+
         for (int i = 0; i < motsHabilete.Length; i++)
         {
             if (isEffet(motsHabilete[i]))
@@ -221,38 +424,153 @@ public class JouerCarteBoard : MonoBehaviour {
         }
         return effet;
     }
-    private void trouverHabilite(string zHabilete)
-    {
-        string[] motsHabilete = zHabilete.Split(new char[] { ' ' });
-        string effet ="";
-        string[] stats = zHabilete.Split(new char[] { '+' });
-        effet = trouverTypeEffet(motsHabilete);
-    }
     private bool isEffet(string mot)
     {
-        return mot == "invoque" || mot == "dégat" || mot == "dégats" || mot == "soigne" || mot == "endort" || mot == "transforme" || mot == "donne";
+        return mot == "Invoque" || mot == "Inflige" || mot == "Soigne" || mot == "Endort" || mot == "Transforme" || mot == "Donne" || mot == "Detruit";
     }
-    private bool isTarget(string mot)
-    {        // une seul target ----- Héros ---- Créatures et batiments--------Créatures---------Bâtiments--------T
-        return mot == "cible" || mot == "héros" || mot == "cartes" || mot == "créature" || mot == "bâtiment" || mot == "toutes" ;
-    }
-    private bool isEnnemis(string mot)
+    private bool isEnnemi(string mot)
     {
-        return mot == "dégat" || mot == "endort" || mot == "transforme";
+        return mot == "Inflige" || mot == "Endort" || mot == "Transforme" || mot == "Detruit";
     }
     private bool isATargetNeeded(string mot)
     {
-        return mot == "cible" || mot == "créature" || mot == "bâtiment";
+        return mot == "cible" || mot == "creature" || mot == "batiment";
+    }
+    private bool isOnBothPlayers(string target)
+    {
+        return target == "touteslescartes" || target == "touteslescreatures" || target == "touslesbatiments" || target == "placedecombat";
+    }
+    private bool healHeros(string quelJoueur, int nbVie)
+    {
+        Script_Jouer = GetComponent<Jouer>();
+        if (quelJoueur == "Allier")
+        {
+            if (Jouer.HpJoueur + nbVie >= 30)
+                Jouer.HpJoueur = 30;
+            else
+                Jouer.HpJoueur += nbVie;
+        }
+        else
+        {
+            if (Jouer.HpEnnemi + nbVie >= 30)
+                Jouer.HpEnnemi = 30;
+            else
+                Jouer.HpEnnemi += nbVie;
+        }
+        return true;
+    }
+    public bool burnHeros(string quelJoueur, int nbDegat)
+    {
+        Script_Jouer = GetComponent<Jouer>();
+        if (quelJoueur == "Allier")
+            Jouer.HpJoueur -= nbDegat;
+        else
+            Jouer.HpEnnemi -= nbDegat;
+        return true;
+    }
+    public bool isOnHeros(string target)
+    {
+        return target == "placedecombat" || target == "touslesennemis";
+    }
+    public bool isOnBothHeros(string target)
+    {
+        return target == "placedecombat";
+    }
+    public bool spellCreaturesBothSides(string target)
+    {
+        return target == "touteslescreature";
     }
 
-    void OnMouseDown(){
+    void OnMouseDown()
+    {
+        Jouer.target = null;
         int Emplacement = 0;
-        if (Cout[8].text == "Sort" && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+        int posTarget;
+        if(Jouer.enTrainCaster)
         {
-            bool targetNeeded = false;
-            string effet = "";
-            string spellTarget = "";
-            string[] texteHabiliteSansEspace;
+            if (Jouer.targetNeeded)
+            {
+                
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit carte;
+                if (Physics.Raycast(ray, out carte))
+                {
+                    Jouer.target = GameObject.Find(carte.collider.gameObject.name);
+                    
+                    if(Jouer.target != null && (Jouer.target.name == "hero ennemis" || Jouer.target.name == "hero"))
+                    {
+                        if (Jouer.effet == "Inflige")
+                        {
+                            if (Jouer.target.name == "hero ennemis")
+                                Jouer.enTrainCaster = burnHeros("Ennemi", trouverNbDegat(Jouer.texteHabileteSansEspace));
+                            else
+                                Jouer.enTrainCaster = burnHeros("Allier", trouverNbDegat(Jouer.texteHabileteSansEspace));
+                        }
+                        else if(Jouer.effet == "Soigne")
+                        {
+                            if (Jouer.target.name == "hero")
+                                Jouer.enTrainCaster = healHeros("Allier", trouverNbVie(Jouer.texteHabileteSansEspace));
+                            else
+                                Jouer.enTrainCaster = healHeros("Ennemi", trouverNbVie(Jouer.texteHabileteSansEspace));
+                        }
+                    }
+                    /*permanents car est sur le board*/
+                    
+                    else
+                    {
+                        if (! isEnnemi(Jouer.effet))
+                        {
+                            posTarget = TrouverEmplacementCarteJoueur(Jouer.target.transform.position, Jouer.ZoneCombat);
+                            Jouer.carteTarget = Jouer.ZoneCombat[posTarget].carte;
+
+                            if (TrouverEmplacementCarteJoueur(Jouer.target.transform.position, Jouer.ZoneCombat) != -1)
+                            {
+                                if (Jouer.effet == "Soigne")
+                                    Jouer.enTrainCaster = spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[posTarget].carte, Jouer.target, posTarget);
+                                else if (Jouer.effet == "Donne")
+                                    Jouer.enTrainCaster = spellBuff(Jouer.spellTarget, Jouer.ZoneCombat[posTarget].carte, Jouer.target, posTarget);
+                            }
+                        }
+                        else
+                        {
+                            if (TrouverEmplacementCarteJoueur(Jouer.target.transform.position, Jouer.ZoneCombatEnnemie) != -1)
+                            {
+                                posTarget = TrouverEmplacementCarteJoueur(Jouer.target.transform.position, Jouer.ZoneCombatEnnemie);
+                                Jouer.carteTarget = Jouer.ZoneCombatEnnemie[posTarget].carte;
+
+                                if (Jouer.effet == "Inflige")
+                                    Jouer.enTrainCaster = spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte, Jouer.target, posTarget);
+                                else if (Jouer.effet == "Endort")
+                                    Jouer.enTrainCaster = spellSleep(Jouer.spellTarget, trouverNbTour(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte, Jouer.target, posTarget);
+                                else if (Jouer.effet == "Transforme")
+                                    Jouer.enTrainCaster = spellTransform(Jouer.spellTarget, trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte, Jouer.target, posTarget);
+                                else if (Jouer.effet == "Detruit")
+                                    Jouer.enTrainCaster = spellDestroy(Jouer.spellTarget, Jouer.ZoneCombatEnnemie[posTarget].carte, Jouer.target, posTarget);
+                            }
+                        }
+                    }
+                }
+                if (!Jouer.enTrainCaster)
+                {
+                    Destroy(Jouer.spell,1);
+                    envoyerMessage("Jouer spellTarget." + Jouer.spell.name +"." + Jouer.target.name);
+                    wait(1);
+                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                    wait(1);
+                    if (Jouer.target.name != "hero ennemis" || Jouer.target.name != "hero")
+                        EnvoyerCarte(connexionServeur.sck, Jouer.carteTarget);
+
+                    Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
+                    Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
+                    Jouer.spell = null;
+                }
+            }
+        }
+        else if ((this.tag != "hero" || this.tag != "hero ennemis") && !Jouer.enTrainCaster && Cout[8].text == "Sort" && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+        {
+            Jouer.targetNeeded = false;
+            Jouer.effet = "";
+            Jouer.spellTarget = "";
             Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.joueur1.nbGem -= System.Int32.Parse(Cout[2].text);
@@ -260,126 +578,140 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.NbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
-
-            spell = this.gameObject;
-            int pos = TrouverEmplacementCarteJoueur(this.transform.position,Jouer.ZoneCarteJoueur);
+            Jouer.texteHabileteSansEspace = Cout[7].text.Split(new char[] { ' ' });
+            Jouer.isEnnemi = isEnnemi(Jouer.texteHabileteSansEspace[0]);
+            Jouer.spell = this.gameObject;
+            Jouer.position = TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur);
             this.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
-            EstJouer=true;
-            Jouer.ZoneCarteJoueur[pos].EstOccupee=false;
+            EstJouer = true;
+            Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
             //Split
-            texteHabiliteSansEspace = Cout[7].text.Split(new char[] { ' ' });
+            Jouer.texteHabileteSansEspace = Cout[7].text.Split(new char[] { ' ' });
             //effet habilité
-            effet = trouverTypeEffet(Cout[7].text.Split(new char[] { ' ' }));
+            Jouer.effet = trouverTypeEffet(Cout[7].text.Split(new char[] { ' ' }));
             //target qui recoit le spell
-            spellTarget = trouverTypeTarget(Cout[7].text.Split(new char[] { ' ' }));
+            Jouer.spellTarget = trouverTypeTarget(Cout[7].text.Split(new char[] { ' ' }));
 
-            if (isATargetNeeded(trouverTypeTarget(texteHabiliteSansEspace)))
-                targetNeeded = true;
+            if (isATargetNeeded(trouverTypeTarget(Jouer.texteHabileteSansEspace)))
+                Jouer.targetNeeded = true;
             else
-                targetNeeded = false;
+                Jouer.targetNeeded = false;
 
-            if(targetNeeded)
+            if(!Jouer.targetNeeded)
             {
-                bool targetTrouve = false;
-                int posTarget;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit carte;
-                while(!targetTrouve)
+                if (Jouer.effet == "Inflige")
                 {
-                    if (Physics.Raycast(ray, out carte) && Selectionable(GameObject.Find(carte.collider.gameObject.name), Jouer.ZoneCombat))
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
-                        target = GameObject.Find(carte.collider.gameObject.name);
-                        if (isEnnemis(texteHabiliteSansEspace[0]))
-                            posTarget = TrouverEmplacementCarteJoueur(target.transform.position, Jouer.ZoneCombatEnnemie);
-                        else
-                            posTarget = TrouverEmplacementCarteJoueur(target.transform.position, Jouer.ZoneCombat);
-                        /*permanents car est sur le board*/
-                        if (posTarget != -1)
+                        if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                            spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                        if (isOnBothPlayers(Jouer.spellTarget))
                         {
+                            if (Jouer.ZoneCombat[i].carte != null)
+                                spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        }
+                    }
+                    if (isOnHeros(Jouer.spellTarget))
+                    {
+                        burnHeros("Ennemi", trouverNbDegat(Jouer.texteHabileteSansEspace));
+                        if (isOnBothHeros(Jouer.spellTarget))
+                            burnHeros("Allier", trouverNbDegat(Jouer.texteHabileteSansEspace));
+                    }
+                }
+                else if (Jouer.effet == "Invoque")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                        spellSummon(Jouer.spellTarget, trouverNbSummon(Jouer.texteHabileteSansEspace), trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat);
+                }
+                else if (Jouer.effet == "Endort")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    {
+                        if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                            spellSleep(Jouer.spellTarget, trouverNbTour(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                        if (spellCreaturesBothSides(Jouer.spellTarget))
+                        {
+                            if (Jouer.ZoneCombat[i].carte != null)
+                                spellSleep(Jouer.spellTarget, trouverNbTour(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        }
+                               
+                    }
+                }
+                else if (Jouer.effet == "Transforme")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    {
+                        if(Jouer.ZoneCombatEnnemie[i].carte != null)
+                            spellTransform(Jouer.spellTarget, trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                        if(isOnBothPlayers(Jouer.spellTarget))
+                        {
+                            if (Jouer.ZoneCombat[i].carte != null)
+                                spellTransform(Jouer.spellTarget, trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        }
+                        
+                    }
+                }
+                else if (Jouer.effet == "Detruit")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    {
+                        if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                            spellDestroy(Jouer.spellTarget, Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                        if (isOnBothPlayers(Jouer.spellTarget))
+                        {
+                            if (Jouer.ZoneCombat[i].carte != null)
+                                spellDestroy(Jouer.spellTarget, Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        }
+                    }
+                }
+                else if (Jouer.effet == "Soigne")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    {
+                        if (Jouer.ZoneCombat[i].carte != null)
+                            spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace) ,Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        if (isOnBothPlayers(Jouer.spellTarget))
+                        {
+                            if(Jouer.ZoneCombatEnnemie[i].carte != null)
+                                spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
 
-                            if (effet == "Infliger")
-                                spellBurn(spellTarget, trouverNbDegat(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                            else if (effet == "Endort")
-                                spellSleep(spellTarget, trouverNbTour(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                            else if (effet == "Transforme")
-                                spellTransform(spellTarget, trouverStats(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                            else if (effet == "Détruit")
-                                spellDestroy(spellTarget, Jouer.ZoneCombatEnnemie[posTarget].carte);
-                            else if (effet == "Soigne")
-                                spellHeal(spellTarget, trouverNbVie(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                            targetTrouve = true;
-                        }
-                        //burn
-                        else if (gameObject.name == "hero ennemis")
-                        {
-                            if (effet == "Inflige")
+                            if (isOnHeros(Jouer.spellTarget))
                             {
-                                spellBurn(spellTarget, trouverNbDegat(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                                targetTrouve = true;
-                            }
-                        }
-                        //heal
-                        else if (gameObject.name == "hero") 
-                        {
-                            if (effet == "Soigne")
-                            {
-                                spellHeal(spellTarget, trouverNbVie(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[posTarget].carte);
-                                targetTrouve = true;
+                                healHeros("Allier", trouverNbVie(Jouer.texteHabileteSansEspace));
+                                if (isOnBothHeros(Jouer.spellTarget))
+                                    healHeros("Ennemi", trouverNbVie(Jouer.texteHabileteSansEspace));
                             }
                         }
                     }
                 }
+                else if(Jouer.effet == "Donne")
+                {
+                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    {
+                        if (Jouer.ZoneCombat[i].carte != null)
+                            spellBuff(Jouer.spellTarget, Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                        if (isOnBothPlayers(Jouer.spellTarget))
+                        {
+                            if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                                spellBuff(Jouer.spellTarget, Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                        }
+                    }
+                }
             }
+            if (Jouer.targetNeeded)
+                Jouer.enTrainCaster = true;
             else
             {
-                
-                if (effet == "Infliger")
-                {
-                    for(int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellBurn(spellTarget, trouverNbDegat(texteHabiliteSansEspace), Jouer.ZoneCombatEnnemie[i].carte);
-                }
-                    
-                else if (effet == "Invoque")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellSummon(spellTarget, trouverNbSummon(texteHabiliteSansEspace), trouverStats(texteHabiliteSansEspace));
-                }
-                    
-                else if (effet == "Endort")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellSleep(spellTarget, trouverNbTour(texteHabiliteSansEspace), Jouer.ZoneCombat[i].carte);
-                }
-                    
-                else if (effet == "Transforme")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellTransform(spellTarget, trouverStats(texteHabiliteSansEspace), Jouer.ZoneCombat[i].carte);
-                }
-                    
-                else if (effet == "Détruit")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellDestroy(spellTarget, Jouer.ZoneCombat[i].carte);
-                }
-                    
-                else if (effet == "Soigne")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellHeal(spellTarget, trouverNbVie(texteHabiliteSansEspace), Jouer.ZoneCombat[i].carte);
-                }
-                    
-
+                Destroy(Jouer.spell, 1);
+                envoyerMessage("Jouer spellnotarget." + Jouer.spell.name);
+                wait(1);
+                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
+                Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
+                Jouer.spell = null;
             }
-
-            envoyerMessage("Jouer Carte." + this.name);
-            wait(1);
-            EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[pos].carte);
-            Jouer.ZoneCarteJoueur[pos].carte = null;
-
-
         }
-        else if (getNbCarteZone(Jouer.ZoneCombat)<Jouer.ZoneCombat.Length&&Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+        else if ((this.tag != "hero" || this.tag != "hero ennemis") && !Jouer.enTrainCaster && getNbCarteZone(Jouer.ZoneCombat) < Jouer.ZoneCombat.Length && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
             Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
@@ -390,69 +722,69 @@ public class JouerCarteBoard : MonoBehaviour {
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
             //if (Cout[8].text != "Sort")
             //{
-                int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
-                Vector3 temp = this.transform.position;
-                this.transform.position = Jouer.ZoneCombat[PlacementZoneCombat].Pos;
-                EstJouer = true;
-                Emplacement = TrouverEmplacementCarteJoueur(temp, Jouer.ZoneCarteJoueur);
-                if (Emplacement != -1)
+            int PlacementZoneCombat = Jouer.TrouverOuPlacerCarte(Jouer.ZoneCombat);
+            Vector3 temp = this.transform.position;
+            this.transform.position = Jouer.ZoneCombat[PlacementZoneCombat].Pos;
+            EstJouer = true;
+            Emplacement = TrouverEmplacementCarteJoueur(temp, Jouer.ZoneCarteJoueur);
+            if (Emplacement != -1)
+            {
+                Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
+                Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
+                Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
+                Jouer.ZoneCarteJoueur[Emplacement].carte = null;
+                Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
+                if (Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
                 {
-                    Jouer.ZoneCarteJoueur[Emplacement].EstOccupee = false;
-                    Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = true;
-                    Jouer.ZoneCombat[PlacementZoneCombat].carte = Jouer.ZoneCarteJoueur[Emplacement].carte;
-                    Jouer.ZoneCarteJoueur[Emplacement].carte = null;
-                    Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
-                    if (Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
+                    string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
+                    if (zeSpecialHability[0] == "Donne")
                     {
-                        string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
-                        if (zeSpecialHability[0] == "Donne")
-                        {
-                            setStatbonus(zeSpecialHability);
-                            setStat(Jouer.ZoneCombat,PlacementZoneCombat);
-                        }
-                        else if (zeSpecialHability[0] == "Ajoute")
-                            setManaBonus(zeSpecialHability);
+                        setStatbonus(zeSpecialHability);
+                        setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                     }
-                    else
-                    {
-                        setStat(Jouer.ZoneCombat,PlacementZoneCombat);
-                    }
-                    envoyerMessage("Jouer Carte." + this.name);
-                    wait(1);
-                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
+                    else if (zeSpecialHability[0] == "Ajoute")
+                        setManaBonus(zeSpecialHability);
                 }
+                else
+                {
+                    setStat(Jouer.ZoneCombat, PlacementZoneCombat);
+                }
+                envoyerMessage("Jouer Carte." + this.name);
+                wait(1);
+                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
+            }
             //}
             //else
             //{
-                /*faire habileté de la carte*/
+            /*faire habileté de la carte*/
 
-                /*détruire la carte*/
-                //Destroy(this);
+            /*détruire la carte*/
+            //Destroy(this);
             //}
         }
-	}
-    private void enleverBonusStat(string [] data)
+    }
+    private void enleverBonusStat(string[] data)
     {
         int num = getNumBonus(data[1]);
         string sorteAttaque = data[2];
-        enevlerStat(Jouer.ZoneCombat,sorteAttaque,num);
+        enevlerStat(Jouer.ZoneCombat, sorteAttaque, num);
     }
-    private void enevlerStat(PosZoneCombat[] zone, string stat,int valeur)
+    private void enevlerStat(PosZoneCombat[] zone, string stat, int valeur)
     {
         if (stat == "pV")
             Jouer.vieBonus -= valeur;
         else if (stat == "pAtt")
             Jouer.attaqueBonus -= valeur;
         else if (stat == "pArm")
-            Jouer.armureBonus -= valeur;        
+            Jouer.armureBonus -= valeur;
     }
     private void setStatbonus(string[] data)
     {
         int num = getNumBonus(data[1]);
         string sorteAttaque = data[2];
-        setBonusStat(Jouer.ZoneCombat,sorteAttaque,num);
+        setBonusStat(Jouer.ZoneCombat, sorteAttaque, num);
     }
-    private void setBonusStat(PosZoneCombat[] zone, string stat,int valeur)
+    private void setBonusStat(PosZoneCombat[] zone, string stat, int valeur)
     {
         if (stat == "pV")
             Jouer.vieBonus += valeur;
@@ -461,15 +793,15 @@ public class JouerCarteBoard : MonoBehaviour {
         else if (stat == "pArm")
             Jouer.armureBonus += valeur;
     }
-    private void setStat(PosZoneCombat[] zone,int pos)
+    private void setStat(PosZoneCombat[] zone, int pos)
     {
-        GameObject temp=null;
-        if(Jouer.ZoneCombat[pos].carte != null)
-           temp = getGameObjet(Jouer.styleCarteAllier, zone, pos);
+        GameObject temp = null;
+        if (Jouer.ZoneCombat[pos].carte != null)
+            temp = getGameObjet(Jouer.styleCarteAllier, zone, pos);
         if (temp != null)
-            setStats(temp,zone[pos].carte,Jouer.attaqueBonus,Jouer.armureBonus,Jouer.vieBonus);
+            setStats(temp, zone[pos].carte, Jouer.attaqueBonus, Jouer.armureBonus, Jouer.vieBonus);
     }
-    private void setStats(GameObject a,Carte c,int attaqueB,int armureB,int vieB)
+    private void setStats(GameObject a, Carte c, int attaqueB, int armureB, int vieB)
     {
         TextMesh[] stat = a.GetComponentsInChildren<TextMesh>();
         c.perm.Armure += armureB;
@@ -483,9 +815,9 @@ public class JouerCarteBoard : MonoBehaviour {
         stat[5].text = c.perm.Vie.ToString();
 
     }
-    private GameObject getGameObjet(GameObject[] tab, PosZoneCombat[] carte,int pos)
-    { 
-        for(int i=0;i<tab.Length;++i)
+    private GameObject getGameObjet(GameObject[] tab, PosZoneCombat[] carte, int pos)
+    {
+        for (int i = 0; i < tab.Length; ++i)
         {
             if (tab[i] != null && tab[i].transform.position.Equals(carte[pos].Pos))
                 return tab[i].gameObject;
@@ -517,7 +849,8 @@ public class JouerCarteBoard : MonoBehaviour {
     {
         yield return new WaitForSeconds(i);
     }
-	void OnMouseOver(){
+
+    void OnMouseOver(){
         delay += Time.deltaTime;
         //// here the 2 is the time that you want before load the bar
         if(delay >=1f && cloneCarte == null &&  !estClone){
@@ -530,7 +863,7 @@ public class JouerCarteBoard : MonoBehaviour {
             cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
            //changer de position
             cloneCarte.transform.position = new Vector3(6.5f,-0.5f, 1);
-        }
+         }
 	}
 
 	void OnMouseExit(){
@@ -539,7 +872,7 @@ public class JouerCarteBoard : MonoBehaviour {
         {
             Destroy(cloneCarte);
         }
-	}
+       }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
