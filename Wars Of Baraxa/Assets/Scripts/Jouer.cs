@@ -17,9 +17,9 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    public bool gameFini = false;
-    public bool  EstGagnant = false;
-    public bool  EstPerdant = false;
+    static public bool  gameFini = false;
+    static public bool  EstGagnant = false;
+    static public bool  EstPerdant = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -187,7 +187,6 @@ public class Jouer : MonoBehaviour
             }
         }
             return temp;
->>>>>>> origin/master
     }
     void OnDestroy()
     {
@@ -522,7 +521,7 @@ public class Jouer : MonoBehaviour
         {
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
-            if (!gameFini && ReceiveMessage.message=="")
+            if (!gameFini && ReceiveMessage.message == "")
             {
                 if (t == null || !t.IsAlive)
                 {
@@ -532,6 +531,7 @@ public class Jouer : MonoBehaviour
             }
             attaque s = GetComponent<attaque>();
             s.enabled = false;
+            if (ReceiveMessage.message != "")
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
         }
     }
@@ -563,6 +563,12 @@ public class Jouer : MonoBehaviour
     {
         switch (data[0])
         {
+            case "JePart":
+                HpEnnemi = 0;
+                gameFini = true;
+                EstGagnant = true;
+                ReceiveMessage.message = "";
+            break;
             case "AjouterManaEnnemis":
                 setManaEnnemis(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
                 ReceiveMessage.message = "";
@@ -885,16 +891,15 @@ public class Jouer : MonoBehaviour
                 ReceiveMessage.message = "";
                 break;
 
-        }
             case "Carte manquante":
                 HpEnnemi = 0;
                 gameFini = true;
                 break;
-        //}
-        if (data[0] == "Carte manquante")
-        {
-            EstGagnant = true;
         }
+            if (data[0] == "Carte manquante")
+            {
+                EstGagnant = true;
+            }
     }
 
     private void checkIfDmgHeroes(string typeTarget, int dmg)
@@ -1072,9 +1077,6 @@ public class Jouer : MonoBehaviour
         return valide;
 
     }
-=======
-
->>>>>>> origin/master
     private GameObject trouverBackCard()
     {
         GameObject game = null;
@@ -1225,7 +1227,7 @@ public class Jouer : MonoBehaviour
 
     private void PigerCarte()
     {
-        NbCarteEnMainJoueur = 0;v
+        NbCarteEnMainJoueur = 0;
 	//compte le nombre de carte en main
         for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
         {
