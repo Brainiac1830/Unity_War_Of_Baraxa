@@ -63,7 +63,12 @@ public class menu_Script : MonoBehaviour
             {
                 Application.LoadLevel("Profile");
             }
-            if (GUI.Button(new Rect((Screen.width / 2) - (Screen.width * 0.3f / 2), Screen.height * 0.67f, Screen.width * 0.3f, Screen.height * 0.05f), "Quitter", test))
+            if (GUI.Button(new Rect((Screen.width / 2) - (Screen.width * 0.3f / 2), Screen.height * 0.67f, Screen.width * 0.3f, Screen.height * 0.05f), "deconnection", test))
+            {
+                envoyerMessage("RetourMenu");
+                Application.LoadLevel("Connexion");
+            }
+            if (GUI.Button(new Rect((Screen.width / 2) - (Screen.width * 0.3f / 2), Screen.height * 0.77f, Screen.width * 0.3f, Screen.height * 0.05f), "Quitter", test))
             {
                 quitter = true;
             }

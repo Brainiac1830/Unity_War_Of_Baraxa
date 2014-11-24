@@ -17,9 +17,11 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    public static bool gameFini = false;
-    public static bool EstGagnant = false;
-    public bool EstPerdant = false;
+
+    static public bool  gameFini = false;
+    static public bool  EstGagnant = false;
+    static public bool  EstPerdant = false;
+
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -533,6 +535,7 @@ public class Jouer : MonoBehaviour
             }
             attaque s = GetComponent<attaque>();
             s.enabled = false;
+            if (ReceiveMessage.message != "")
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
         }
     }
@@ -564,6 +567,12 @@ public class Jouer : MonoBehaviour
     {
         switch (data[0])
         {
+            case "JePart":
+                HpEnnemi = 0;
+                gameFini = true;
+                EstGagnant = true;
+                ReceiveMessage.message = "";
+            break;
             case "AjouterManaEnnemis":
                 setManaEnnemis(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
                 ReceiveMessage.message = "";
@@ -887,8 +896,6 @@ public class Jouer : MonoBehaviour
 
                 ReceiveMessage.message = "";
                 break;
-
-
             case "Carte manquante":
                 HpEnnemi = 0;
                 gameFini = true;
@@ -1227,6 +1234,7 @@ public class Jouer : MonoBehaviour
     private void PigerCarte()
     {
         NbCarteEnMainJoueur = 0;
+
         //compte le nombre de carte en main
         for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
         {

@@ -8,7 +8,7 @@ public class connexionServeur : MonoBehaviour {
     public static string nom = "allo";
 	// Use this for initialization
 	void Start () {
-        sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        sck = null;
 	}
 	
 	// Update is called once per frame

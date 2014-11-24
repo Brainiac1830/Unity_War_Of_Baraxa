@@ -14,8 +14,8 @@ public class attaque : MonoBehaviour {
     Permanent Defenseur;
     GameObject carteAttaque;
     GameObject carteDefense;
-    int posAllier;
-    int posDefenseur;
+    int posAllier=-1;
+    int posDefenseur=-1;
     Color Normal;
 	// Use this for initialization
 	void Start () {
@@ -43,10 +43,15 @@ public class attaque : MonoBehaviour {
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab) && tab[i].carte.perm.estEndormi == 0)
+            if (tab[i].carte != null && style[i] != null && i == posAllier)
+            {
+                style[i].renderer.material.color = Color.blue;
+            }
+            else if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab) && tab[i].carte.perm.estEndormi == 0)
             {
                 style[i].renderer.material.color = Color.green;
             }
+
             else if (tab[i].carte != null && style[i] != null)
                 style[i].renderer.material.color = Color.white;
         }
@@ -118,6 +123,7 @@ public class attaque : MonoBehaviour {
                 if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature")
                 {
                     AttaquantClick = true;
+                    Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.blue;
                     int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
                     Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);
                     
@@ -160,7 +166,7 @@ public class attaque : MonoBehaviour {
                         Jouer.EstGagnant = true;
                         Jouer.gameFini = true;
                     }
-
+                    posAllier = -1;
                     Attaquant = null;
                 } 
             }
@@ -206,6 +212,8 @@ public class attaque : MonoBehaviour {
             carteAttaque = null;
             Defenseur = null;
             carteDefense = null;
+            posAllier = -1;
+            posDefenseur = -1;
             audio.PlayOneShot(Attack);
         }      
     }

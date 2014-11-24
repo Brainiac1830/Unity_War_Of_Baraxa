@@ -58,6 +58,8 @@ public class JouerCarteBoard : MonoBehaviour
                     }
                 }
             }
+            if (cloneCarte != null)
+                Destroy(cloneCarte);
         }
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
