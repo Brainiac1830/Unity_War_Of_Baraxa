@@ -121,9 +121,9 @@ public class script_TestingShit : MonoBehaviour {
 			totalRotation = 0;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Escape)){
+		/*if (Input.GetKeyDown(KeyCode)){
 			tourne = true;
-		}
+		}*/
 	}
 
 	public void turnOffText()

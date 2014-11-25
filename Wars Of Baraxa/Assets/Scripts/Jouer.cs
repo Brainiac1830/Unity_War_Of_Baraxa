@@ -14,6 +14,7 @@ using warsofbaraxa;
 public class Jouer : MonoBehaviour
 {
     //variable
+    bool menu=false;
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
@@ -409,6 +410,17 @@ public class Jouer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (menu)
+            {
+                menu = false;
+            }
+            else
+            {
+                menu = true;
+            }
+        }
     }
     //affichage (refresh per frame)
     public void OnGUI()
@@ -422,7 +434,24 @@ public class Jouer : MonoBehaviour
 	//Héro Ennemi
         GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.001f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpEnnemi.ToString());
         GUI.Label(new Rect(Screen.width * 0.90f, Screen.height * 0.03f, Screen.width * 1.0f, Screen.height * 1.0f), "Nombre de carte: " + nbCarteEnnemis.ToString());
+        if(menu)
+        {
+            GUIBox.fontSize = Screen.width / 30;
+            GUIButton.fontSize = Screen.width / 40;
+            GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.17f, Screen.height * 0.30f), "", GUIBox);
+            GUI.Label(new Rect(Screen.width * 0.4f, Screen.height * 0.385f, Screen.width * 0.005f, Screen.height * 0.005f), "Menu",GUIButton);
+            if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.43f, Screen.width * 0.14f, Screen.height * 0.07f), "Abandonner", GUIButton))
+            {
+                gameFini = true;
+                EstPerdant = true;
+                envoyerMessage("surrender");
+            }
 
+            if (GUI.Button(new Rect(Screen.width * 0.36f, Screen.height * 0.53f, Screen.width * 0.15f, Screen.height * 0.07f), "Retour au jeu", GUIButton))
+            {
+                menu = false;
+            }            
+        }
         if(gameFini)
         {
             GUIBox.fontSize = Screen.width / 25;
@@ -432,6 +461,8 @@ public class Jouer : MonoBehaviour
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné!", GUIBox);
                 if (GUI.Button(new Rect((Screen.width * 0.45f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
+                    envoyerMessage("asd");
+                    t.Abort();
                     Application.LoadLevel("Menu");
                 }
             }
@@ -440,6 +471,8 @@ public class Jouer : MonoBehaviour
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu!", GUIBox);
                 if (GUI.Button(new Rect((Screen.width * 0.45f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
+                    envoyerMessage("asd");
+                    t.Abort();
                     Application.LoadLevel("Menu");
                 }
             }
@@ -454,6 +487,7 @@ public class Jouer : MonoBehaviour
                 MonTour = false;
                 resetArmor(ZoneCombat,styleCarteAlliercombat,true);
                 resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
+                pigerCarteEnnemis();
             }
         }
         else
@@ -518,8 +552,6 @@ public class Jouer : MonoBehaviour
             GUI.Label(new Rect(Screen.width / 1.3f, Screen.height / 1.26f, Screen.width * 0.25f, Screen.height * 0.10f), Worker);
             GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Worker: " + NbWorker.ToString());
         }
-        if (!MonTour)
-        {
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
             if (!gameFini && ReceiveMessage.message == "")
@@ -530,11 +562,10 @@ public class Jouer : MonoBehaviour
                     t.Start();
                 }
             }
-            attaque s = GetComponent<attaque>();
-            s.enabled = false;
+            //attaque s = GetComponent<attaque>();
+            //s.enabled = false;
             if (ReceiveMessage.message != "")
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
-        }
     }
     private void setSpecialHability(string[] data)
     {
@@ -565,9 +596,8 @@ public class Jouer : MonoBehaviour
         switch (data[0])
         {
             case "JePart":
-                HpEnnemi = 0;
                 gameFini = true;
-                EstGagnant = true;
+                EstGagnant = true;               
                 ReceiveMessage.message = "";
             break;
             case "AjouterManaEnnemis":
@@ -644,17 +674,17 @@ public class Jouer : MonoBehaviour
                 audio.PlayOneShot(AttackSound);
                 ReceiveMessage.message = "";
                 break;
-            case "Ennemis pige":
-                Transform t = Instantiate(carteBack, new Vector3(0, 0, -100), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
-                GameObject zeCartePiger = t.gameObject;
-                zeCartePiger.name = "cardbackennemis" + noCarteEnnemis;
-                placerCarte(zeCartePiger, ZoneCarteEnnemie);
-                JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
-                pigerScript.EstEnnemie = true;
-                ++noCarteEnnemis;
-                --nbCarteEnnemis;
-                ReceiveMessage.message = "";
-                break;
+            //case "Ennemis pige":
+            //    Transform t = Instantiate(carteBack, new Vector3(0, 0, -100), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+            //    GameObject zeCartePiger = t.gameObject;
+            //    zeCartePiger.name = "cardbackennemis" + noCarteEnnemis;
+            //    placerCarte(zeCartePiger, ZoneCarteEnnemie);
+            //    JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
+            //    pigerScript.EstEnnemie = true;
+            //    ++noCarteEnnemis;
+            //    --nbCarteEnnemis;
+            //    ReceiveMessage.message = "";
+            //    break;
             case "spellwithtarget":
                 Carte target = null;
                 Carte spell = createCarte(data, 3);
@@ -1272,6 +1302,29 @@ public class Jouer : MonoBehaviour
             envoyerMessage("Piger");
         }
         --nbCarteAllier;
+    }
+    public void pigerCarteEnnemis()
+    {
+        int NbCarteEnMainJoueurEnemis = 0;
+        //compte le nombre de carte en main
+        for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
+        {
+            if (ZoneCarteJoueur[i].EstOccupee == true)
+            {
+                ++NbCarteEnMainJoueurEnemis;
+            }
+        }
+        if (NbCarteEnMainJoueur < 7)
+        {
+            Transform t = Instantiate(carteBack, new Vector3(0, 0, -100), Quaternion.Euler(new Vector3(0, 0, 0))) as Transform;
+            GameObject zeCartePiger = t.gameObject;
+            zeCartePiger.name = "cardbackennemis" + noCarteEnnemis;
+            placerCarte(zeCartePiger, ZoneCarteEnnemie);
+            JouerCarteBoard pigerScript = zeCartePiger.GetComponent<JouerCarteBoard>();
+            pigerScript.EstEnnemie = true;
+            ++noCarteEnnemis;
+        }
+        --nbCarteEnnemis;
     }
     private Carte setHabilete(Carte card)
     {
