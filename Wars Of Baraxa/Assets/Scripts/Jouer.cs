@@ -17,9 +17,9 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    public bool gameFini = false;
-    public bool  EstGagnant = false;
-    public bool  EstPerdant = false;
+    public static bool gameFini = false;
+    public static bool  EstGagnant = false;
+    public static bool  EstPerdant = false;
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
     static public GameObject[] styleCarteAlliercombat;
@@ -54,6 +54,7 @@ public class Jouer : MonoBehaviour
     public static string spellTarget;
     public static GameObject spell;             //
     public static string[] texteHabileteSansEspace;
+    public static string texteHabileteSansNewline;
     public static GameObject target;
     public static Carte carteTarget;
     public static int position;
@@ -187,7 +188,6 @@ public class Jouer : MonoBehaviour
             }
         }
             return temp;
->>>>>>> origin/master
     }
     void OnDestroy()
     {
@@ -355,7 +355,30 @@ public class Jouer : MonoBehaviour
                 t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
         }
     }
-
+    private void setValueFromCard(Transform t, Carte card)
+    {
+        if (card != null && t != null)
+        {
+            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+            stat[0].text = card.CoutBois.ToString();
+            stat[1].text = card.CoutBle.ToString();
+            stat[2].text = card.CoutGem.ToString();
+            stat[6].text = card.NomCarte;
+            stat[7].text = card.Habilete;
+            if(card.perm != null)
+            {
+                stat[3].text = card.perm.Armure.ToString();
+                stat[4].text = card.perm.Attaque.ToString();
+                stat[5].text = card.perm.Vie.ToString();
+            }
+            if (card.TypeCarte == "Sort")
+                stat[8].text = card.TypeCarte;
+            else
+                stat[8].text = card.perm.TypePerm;
+            SpriteRenderer sprite = t.GetComponentInChildren<SpriteRenderer>();
+            sprite.sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
+        }
+    }
     private void changestatFromCard(GameObject t, Carte card)
     {
         if (card != null && card.perm != null && t != null)
@@ -452,6 +475,7 @@ public class Jouer : MonoBehaviour
             {
                 envoyerMessage("Fin De Tour");
                 MonTour = false;
+                descendreSleep(ZoneCombat, ZoneCombatEnnemie);
                 resetArmor(ZoneCombat,styleCarteAlliercombat,true);
                 resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
             }
@@ -533,6 +557,16 @@ public class Jouer : MonoBehaviour
             attaque s = GetComponent<attaque>();
             s.enabled = false;
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
+        }
+    }
+    private void descendreSleep(PosZoneCombat[] Zoneallier, PosZoneCombat[] Zoneennemi)
+    {
+        for (int i = 0; i < Zoneallier.Length; ++i)
+        {
+            if (Zoneallier[i] != null && Zoneallier[i].EstOccupee && Zoneallier[i].carte != null && Zoneallier[i].carte.perm.estEndormi != 0)
+                Zoneallier[i].carte.perm.estEndormi--;
+            if (Zoneennemi[i] != null && Zoneennemi[i].EstOccupee && Zoneennemi[i].carte != null && Zoneennemi[i].carte.perm.estEndormi != 0)
+                Zoneennemi[i].carte.perm.estEndormi--;
         }
     }
     private void setSpecialHability(string[] data)
@@ -665,6 +699,10 @@ public class Jouer : MonoBehaviour
                     int num2 = data[1].IndexOf("d");
                     data[2] = data[2].Insert(num2 + 1, "ennemis");
                 }
+                GameObject tempss = trouverBackCard();
+                int places = TrouverEmplacementCarteJoueur(tempss.transform.position, ZoneCarteEnnemie);
+                ZoneCarteEnnemie[places].EstOccupee = false;
+                Destroy(tempss);
                 GameObject gamespell = GameObject.Find(data[1]);
                 GameObject gametarget = GameObject.Find(data[2]);
                 gamespell.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
@@ -703,7 +741,9 @@ public class Jouer : MonoBehaviour
                 }
                 else if (spell.Habilete.Split(new char[] { ' ' })[0] == "Endort")
                 {
-                    //afficher un ZZzzzz en haut de la carte
+                    string[] textHabilete = spell.Habilete.Split(new char[] { ' '});
+                    ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].carte.perm.estEndormi = int.Parse(textHabilete[textHabilete.Length - 2]);
+
                 }
                 else if (spell.Habilete.Split(new char[] { ' ' })[0] == "Transforme")
                 {
@@ -724,18 +764,24 @@ public class Jouer : MonoBehaviour
                 break;
             case "spellNoTarget":
                 Carte spell2 = createCarte(data, 2);
+                
                 bool valide = false;
                 string typeTarget = trouverTypeTarget(spell2.Habilete.Split(new char[] { ' ' }));
                 setManaEnnemis(NbBleEnnemis - spell2.CoutBle, NbBoisEnnemis - spell2.CoutBois, NbGemEnnemis - spell2.CoutGem);
                 num = data[1].IndexOf("d");
                 data[1] = data[1].Insert(num + 1, "ennemis");
+                GameObject tempsss = trouverBackCard();
+                int placess = TrouverEmplacementCarteJoueur(tempsss.transform.position, ZoneCarteEnnemie);
+                ZoneCarteEnnemie[placess].EstOccupee = false;
+                Destroy(tempsss);
                 GameObject gamespell2 = GameObject.Find(data[1]);
+                setValueFromCard(gamespell2.transform,spell2);
                 gamespell2.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell2, 3);
                 if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Inflige")
                 {
-                    //styleCarteEnnemis[i] == gameObject  || ZoneCombatEnnemie[i].carte == carte
-                    int dmg = int.Parse(spell2.Habilete.Split(new char[] { ' ' })[1]);
+                    string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
+                    int dmg = int.Parse(tabHabileteSpellSansNewline.Split(new char[] { ' ' })[1]);
                     for (int i = 0; i < ZoneCombat.Length; i++)
                     {
                         valide = false;
@@ -745,7 +791,7 @@ public class Jouer : MonoBehaviour
                             {
                                 valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombatEnnemie);
                                 if (valide)
-                                    doTheDmg(dmg, i, ZoneCombatEnnemie);
+                                    doTheDmg(dmg, i, ZoneCombatEnnemie, styleCarteEnnemisCombat[i]);
                                 
                             }
                         }
@@ -753,7 +799,7 @@ public class Jouer : MonoBehaviour
                         {
                             valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
                             if (valide)
-                                doTheDmg(dmg, i, ZoneCombat);
+                                doTheDmg(dmg, i, ZoneCombat, styleCarteAlliercombat[i]);
                         }
                     }
                     if (typeTarget == "placedecombat" || typeTarget == "ennemis")
@@ -789,7 +835,8 @@ public class Jouer : MonoBehaviour
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Transforme")
                 {
-                    string[] tabHabileteSpell = spell2.Habilete.Split(new char[] { ' ' });
+                    string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
+                    string[] tabHabileteSpell = tabHabileteSpellSansNewline.Split(new char[] { ' ' });
                     string[] statsTransforme = tabHabileteSpell[tabHabileteSpell.Length - 1].Split(new char[] { '/' });
                     for (int i = 0; i < ZoneCombat.Length; i++)
                     {
@@ -814,7 +861,8 @@ public class Jouer : MonoBehaviour
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Endort")
                 {
                     //afficher icon ZZzz
-                    int nbTours = int.Parse(spell2.Habilete.Split(new char[] { ' ' })[spell2.Habilete.Split(new char[] { ' ' }).Length - 1]);
+                    string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
+                    int nbTours = int.Parse(tabHabileteSpellSansNewline.Split(new char[] { ' ' })[tabHabileteSpellSansNewline.Split(new char[] { ' ' }).Length - 2]);
                     for (int i = 0; i < ZoneCombat.Length; i++)
                     {
                         valide = false;
@@ -837,7 +885,8 @@ public class Jouer : MonoBehaviour
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Donne")
                 {
-                    string[] tabHabileteSpell = spell2.Habilete.Split(new char[] { ' ' });
+                    string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
+                    string[] tabHabileteSpell = tabHabileteSpellSansNewline.Split(new char[] { ' ' });
                     for(int i = 0; i < ZoneCombatEnnemie.Length; i++)
                     {
                         valide = false;
@@ -860,7 +909,8 @@ public class Jouer : MonoBehaviour
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Soigne")
                 {
-                    int nbHeal = int.Parse(spell2.Habilete.Split(new char[] {' '})[1]);
+                    string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
+                    int nbHeal = int.Parse(tabHabileteSpellSansNewline.Split(new char[] { ' ' })[1]);
                     for(int i = 0; i < ZoneCombatEnnemie.Length; i++)
                     {
                         valide = false;
@@ -885,12 +935,11 @@ public class Jouer : MonoBehaviour
                 ReceiveMessage.message = "";
                 break;
 
-        }
             case "Carte manquante":
                 HpEnnemi = 0;
                 gameFini = true;
                 break;
-        //}
+        }
         if (data[0] == "Carte manquante")
         {
             EstGagnant = true;
@@ -910,7 +959,7 @@ public class Jouer : MonoBehaviour
                 HpEnnemi -= dmg;
         }
     }
-    private void doTheDmg(int dmg, int i, PosZoneCombat[] zone)
+    private void doTheDmg(int dmg, int i, PosZoneCombat[] zone, GameObject t)
     {
         if ((zone[i].carte.perm.Armure - dmg) >= 0)
             zone[i].carte.perm.Armure -= dmg;
@@ -921,17 +970,17 @@ public class Jouer : MonoBehaviour
             zone[i].carte.perm.Vie -= difference;
             if (zone[i].carte.perm.Vie <= 0)
             {
-                Destroy(styleCarteAllier[i], 1);
+                Destroy(t, 1);
                 zone[i].EstOccupee = false;
                 zone[i].carte = null;
             }
         }
 
-        if (styleCarteEnnemis[i] != null && ZoneCombat[i].carte != null)
+        if (t != null && zone[i].carte != null)
         {
-            TextMesh[] zeStat = styleCarteAllier[i].GetComponentsInChildren<TextMesh>();
-            zeStat[3].text = ZoneCombat[i].carte.perm.Armure.ToString();
-            zeStat[5].text = ZoneCombat[i].carte.perm.Vie.ToString();
+            TextMesh[] zeStat = t.GetComponentsInChildren<TextMesh>();
+            zeStat[3].text = zone[i].carte.perm.Armure.ToString();
+            zeStat[5].text = zone[i].carte.perm.Vie.ToString();
         }
     }
     private void doSleep(int i,PosZoneCombat[] zone, int nbTours)
@@ -1000,11 +1049,14 @@ public class Jouer : MonoBehaviour
     }
     private void doTransformation(GameObject t, int i, PosZoneCombat[] zone, string[] statsTransforme)
     {
-        int vieTransformation = int.Parse(statsTransforme[0]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[2]);
+        int vieTransformation = int.Parse(statsTransforme[2]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[0]);
 
         zone[i].carte.perm.Vie = vieTransformation;
         zone[i].carte.perm.Attaque = attaqueTransformation;
         zone[i].carte.perm.Armure = armureTransformation;
+        zone[i].carte.perm.basicVie = vieTransformation;
+        zone[i].carte.perm.basicAttaque = attaqueTransformation;
+        zone[i].carte.perm.basicArmor = armureTransformation;
 
         TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
         stat[3].text = zone[i].carte.perm.Armure.ToString();
@@ -1072,9 +1124,7 @@ public class Jouer : MonoBehaviour
         return valide;
 
     }
-=======
 
->>>>>>> origin/master
     private GameObject trouverBackCard()
     {
         GameObject game = null;
@@ -1112,6 +1162,10 @@ public class Jouer : MonoBehaviour
     {
         recevoirDegat(attaquant, posAllier, false, nomAttaquant);
         recevoirDegat(ennemi, posDefenseur, true, nomDefenseur);
+        if (ennemi.perm.estEndormi != 0)
+        {
+            ennemi.perm.estEndormi = 0;
+        }
         if (attaquant.perm.Vie <= 0)
         {
             GameObject temp = GameObject.Find(nomAttaquant);
@@ -1225,7 +1279,7 @@ public class Jouer : MonoBehaviour
 
     private void PigerCarte()
     {
-        NbCarteEnMainJoueur = 0;v
+        NbCarteEnMainJoueur = 0;
 	//compte le nombre de carte en main
         for (int i = 0; i < ZoneCarteJoueur.Length; ++i)
         {
