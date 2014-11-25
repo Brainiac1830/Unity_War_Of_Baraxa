@@ -205,16 +205,27 @@ public class JouerCarteBoard : MonoBehaviour
         ////////////////////
 
         bool valide = false;
-        if (target == "cible")
+        if (target == "cible" || target == "touteslescartes")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
+        }
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+        {
+            if (zeTarget.perm.TypePerm == "Batiment")
+                valide = true;
+        }
+
         if (valide)
         {
-            zeTarget.perm.Vie = stats[0];
+            zeTarget.perm.Vie = stats[2];
             zeTarget.perm.Attaque = stats[1];
-            zeTarget.perm.Armure = stats[2];
+            zeTarget.perm.Armure = stats[0];
+            zeTarget.perm.basicVie = stats[2];
+            zeTarget.perm.basicAttaque = stats[1];
+            zeTarget.perm.basicArmor = stats[0];
         }
 
         if (t != null)
@@ -480,7 +491,7 @@ public class JouerCarteBoard : MonoBehaviour
     }
     public bool spellCreaturesBothSides(string target)
     {
-        return target == "touteslescreature";
+        return target == "touteslescreatures";
     }
 
     void OnMouseDown()
@@ -580,19 +591,18 @@ public class JouerCarteBoard : MonoBehaviour
             Jouer.NbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.NbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.NbGem -= System.Int32.Parse(Cout[2].text);
-            Jouer.texteHabileteSansEspace = Cout[7].text.Split(new char[] { ' ' });
+            Jouer.texteHabileteSansNewline = Cout[7].text.Replace('\n', ' ');
+            Jouer.texteHabileteSansEspace = Jouer.texteHabileteSansNewline.Split(new char[] { ' ' });
             Jouer.isEnnemi = isEnnemi(Jouer.texteHabileteSansEspace[0]);
             Jouer.spell = this.gameObject;
             Jouer.position = TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur);
             this.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
             EstJouer = true;
             Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
-            //Split
-            Jouer.texteHabileteSansEspace = Cout[7].text.Split(new char[] { ' ' });
             //effet habilité
-            Jouer.effet = trouverTypeEffet(Cout[7].text.Split(new char[] { ' ' }));
+            Jouer.effet = trouverTypeEffet(Jouer.texteHabileteSansEspace);
             //target qui recoit le spell
-            Jouer.spellTarget = trouverTypeTarget(Cout[7].text.Split(new char[] { ' ' }));
+            Jouer.spellTarget = trouverTypeTarget(Jouer.texteHabileteSansEspace);
 
             if (isATargetNeeded(trouverTypeTarget(Jouer.texteHabileteSansEspace)))
                 Jouer.targetNeeded = true;

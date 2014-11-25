@@ -120,7 +120,7 @@ public class attaque : MonoBehaviour {
             {
                 carteAttaque = GameObject.Find(carte.collider.gameObject.name);
                 posAllier = TrouverEmplacementCarteJoueur(carteAttaque.transform.position, Jouer.ZoneCombat);
-                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature")
+                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature" && Jouer.ZoneCombat[posAllier].carte.perm.estEndormi == 0)
                 {
                     AttaquantClick = true;
                     Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.blue;
@@ -196,7 +196,11 @@ public class attaque : MonoBehaviour {
                 Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
             else
                 Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
-
+            
+            if (Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm.estEndormi != 0)
+            {
+                Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm.estEndormi = 0;
+            }
             if (Attaquant.Vie <= 0)
             {
                 kill(carteAttaque);
