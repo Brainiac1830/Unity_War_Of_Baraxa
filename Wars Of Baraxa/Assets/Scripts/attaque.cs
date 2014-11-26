@@ -98,7 +98,6 @@ public class attaque : MonoBehaviour {
     }
     public bool foundTaunt(PosZoneCombat[] tab)
     {
-        const int taunt = 1;
         bool esttaunt = false;
         for (int i = 0; i < tab.Length; ++i)
         {
@@ -120,7 +119,7 @@ public class attaque : MonoBehaviour {
             {
                 carteAttaque = GameObject.Find(carte.collider.gameObject.name);
                 posAllier = TrouverEmplacementCarteJoueur(carteAttaque.transform.position, Jouer.ZoneCombat);
-                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature")
+                if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature" && Jouer.ZoneCombat[posAllier].carte.perm.estEndormi == 0)
                 {
                     AttaquantClick = true;
                     Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.blue;
@@ -173,6 +172,8 @@ public class attaque : MonoBehaviour {
         }
         else if (Input.GetMouseButtonDown(1) && AttaquantClick )
         {
+            if (posAllier != -1 && Jouer.styleCarteAlliercombat[posAllier] != null)
+                Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.white;
             AttaquantClick = false;
             posAllier = -1;
         }
@@ -197,7 +198,11 @@ public class attaque : MonoBehaviour {
                 Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
             else
                 Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
-
+            
+            if (Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm.estEndormi != 0)
+            {
+                Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm.estEndormi = 0;
+            }
             if (Attaquant.Vie <= 0)
             {
                 kill(carteAttaque);
