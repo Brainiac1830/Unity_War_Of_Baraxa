@@ -18,10 +18,6 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
-    public static bool gameFini = false;
-    public static bool  EstGagnant = false;
-    public static bool  EstPerdant = false;
-
     static public bool  gameFini = false;
     static public bool  EstGagnant = false;
     static public bool  EstPerdant = false;
@@ -1489,7 +1485,11 @@ public class Jouer : MonoBehaviour
             }
 
         }
-        catch (TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
+        catch (TimeoutException) 
+        {
+            Console.Write("Erreur de telechargement des données");
+            
+        }
         return carte;
     }
     private void EnvoyerCarte(Socket client, Carte carte)
@@ -1523,7 +1523,7 @@ public class Jouer : MonoBehaviour
             }
 
         }
-        catch (TimeoutException ex) { Console.Write("Erreur de telechargement des données"); }
+        catch (TimeoutException) { Console.Write("Erreur de telechargement des données"); }
         return zeDeck;
     }
 

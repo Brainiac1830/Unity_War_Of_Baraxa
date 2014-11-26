@@ -98,7 +98,6 @@ public class attaque : MonoBehaviour {
     }
     public bool foundTaunt(PosZoneCombat[] tab)
     {
-        const int taunt = 1;
         bool esttaunt = false;
         for (int i = 0; i < tab.Length; ++i)
         {
@@ -173,7 +172,10 @@ public class attaque : MonoBehaviour {
         }
         else if (Input.GetMouseButtonDown(1) && AttaquantClick )
         {
+            if (posAllier != -1 && Jouer.styleCarteAlliercombat[posAllier] != null)
+                Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.white;
             AttaquantClick = false;
+            posAllier = -1;
         }
     }
     private void attaqueSomething()

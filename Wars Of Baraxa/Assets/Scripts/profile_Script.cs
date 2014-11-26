@@ -35,10 +35,13 @@ public class profile_Script : MonoBehaviour {
         envoyerMessage("afficher profil,"+ connexionServeur.nom);
         string message = lire();
         string[] data = message.Split(new char[] { ',' });
-        victoire = data[0];
-        defaite = data[1];
-        alias = data[2];
-        nomComplet = data[3];
+        if (data.Length >= 4)
+        {
+            victoire = data[0];
+            defaite = data[1];
+            alias = data[2];
+            nomComplet = data[3];
+        }
     }
 	// Update is called once per frame
 	void Update () {

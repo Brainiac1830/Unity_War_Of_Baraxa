@@ -36,12 +36,12 @@ public class Script_logIn : MonoBehaviour {
         if (connexionServeur.sck == null)
         {
             connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.114"), 1234);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
             try
             {
                 connexionServeur.sck.Connect(localEndPoint);
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
                 Application.LoadLevel("Acceuil");
             }
