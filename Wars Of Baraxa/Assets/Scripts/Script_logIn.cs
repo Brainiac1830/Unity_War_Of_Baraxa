@@ -195,8 +195,23 @@ public void OnGUI() {
     }
     private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
-        envoyerMessage(alias+","+mdp+","+nom+","+prenom);
-        string reponse = lire();
+        string reponse = "";
+        connexionServeur.sck.ReceiveTimeout = 500;
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage(alias + "," + mdp + "," + nom + "," + prenom);
+                reponse = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         if (reponse == "oui")
         {
             connexionServeur.nom = alias;
@@ -207,8 +222,23 @@ public void OnGUI() {
     }
     private bool estDansBd(string alias, string mdp)
     {
-        envoyerMessage(alias +","+mdp);
-        string reponse = lire();
+        string reponse = "";
+        connexionServeur.sck.ReceiveTimeout = 500;
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage(alias + "," + mdp);
+                reponse = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         if (reponse == "oui")
         {
             connexionServeur.nom = alias;

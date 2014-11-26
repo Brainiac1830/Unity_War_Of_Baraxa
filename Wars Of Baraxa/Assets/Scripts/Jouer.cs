@@ -956,6 +956,8 @@ public class Jouer : MonoBehaviour
                 {
                     gameFini = true;
                     EstPerdant = true;
+                    if (t.IsAlive)
+                        t.Abort();
                     ReceiveMessage.message = "";
                 }
                 break;

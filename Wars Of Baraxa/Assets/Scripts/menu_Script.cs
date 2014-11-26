@@ -65,6 +65,7 @@ public class menu_Script : MonoBehaviour
             }
             if (GUI.Button(new Rect((Screen.width / 2) - (Screen.width * 0.3f / 2), Screen.height * 0.67f, Screen.width * 0.3f, Screen.height * 0.05f), "deconnection", test))
             {
+
                 envoyerMessage("RetourMenu");
                 Application.LoadLevel("Connexion");
             }
