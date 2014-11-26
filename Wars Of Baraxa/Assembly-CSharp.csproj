@@ -58,12 +58,13 @@
      <Compile Include="Assets\Scripts\script_Card.cs" />
      <Compile Include="Assets\Scripts\script_TestingShit.cs" />
  <Reference Include="Oracle.DataAccess">
- <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/Oracle.DataAccess.dll</HintPath>
+ <HintPath>C:/Users/200666155/Documents/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/Oracle.DataAccess.dll</HintPath>
  </Reference>
  <Reference Include="warsofbaraxa">
- <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
+ <HintPath>C:/Users/200666155/Documents/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
  </Reference>
  <Reference Include="WarsOfBaraxaBD">
+ <HintPath>C:/Users/200666155/Documents/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
  <HintPath>C:/Users/201240453/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
  </Reference>
   </ItemGroup>

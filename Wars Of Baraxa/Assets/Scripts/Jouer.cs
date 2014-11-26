@@ -748,6 +748,8 @@ public class Jouer : MonoBehaviour
                     envoyerMessage("asd");
                     t.Abort();
                     Application.LoadLevel("Menu");
+                    EstGagnant = false;
+                    gameFini = false;
                 }
             }
             else if (EstPerdant)
@@ -758,6 +760,9 @@ public class Jouer : MonoBehaviour
                     envoyerMessage("asd");
                     t.Abort();
                     Application.LoadLevel("Menu");
+                    ReceiveMessage.message = "";
+                    EstPerdant = false;
+                    gameFini = false;
                 }
             }
         }
