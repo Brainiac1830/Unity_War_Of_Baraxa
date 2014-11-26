@@ -37,6 +37,11 @@ public class Jouer : MonoBehaviour
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
+    public Texture2D taunt;
+    public Texture2D sleep;
+    public Texture2D invisible;
+    public Texture2D attaquePuissante;
+    public Texture2D attaqueDouble;
     public SpriteRenderer ImageCarte;
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
@@ -212,10 +217,14 @@ public class Jouer : MonoBehaviour
                 child.name = child.name + i;
                 child.tag = "textStats";
             }
+
+            
+
             styleCarteAllier[i] = cards.gameObject;
             styleCarteAllier[i].name = "card" + i;
             setValue(i, cards, true);
             tabCarteAllier.CarteDeck[i] = setHabilete(tabCarteAllier.CarteDeck[i]);
+            takeOutIconsFriendly(i);
         }
     }
     public void instantiateCardEnnemis()
@@ -230,8 +239,12 @@ public class Jouer : MonoBehaviour
                 child.name = child.name + "Ennemis" + i;
                 child.tag = "textStats";
             }
+
+            
+
             styleCarteEnnemis[i] = cards.gameObject;
             styleCarteEnnemis[i].name = "cardennemis" + i;
+            takeOutIconsEnnemy(i);
         }
     }
     public void initOrdrePige(int[] tab)
@@ -434,6 +447,249 @@ public class Jouer : MonoBehaviour
                 t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = tabCarteEnnemis[i].TypeCarte;
         }
     }
+
+    private void takeOutIconsFriendly(int i)
+    {
+        Color color;
+        GameObject taunt = null;
+        GameObject invis = null;
+        GameObject attaqueDouble = null;
+        GameObject attaquePuissante = null;
+        GameObject sleep = null;
+
+        if(styleCarteAllier[i] != null)
+        {
+            taunt = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("taunt").gameObject;
+            invis = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("invis").gameObject;
+            attaqueDouble = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("attaqueDouble").gameObject;
+            attaquePuissante = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("attaquePuissante").gameObject;
+            sleep = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("sleep").gameObject;
+            //turn off taunt icon
+            color = taunt.renderer.material.color;
+            color.a = 0f;
+            taunt.renderer.material.color = color;
+            //turn off invis icon
+            color = invis.renderer.material.color;
+            color.a = 0f;
+            invis.renderer.material.color = color;
+            //turn off attaque double icon
+            color = attaqueDouble.renderer.material.color;
+            color.a = 0f;
+            attaqueDouble.renderer.material.color = color;
+            //turn off attaque puissante icon
+            color = attaquePuissante.renderer.material.color;
+            color.a = 0f;
+            attaquePuissante.renderer.material.color = color;
+            //turn off sleep icon
+            color = sleep.renderer.material.color;
+            color.a = 0f;
+            sleep.renderer.material.color = color;
+        }
+        
+
+    }
+    private void takeOutIconsEnnemy(int i)
+    {
+        Color color;
+        GameObject taunt = null;
+        GameObject invis = null;
+        GameObject attaqueDouble = null;
+        GameObject attaquePuissante = null;
+        GameObject sleep = null;
+
+        if(styleCarteEnnemis[i] != null)
+        {
+            taunt = styleCarteEnnemis[i].transform.FindChild("zeattributsEnnemis" + i.ToString()).FindChild("taunt").gameObject;
+            invis = styleCarteEnnemis[i].transform.FindChild("zeattributsEnnemis" + i.ToString()).FindChild("invis").gameObject;
+            attaqueDouble = styleCarteEnnemis[i].transform.FindChild("zeattributsEnnemis" + i.ToString()).FindChild("attaqueDouble").gameObject;
+            attaquePuissante = styleCarteEnnemis[i].transform.FindChild("zeattributsEnnemis" + i.ToString()).FindChild("attaquePuissante").gameObject;
+            sleep = styleCarteEnnemis[i].transform.FindChild("zeattributsEnnemis" + i.ToString() ).FindChild("sleep").gameObject;
+            //turn off taunt icon
+            color = taunt.renderer.material.color;
+            color.a = 0f;
+            taunt.renderer.material.color = color;
+            //turn off invis icon
+            color = invis.renderer.material.color;
+            color.a = 0f;
+            invis.renderer.material.color = color;
+            //turn off attaque double icon
+            color = attaqueDouble.renderer.material.color;
+            color.a = 0f;
+            attaqueDouble.renderer.material.color = color;
+            //turn off attaque puissante icon
+            color = attaquePuissante.renderer.material.color;
+            color.a = 0f;
+            attaquePuissante.renderer.material.color = color;
+            //turn off sleep icon
+            color = sleep.renderer.material.color;
+            color.a = 0f;
+            sleep.renderer.material.color = color;
+        }
+    }
+    private void afficherIconSpecial()
+    {
+        Color color;
+        GameObject taunt = null;
+        GameObject invis = null;
+        GameObject attaqueDouble = null;
+        GameObject attaquePuissante = null;
+        GameObject sleep = null;
+        int numero = 0;
+        int taille = 0;
+
+        for (int i = 0; i < ZoneCombat.Length; i++)
+        {
+
+
+            if (styleCarteAlliercombat[i] != null)
+            {
+                taille = styleCarteAlliercombat[i].name.Length - 4;
+                numero = int.Parse(styleCarteAlliercombat[i].name.Substring(4, taille));
+                taunt = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("taunt").gameObject;
+                invis = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("invis").gameObject;
+                attaqueDouble = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("attaqueDouble").gameObject;
+                attaquePuissante = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("attaquePuissante").gameObject;
+                sleep = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("sleep").gameObject;
+
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estTaunt)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    taunt.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    taunt.renderer.material.color = color;
+                }
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estInvisible)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    invis.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    invis.renderer.material.color = color;
+                }
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estAttaqueDouble)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    attaqueDouble.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    attaqueDouble.renderer.material.color = color;
+                }
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estAttaquePuisante)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    attaquePuissante.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    attaquePuissante.renderer.material.color = color;
+                }
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estEndormi != 0)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    sleep.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    sleep.renderer.material.color = color;
+                }
+            }
+
+
+
+            if (styleCarteEnnemisCombat[i] != null)
+            {
+                taille = styleCarteEnnemisCombat[i].name.Length - 11;
+                numero = int.Parse(styleCarteEnnemisCombat[i].name.Substring(11, taille));
+                taunt = styleCarteEnnemisCombat[i].transform.FindChild("zeattributsEnnemis" + numero.ToString()).FindChild("taunt").gameObject;
+                invis = styleCarteEnnemisCombat[i].transform.FindChild("zeattributsEnnemis" + numero.ToString()).FindChild("invis").gameObject;
+                attaqueDouble = styleCarteEnnemisCombat[i].transform.FindChild("zeattributsEnnemis" + numero.ToString()).FindChild("attaqueDouble").gameObject;
+                attaquePuissante = styleCarteEnnemisCombat[i].transform.FindChild("zeattributsEnnemis" + numero.ToString()).FindChild("attaquePuissante").gameObject;
+                sleep = styleCarteEnnemisCombat[i].transform.FindChild("zeattributsEnnemis" + numero.ToString()).FindChild("sleep").gameObject;
+
+                if (ZoneCombatEnnemie[i].carte != null && ZoneCombatEnnemie[i].carte.perm.estTaunt)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    taunt.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    taunt.renderer.material.color = color;
+                }
+                if (ZoneCombatEnnemie[i].carte != null && ZoneCombatEnnemie[i].carte.perm.estInvisible)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    invis.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    invis.renderer.material.color = color;
+                }
+                if (ZoneCombatEnnemie[i].carte != null && ZoneCombatEnnemie[i].carte.perm.estAttaqueDouble)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    attaqueDouble.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    attaqueDouble.renderer.material.color = color;
+                }
+                if (ZoneCombatEnnemie[i].carte != null && ZoneCombatEnnemie[i].carte.perm.estAttaquePuisante)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    attaquePuissante.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    attaquePuissante.renderer.material.color = color;
+                }
+                if (ZoneCombatEnnemie[i].carte != null && ZoneCombatEnnemie[i].carte.perm.estEndormi != 0)
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 1f;
+                    sleep.renderer.material.color = color;
+                }
+                else
+                {
+                    color = taunt.renderer.material.color;
+                    color.a = 0f;
+                    sleep.renderer.material.color = color;
+                }
+            }
+
+
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -454,6 +710,8 @@ public class Jouer : MonoBehaviour
     {
         Event e;
         e = Event.current;
+
+        afficherIconSpecial();
 
         //Héro Joueur
         GUI.Label(new Rect(Screen.width * 0.045f, Screen.height * 0.76f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpJoueur.ToString());
@@ -551,10 +809,10 @@ public class Jouer : MonoBehaviour
             {
                 NbGem = SetManaAjouter(e, NbGem, "gem");
             }
-            GUI.Label(new Rect(Screen.width / 1.08f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Gem: " + NbGem.ToString());
+            GUI.Label(new Rect(Screen.width / 1.08f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Gemmes: " + NbGem.ToString());
             //WORKER
             GUI.Label(new Rect(Screen.width / 1.3f, Screen.height / 1.26f, Screen.width * 0.25f, Screen.height * 0.10f), Worker);
-            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Worker: " + NbWorker.ToString());
+            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Artisan(s): " + NbWorker.ToString());
 
             if (GUI.Button(new Rect(Screen.width / 1.12f, Screen.height / 1.26f, Screen.width * 0.1f, Screen.height * 0.1f), "Placer") && NbWorker == 0)
             {
@@ -575,9 +833,9 @@ public class Jouer : MonoBehaviour
             GUI.enabled = true;
             GUI.Label(new Rect(Screen.width / 1.27f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Blé: " + NbBle.ToString());
             GUI.Label(new Rect(Screen.width / 1.17f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Bois: " + NbBois.ToString());
-            GUI.Label(new Rect(Screen.width / 1.08f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Gem: " + NbGem.ToString());
+            GUI.Label(new Rect(Screen.width / 1.08f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Gemmes: " + NbGem.ToString());
             GUI.Label(new Rect(Screen.width / 1.3f, Screen.height / 1.26f, Screen.width * 0.25f, Screen.height * 0.10f), Worker);
-            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Worker: " + NbWorker.ToString());
+            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Atrisan(s): " + NbWorker.ToString());
         }
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
