@@ -10,10 +10,17 @@ MonoImporter:
   - Worker: {instanceID: 0}
   - PlayerChar: {instanceID: 0}
   - EnnemiChar: {instanceID: 0}
+  - taunt: {fileID: 2800000, guid: 925ee73f8015e1a47851f2028e937cd0, type: 3}
+  - sleep: {instanceID: 0}
+  - invisible: {instanceID: 0}
+  - attaquePuissante: {instanceID: 0}
+  - attaqueDouble: {instanceID: 0}
   - ImageCarte: {instanceID: 0}
   - AttackSound: {instanceID: 0}
   - PlacementCarte: {instanceID: 0}
   - carteBack: {instanceID: 0}
+  - carteBatiment: {instanceID: 0}
+  - carteCreature: {instanceID: 0}
   - card: {instanceID: 0}
   - cardennemis: {instanceID: 0}
   - ScriptEnnemie: {instanceID: 0}

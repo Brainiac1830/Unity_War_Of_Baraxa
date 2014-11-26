@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: 925ee73f8015e1a47851f2028e937cd0
+guid: 078b5db1ae59d104ba4cb807b041e474
 TextureImporter:
   fileIDToRecycleName:
-    21300000: taunt
+    21300000: lightening-40269_641
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -38,7 +38,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: .5, y: .5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 1500
+  spritePixelsToUnits: 2000
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
