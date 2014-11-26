@@ -174,6 +174,7 @@ public class attaque : MonoBehaviour {
         else if (Input.GetMouseButtonDown(1) && AttaquantClick )
         {
             AttaquantClick = false;
+            posAllier = -1;
         }
     }
     private void attaqueSomething()

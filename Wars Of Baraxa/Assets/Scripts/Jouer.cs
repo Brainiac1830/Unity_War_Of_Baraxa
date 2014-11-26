@@ -436,6 +436,8 @@ public class Jouer : MonoBehaviour
                 if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
+                    EstGagnant = false;
+                    gameFini = false;
                 }
             }
             else if (EstPerdant)
@@ -444,6 +446,9 @@ public class Jouer : MonoBehaviour
                 if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
                 {
                     Application.LoadLevel("Menu");
+                    ReceiveMessage.message = "";
+                    EstPerdant = false;
+                    gameFini = false;
                 }
             }
         }
