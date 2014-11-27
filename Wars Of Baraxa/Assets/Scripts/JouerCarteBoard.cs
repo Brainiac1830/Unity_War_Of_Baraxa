@@ -220,12 +220,12 @@ public class JouerCarteBoard : MonoBehaviour
 
         if (valide)
         {
-            zeTarget.perm.Vie = stats[2];
+            zeTarget.perm.Vie = stats[0];
             zeTarget.perm.Attaque = stats[1];
-            zeTarget.perm.Armure = stats[0];
-            zeTarget.perm.basicVie = stats[2];
+            zeTarget.perm.Armure = stats[2];
+            zeTarget.perm.basicVie = stats[0];
             zeTarget.perm.basicAttaque = stats[1];
-            zeTarget.perm.basicArmor = stats[0];
+            zeTarget.perm.basicArmor = stats[2];
         }
 
         if (t != null)
@@ -470,7 +470,7 @@ public class JouerCarteBoard : MonoBehaviour
             else
                 Jouer.HpEnnemi += nbVie;
         }
-        return true;
+        return false;
     }
     public bool burnHeros(string quelJoueur, int nbDegat)
     {
@@ -479,11 +479,32 @@ public class JouerCarteBoard : MonoBehaviour
             Jouer.HpJoueur -= nbDegat;
         else
             Jouer.HpEnnemi -= nbDegat;
-        return true;
+
+        if(Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
+        {
+            Jouer.gameFini = true;
+            Jouer.EstNul = true;
+        }
+        else if(Jouer.HpJoueur <= 0)
+        {
+            Jouer.gameFini = true;
+            Jouer.EstPerdant = true;
+        }
+        else if(Jouer.HpEnnemi <= 0)
+        {
+            Jouer.gameFini = true;
+            Jouer.EstGagnant = true;
+        }
+        else if(Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
+        {
+            Jouer.gameFini = true;
+            Jouer.EstNul = true;
+        }
+        return false;
     }
     public bool isOnHeros(string target)
     {
-        return target == "placedecombat" || target == "touslesennemis";
+        return target == "placedecombat" || target == "ennemis";
     }
     public bool isOnBothHeros(string target)
     {
@@ -492,6 +513,17 @@ public class JouerCarteBoard : MonoBehaviour
     public bool spellCreaturesBothSides(string target)
     {
         return target == "touteslescreatures";
+    }
+
+    public static int trouverPosEnTrainCaster(GameObject carte)
+    {
+        int pos = 0;
+        for(int i = 0; i < Jouer.ZoneCarteJoueur.Length; i++)
+        {
+            if (carte.transform.position == Jouer.ZoneCarteJoueur[i].Pos)
+                pos = i;
+        }
+        return pos;
     }
 
     void OnMouseDown()
@@ -565,12 +597,13 @@ public class JouerCarteBoard : MonoBehaviour
                 }
                 if (!Jouer.enTrainCaster)
                 {
+                    EstJouer = true;
                     Destroy(Jouer.spell,1);
                     envoyerMessage("Jouer spellTarget." + Jouer.spell.name +"." + Jouer.target.name);
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
                     wait(1);
-                    if (Jouer.target.name != "hero ennemis" || Jouer.target.name != "hero")
+                    if (Jouer.target.name != "hero ennemis" && Jouer.target.name != "hero")
                         EnvoyerCarte(connexionServeur.sck, Jouer.carteTarget);
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
@@ -579,7 +612,7 @@ public class JouerCarteBoard : MonoBehaviour
                 }
             }
         }
-        else if ((this.tag != "hero" || this.tag != "hero ennemis") && !Jouer.enTrainCaster && Cout[8].text == "Sort" && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+        else if ((this.name != "hero" || this.name != "hero ennemis") && Cout.Length != 0 && !Jouer.enTrainCaster && Cout[8].text == "Sort" && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
             Jouer.targetNeeded = false;
             Jouer.effet = "";
@@ -596,13 +629,14 @@ public class JouerCarteBoard : MonoBehaviour
             Jouer.isEnnemi = isEnnemi(Jouer.texteHabileteSansEspace[0]);
             Jouer.spell = this.gameObject;
             Jouer.position = TrouverEmplacementCarteJoueur(this.transform.position, Jouer.ZoneCarteJoueur);
+            Jouer.posCarteEnTrainCaster = trouverPosEnTrainCaster(this.gameObject);
             this.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
-            EstJouer = true;
             Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
             //effet habilité
             Jouer.effet = trouverTypeEffet(Jouer.texteHabileteSansEspace);
             //target qui recoit le spell
             Jouer.spellTarget = trouverTypeTarget(Jouer.texteHabileteSansEspace);
+            
 
             if (isATargetNeeded(trouverTypeTarget(Jouer.texteHabileteSansEspace)))
                 Jouer.targetNeeded = true;
@@ -714,6 +748,7 @@ public class JouerCarteBoard : MonoBehaviour
                 Jouer.enTrainCaster = true;
             else
             {
+                EstJouer = true;
                 Destroy(Jouer.spell, 1);
                 envoyerMessage("Jouer spellnotarget." + Jouer.spell.name);
                 wait(1);
@@ -723,7 +758,7 @@ public class JouerCarteBoard : MonoBehaviour
                 Jouer.spell = null;
             }
         }
-        else if ((this.tag != "hero" || this.tag != "hero ennemis") && !Jouer.enTrainCaster && getNbCarteZone(Jouer.ZoneCombat) < Jouer.ZoneCombat.Length && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
+        else if ((this.tag != "hero" || this.tag != "hero ennemis") && Cout.Length != 0 && !Jouer.enTrainCaster && getNbCarteZone(Jouer.ZoneCombat) < Jouer.ZoneCombat.Length && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
             Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
@@ -841,11 +876,20 @@ public class JouerCarteBoard : MonoBehaviour
         int num = getNumBonus(data[1]);
         string sorteMana = data[2];
         if (sorteMana == "bois")
+        {
             Jouer.NbBois += num;
+            Jouer.joueur1.nbBois += num;
+        }
         else if (sorteMana == "gem")
+        {
             Jouer.NbGem += num;
+            Jouer.joueur1.nbGem += num;
+        }
         else if (sorteMana == "ble")
+        {
             Jouer.NbBle += num;
+            Jouer.joueur1.nbBle += num;
+        }
     }
     private int getNumBonus(string laplace)
     {
