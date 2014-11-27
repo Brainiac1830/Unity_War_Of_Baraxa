@@ -36,12 +36,12 @@ public class Script_logIn : MonoBehaviour {
         if (connexionServeur.sck == null)
         {
             connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.102"), 1234);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
             try
             {
                 connexionServeur.sck.Connect(localEndPoint);
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
                 Application.LoadLevel("Acceuil");
             }
@@ -195,8 +195,23 @@ public void OnGUI() {
     }
     private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
-        envoyerMessage(alias+","+mdp+","+nom+","+prenom);
-        string reponse = lire();
+        string reponse = "";
+        connexionServeur.sck.ReceiveTimeout = 500;
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage(alias + "," + mdp + "," + nom + "," + prenom);
+                reponse = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         if (reponse == "oui")
         {
             connexionServeur.nom = alias;
@@ -207,8 +222,23 @@ public void OnGUI() {
     }
     private bool estDansBd(string alias, string mdp)
     {
-        envoyerMessage(alias +","+mdp);
-        string reponse = lire();
+        string reponse = "";
+        connexionServeur.sck.ReceiveTimeout = 500;
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage(alias + "," + mdp);
+                reponse = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         if (reponse == "oui")
         {
             connexionServeur.nom = alias;

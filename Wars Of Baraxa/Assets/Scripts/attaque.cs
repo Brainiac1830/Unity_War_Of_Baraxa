@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using warsofbaraxa;
 public class attaque : MonoBehaviour {
     bool AttaquantClick;
-    public Texture2D taunt;
     public AudioClip Attack;
     Permanent Attaquant;
     Permanent Defenseur;
@@ -98,7 +97,6 @@ public class attaque : MonoBehaviour {
     }
     public bool foundTaunt(PosZoneCombat[] tab)
     {
-        const int taunt = 1;
         bool esttaunt = false;
         for (int i = 0; i < tab.Length; ++i)
         {
@@ -123,7 +121,6 @@ public class attaque : MonoBehaviour {
                 if (posAllier != -1 && !Jouer.ZoneCombat[posAllier].carte.perm.aAttaque && Jouer.ZoneCombat[posAllier].carte.perm.TypePerm == "Creature" && Jouer.ZoneCombat[posAllier].carte.perm.estEndormi == 0)
                 {
                     AttaquantClick = true;
-                    Jouer.styleCarteAlliercombat[posAllier].renderer.material.color = Color.blue;
                     int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
                     Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);
                     
@@ -155,6 +152,7 @@ public class attaque : MonoBehaviour {
                         Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
                     else
                         Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble = true;
+
                     AttaquantClick = false;
                     audio.PlayOneShot(Attack);
                     envoyerMessage("Attaquer Joueur");
@@ -174,6 +172,7 @@ public class attaque : MonoBehaviour {
         else if (Input.GetMouseButtonDown(1) && AttaquantClick )
         {
             AttaquantClick = false;
+            posAllier = -1;
         }
     }
     private void attaqueSomething()

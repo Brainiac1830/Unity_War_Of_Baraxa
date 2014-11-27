@@ -19,8 +19,23 @@ public class Script_Lobby : MonoBehaviour
     void Awake()
     {
         DeckChoisis = false;
-        envoyerMessage("recevoir Deck");
-        string message = lire();
+        connexionServeur.sck.ReceiveTimeout = 500;
+        string message = "";
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage("recevoir Deck");
+                message = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         NomDeck = message.Split(new char[] { ',' });
     }
     void OnApplicationQuit()

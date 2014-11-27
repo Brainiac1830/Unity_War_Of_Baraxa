@@ -32,13 +32,31 @@ public class profile_Script : MonoBehaviour {
     }
     public void Awake()
     {
-        envoyerMessage("afficher profil,"+ connexionServeur.nom);
-        string message = lire();
+        connexionServeur.sck.ReceiveTimeout = 500;
+        string message = "";
+        bool recu = false;
+        while (!recu)
+        {
+            try
+            {
+                envoyerMessage("afficher profil," + connexionServeur.nom);
+                message = lire();
+                recu = true;
+            }
+            catch (SocketException)
+            {
+                recu = false;
+            }
+        }
+        connexionServeur.sck.ReceiveTimeout = 0;
         string[] data = message.Split(new char[] { ',' });
-        victoire = data[0];
-        defaite = data[1];
-        alias = data[2];
-        nomComplet = data[3];
+        if (data.Length >= 4)
+        {
+            victoire = data[0];
+            defaite = data[1];
+            alias = data[2];
+            nomComplet = data[3];
+        }
     }
 	// Update is called once per frame
 	void Update () {
