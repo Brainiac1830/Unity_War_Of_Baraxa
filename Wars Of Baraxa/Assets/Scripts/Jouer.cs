@@ -18,6 +18,7 @@ public class Jouer : MonoBehaviour
     static public Joueur joueur1;
     ThreadLire ReceiveMessage;
     Thread t;
+    static public bool EstNul = false;
     static public bool  gameFini = false;
     static public bool  EstGagnant = false;
     static public bool  EstPerdant = false;
@@ -37,11 +38,11 @@ public class Jouer : MonoBehaviour
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
-    public Texture2D taunt;
-    public Texture2D sleep;
-    public Texture2D invisible;
-    public Texture2D attaquePuissante;
-    public Texture2D attaqueDouble;
+    public Texture2D imgTaunt;
+    public Texture2D imgSleep;
+    public Texture2D imgInvisible;
+    public Texture2D imgAttaquePuissante;
+    public Texture2D imgAttaqueDouble;
     public SpriteRenderer ImageCarte;
     public static int NbBle; //test avec static
     public static int NbBois; // test avec static
@@ -51,11 +52,22 @@ public class Jouer : MonoBehaviour
     public GUIStyle GUIBox;
     public GUIStyle GUIButton;
 
+    Color color;
+    public static GameObject taunt = null;
+    public static GameObject invis = null;
+    public static GameObject attaqueDouble = null;
+    public static GameObject attaquePuissante = null;
+    public static GameObject sleep = null;
+    public static int numero = 0;
+    public static int taille = 0;
+
     public static int attaqueBonus;
     public static int armureBonus;
     public static int vieBonus;
     ////////////////////////////////////////////// Spellz
-    public static bool enTrainCaster = false;   //
+    public static bool enTrainCaster = false;
+    public static bool enTrainAttaquer = false;
+    public static int posCarteEnTrainCaster = 0; //
     public static bool targetNeeded = false;    //
     public static bool isEnnemi = false;        //
     public static string effet;                 //
@@ -450,13 +462,6 @@ public class Jouer : MonoBehaviour
 
     private void takeOutIconsFriendly(int i)
     {
-        Color color;
-        GameObject taunt = null;
-        GameObject invis = null;
-        GameObject attaqueDouble = null;
-        GameObject attaquePuissante = null;
-        GameObject sleep = null;
-
         if(styleCarteAllier[i] != null)
         {
             taunt = styleCarteAllier[i].transform.FindChild("zeattributs" + i.ToString()).FindChild("taunt").gameObject;
@@ -490,12 +495,6 @@ public class Jouer : MonoBehaviour
     }
     private void takeOutIconsEnnemy(int i)
     {
-        Color color;
-        GameObject taunt = null;
-        GameObject invis = null;
-        GameObject attaqueDouble = null;
-        GameObject attaquePuissante = null;
-        GameObject sleep = null;
 
         if(styleCarteEnnemis[i] != null)
         {
@@ -528,14 +527,6 @@ public class Jouer : MonoBehaviour
     }
     private void afficherIconSpecial()
     {
-        Color color;
-        GameObject taunt = null;
-        GameObject invis = null;
-        GameObject attaqueDouble = null;
-        GameObject attaquePuissante = null;
-        GameObject sleep = null;
-        int numero = 0;
-        int taille = 0;
 
         for (int i = 0; i < ZoneCombat.Length; i++)
         {
@@ -704,14 +695,23 @@ public class Jouer : MonoBehaviour
                 menu = true;
             }
         }
+        else if(Input.GetMouseButton(1) && (enTrainCaster))
+        {
+            enTrainCaster = false;
+            Jouer.spell.transform.position = ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].Pos;
+            NbBle += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBle;
+            NbBois += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBois;
+            NbGem += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutGem;
+            joueur1.nbBle += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBle;
+            joueur1.nbBois += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBois;
+            joueur1.nbGem += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutGem;
+        }
     }
     //affichage (refresh per frame)
     public void OnGUI()
     {
         Event e;
         e = Event.current;
-
-        afficherIconSpecial();
 
         //Héro Joueur
         GUI.Label(new Rect(Screen.width * 0.045f, Screen.height * 0.76f, Screen.width * 1.0f, Screen.height * 1.0f), "Vie: " + HpJoueur.ToString());
@@ -765,6 +765,16 @@ public class Jouer : MonoBehaviour
                     gameFini = false;
                 }
             }
+            else if(EstNul)
+            {
+                GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Partie nul!", GUIBox);
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                {
+                    envoyerMessage("asd");
+                    t.Abort();
+                    Application.LoadLevel("Menu");
+                }
+            }
         }
 
         //BTN EndTurn
@@ -774,10 +784,12 @@ public class Jouer : MonoBehaviour
             {
                 envoyerMessage("Fin De Tour");
                 MonTour = false;
-                descendreSleep(ZoneCombat, ZoneCombatEnnemie);
                 resetArmor(ZoneCombat,styleCarteAlliercombat,true);
                 resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
                 pigerCarteEnnemis();
+                descendreSleep(ZoneCombat);
+                attaque temp = GetComponent<attaque>();
+                temp.enabled = false;
             }
         }
         else
@@ -840,8 +852,9 @@ public class Jouer : MonoBehaviour
             GUI.Label(new Rect(Screen.width / 1.17f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Bois: " + NbBois.ToString());
             GUI.Label(new Rect(Screen.width / 1.08f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Gemmes: " + NbGem.ToString());
             GUI.Label(new Rect(Screen.width / 1.3f, Screen.height / 1.26f, Screen.width * 0.25f, Screen.height * 0.10f), Worker);
-            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Atrisan(s): " + NbWorker.ToString());
+            GUI.Label(new Rect(Screen.width / 1.23f, Screen.height / 1.17f, Screen.width * 0.15f, Screen.height * 0.1f), "Artisan(s): " + NbWorker.ToString());
         }
+        afficherIconSpecial();
             if (ReceiveMessage.message == "vous avez gagné" || ReceiveMessage.message == "vous avez perdu")
                 gameFini = true;
             if (!gameFini && ReceiveMessage.message == "")
@@ -857,14 +870,12 @@ public class Jouer : MonoBehaviour
             if (ReceiveMessage.message != "")
             traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
     }
-    private void descendreSleep(PosZoneCombat[] Zoneallier, PosZoneCombat[] Zoneennemi)
+    private void descendreSleep(PosZoneCombat[] Zone)
     {
-        for (int i = 0; i < Zoneallier.Length; ++i)
+        for (int i = 0; i < Zone.Length; ++i)
         {
-            if (Zoneallier[i] != null && Zoneallier[i].EstOccupee && Zoneallier[i].carte != null && Zoneallier[i].carte.perm.estEndormi != 0)
-                Zoneallier[i].carte.perm.estEndormi--;
-            if (Zoneennemi[i] != null && Zoneennemi[i].EstOccupee && Zoneennemi[i].carte != null && Zoneennemi[i].carte.perm.estEndormi != 0)
-                Zoneennemi[i].carte.perm.estEndormi--;
+            if (Zone[i] != null && Zone[i].EstOccupee && Zone[i].carte != null && Zone[i].carte.perm.estEndormi != 0)
+                Zone[i].carte.perm.estEndormi--;
         }
     }
     private void setSpecialHability(string[] data)
@@ -884,6 +895,25 @@ public class Jouer : MonoBehaviour
             NbGemEnnemis += num;
         else if (sorteMana == "ble")
             NbBleEnnemis += num;
+    }
+    public void checkIfHeroIsDead()
+    {
+        if(HpEnnemi <= 0 && HpJoueur <= 0)
+        {
+            gameFini = true;
+            EstNul = true;
+        }
+        else if (HpJoueur <= 0)
+        {
+            gameFini = true;
+            EstPerdant = true;
+        }
+        else if (HpEnnemi <= 0)
+        {
+            gameFini = true;
+            EstGagnant = true;
+        }
+        
     }
     private int getNumBonus(string laplace)
     {
@@ -916,9 +946,12 @@ public class Jouer : MonoBehaviour
                     setWorker(true);
                 else
                     setWorker(false);
+
+                descendreSleep(ZoneCombatEnnemie);
                 setpeutAttaquer();
                 PigerCarte();
-
+                attaque attaqueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = GetComponent<attaque>();
+                attaqueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.enabled = true;
                 ReceiveMessage.message = "";
                 break;
             case "AjouterCarteEnnemis":
@@ -1014,7 +1047,9 @@ public class Jouer : MonoBehaviour
                 GameObject gametarget = GameObject.Find(data[2]);
                 gamespell.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell, 3);
-                TextMesh[] stat = gametarget.GetComponentsInChildren<TextMesh>();
+                TextMesh[] stat = null;
+                if(target !=null)
+                    stat = gametarget.GetComponentsInChildren<TextMesh>();
                 if (spell.Habilete.Split(new char[] { ' ' })[0] == "Detruit")
                 {
                     ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].EstOccupee = false;
@@ -1039,9 +1074,15 @@ public class Jouer : MonoBehaviour
                     else
                     {
                         if (data[2] == "hero")
+                        {
                             HpEnnemi -= int.Parse(spell.Habilete.Split(new char[] { ' ' })[1]);
+                            checkIfHeroIsDead();
+                        }
                         else
+                        {
                             HpJoueur -= int.Parse(spell.Habilete.Split(new char[] { ' ' })[1]);
+                            checkIfHeroIsDead();
+                        }
 
                     }
 
@@ -1092,7 +1133,7 @@ public class Jouer : MonoBehaviour
                     for (int i = 0; i < ZoneCombat.Length; i++)
                     {
                         valide = false;
-                        if (typeTarget == "touteslescartes" || typeTarget == "touslesbatiments" || typeTarget == "placedecombat" || typeTarget == "ennemis")
+                        if (typeTarget == "touteslescartes" || typeTarget == "touslesbatiments" || typeTarget == "placedecombat")
                         {
                             if (styleCarteEnnemisCombat[i] != null)
                             {
@@ -1113,9 +1154,13 @@ public class Jouer : MonoBehaviour
                         {
                             HpEnnemi -= dmg;
                             HpJoueur -= dmg;
+                            checkIfHeroIsDead();
                         }
                         else
-                            HpEnnemi -= dmg;
+                        {
+                            HpJoueur -= dmg;
+                            checkIfHeroIsDead();
+                        }
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Detruit")
                 {
@@ -1354,7 +1399,7 @@ public class Jouer : MonoBehaviour
     }
     private void doTransformation(GameObject t, int i, PosZoneCombat[] zone, string[] statsTransforme)
     {
-        int vieTransformation = int.Parse(statsTransforme[2]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[0]);
+        int vieTransformation = int.Parse(statsTransforme[0]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[2]);
 
         zone[i].carte.perm.Vie = vieTransformation;
         zone[i].carte.perm.Attaque = attaqueTransformation;
@@ -1575,7 +1620,7 @@ public class Jouer : MonoBehaviour
     public static int TrouverOuPlacerCarte(PosZoneCombat[] Zone)
     {
         int OuPlacerCarte = 0;
-        for (int i = 0; i < Zone.Length && Zone[i].EstOccupee == true; ++i)
+        for (int i = 0; i < Zone.Length && Zone[i].EstOccupee; ++i)
         {
             OuPlacerCarte++;
         }
@@ -1680,7 +1725,7 @@ public class Jouer : MonoBehaviour
     private int placerCarte(GameObject carte, PosZoneCombat[] zone)
     {
         int PlacementZoneCombat = TrouverOuPlacerCarte(zone);
-        if (PlacementZoneCombat != -1)
+        if (PlacementZoneCombat != -1 && carte != null && PlacementZoneCombat < zone.Length)
         {
             carte.transform.position = zone[PlacementZoneCombat].Pos;
             zone[PlacementZoneCombat].EstOccupee = true;
@@ -1815,7 +1860,7 @@ public class Jouer : MonoBehaviour
             {
                 if (motsHabilete[i + 1] == "les" && (motsHabilete[i + 2] == "cartes" || (motsHabilete[i + 2] == "creatures")))
                 {
-                    if (motsHabilete[i + 3] == "ennemis" || motsHabilete[i + 3] == "alliees")
+                    if (i + 3 < motsHabilete.Length && motsHabilete[i + 3] == "ennemis" || motsHabilete[i + 3] == "alliees")
                     {
                         target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2] + motsHabilete[i + 3];
                         pasTrouver = false;
