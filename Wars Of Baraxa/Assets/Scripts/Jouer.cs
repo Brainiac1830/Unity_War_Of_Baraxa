@@ -551,7 +551,7 @@ public class Jouer : MonoBehaviour
                 attaquePuissante = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("attaquePuissante").gameObject;
                 sleep = styleCarteAlliercombat[i].transform.FindChild("zeattributs" + numero.ToString()).FindChild("sleep").gameObject;
 
-                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm.estTaunt)
+                if (ZoneCombat[i].carte != null && ZoneCombat[i].carte.perm != null && ZoneCombat[i].carte.perm.estTaunt)
                 {
                     color = taunt.renderer.material.color;
                     color.a = 1f;

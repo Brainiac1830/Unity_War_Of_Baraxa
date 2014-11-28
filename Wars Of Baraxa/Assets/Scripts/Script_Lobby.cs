@@ -19,10 +19,11 @@ public class Script_Lobby : MonoBehaviour
     void Awake()
     {
         DeckChoisis = false;
+        int tour = 0;
         connexionServeur.sck.ReceiveTimeout = 500;
         string message = "";
         bool recu = false;
-        while (!recu)
+        while (!recu && tour <10)
         {
             try
             {
@@ -33,7 +34,12 @@ public class Script_Lobby : MonoBehaviour
             catch (SocketException)
             {
                 recu = false;
+                ++tour;
             }
+        }
+        if (tour == 10)
+        {
+            Application.LoadLevel("menu");
         }
         connexionServeur.sck.ReceiveTimeout = 0;
         NomDeck = message.Split(new char[] { ',' });

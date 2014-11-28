@@ -32,10 +32,11 @@ public class profile_Script : MonoBehaviour {
     }
     public void Awake()
     {
+        int tour = 0;
         connexionServeur.sck.ReceiveTimeout = 500;
         string message = "";
         bool recu = false;
-        while (!recu)
+        while (!recu && tour <10)
         {
             try
             {
@@ -46,7 +47,12 @@ public class profile_Script : MonoBehaviour {
             catch (SocketException)
             {
                 recu = false;
+                ++tour;
             }
+        }
+        if (tour == 10)
+        {
+            Application.LoadLevel("Menu");
         }
         connexionServeur.sck.ReceiveTimeout = 0;
         string[] data = message.Split(new char[] { ',' });
