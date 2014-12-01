@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System;
 public class menu_Script : MonoBehaviour
 {
 
@@ -104,14 +105,20 @@ public class menu_Script : MonoBehaviour
     }
     private string recevoirResultat()
     {
-        byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
-        int bytesRead = connexionServeur.sck.Receive(buff);
-        byte[] formatted = new byte[bytesRead];
-        for (int i = 0; i < bytesRead; i++)
+        try
         {
-            formatted[i] = buff[i];
+            byte[] buff = new byte[connexionServeur.sck.SendBufferSize];
+            int bytesRead = connexionServeur.sck.Receive(buff);
+            byte[] formatted = new byte[bytesRead];
+            for (int i = 0; i < bytesRead; i++)
+            {
+                formatted[i] = buff[i];
+            }
+            string strData = Encoding.ASCII.GetString(formatted);
+            return strData;
         }
-        string strData = Encoding.ASCII.GetString(formatted);
-        return strData;
+        catch (Exception)
+        { }
+        return null;
     }
 }
