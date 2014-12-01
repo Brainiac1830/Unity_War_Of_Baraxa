@@ -21,6 +21,10 @@ public class menu_Script : MonoBehaviour
     public GUIStyle GUIButton;
     public GUIStyle Background;
     public GUIStyle Logo;
+    void Awake()
+    {
+        Resources.UnloadUnusedAssets();
+    }
     void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
