@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: fb68d2fef9b588a4689b82e067543d11
+guid: 58cf4aa19365d4343a28661436f15513
 TextureImporter:
   fileIDToRecycleName:
-    21300000: forets des singes
+    21300000: hypnotisme
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -23,7 +23,7 @@ TextureImporter:
   generateCubemap: 0
   seamlessCubemap: 0
   textureFormat: -1
-  maxTextureSize: 1024
+  maxTextureSize: 512
   textureSettings:
     filterMode: -1
     aniso: 1
@@ -38,7 +38,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: .5, y: .5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 31
+  spritePixelsToUnits: 10
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
