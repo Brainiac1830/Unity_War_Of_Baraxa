@@ -1098,19 +1098,19 @@ public class Jouer : MonoBehaviour
                 }
                 else if (spell.Habilete.Split(new char[] { ' ' })[0] == "Transforme")
                 {
-                    int positionCarteEnJEu = TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombatEnnemie);
-                    if (positionCarteEnJEu != -1 && ZoneCombatEnnemie[positionCarteEnJEu] != null && ZoneCombatEnnemie[positionCarteEnJEu].carte != null && ZoneCombatEnnemie[positionCarteEnJEu].carte.perm != null)
+                    int positionCarteEnJeu = TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat);
+                    if (positionCarteEnJeu != -1 && ZoneCombat[positionCarteEnJeu] != null && ZoneCombat[positionCarteEnJeu].carte != null && ZoneCombat[positionCarteEnJeu].carte.perm != null)
                     {
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.Vie = target.perm.Vie;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.basicVie = target.perm.basicVie;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.Armure = target.perm.Armure;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.basicArmor = target.perm.basicArmor;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.Attaque = target.perm.Attaque;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.basicAttaque = target.perm.basicAttaque;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estAttaqueDouble = target.perm.estAttaqueDouble;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estAttaquePuisante = target.perm.estAttaquePuisante;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estInvisible = target.perm.estInvisible;
-                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estTaunt = target.perm.estTaunt;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.Vie = target.perm.Vie;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.basicVie = target.perm.basicVie;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.Armure = target.perm.Armure;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.basicArmor = target.perm.basicArmor;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.Attaque = target.perm.Attaque;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.basicAttaque = target.perm.basicAttaque;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.estAttaqueDouble = target.perm.estAttaqueDouble;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.estAttaquePuisante = target.perm.estAttaquePuisante;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.estInvisible = target.perm.estInvisible;
+                        ZoneCombat[positionCarteEnJeu].carte.perm.estTaunt = target.perm.estTaunt;
 
                     }
                     stat[3].text = target.perm.Armure.ToString();
@@ -1188,26 +1188,29 @@ public class Jouer : MonoBehaviour
                 {
                     string tabHabileteSpellSansNewline = spell2.Habilete.Replace('\n', ' ');
                     int dmg = int.Parse(tabHabileteSpellSansNewline.Split(new char[] { ' ' })[1]);
-                    for (int i = 0; i < ZoneCombat.Length; i++)
+                    if (typeTarget != "herosennemis")
                     {
-                        valide = false;
-                        if (typeTarget == "touteslescartes" || typeTarget == "touslesbatiments" || typeTarget == "placedecombat")
+                        for (int i = 0; i < ZoneCombat.Length; i++)
                         {
-                            if (styleCarteEnnemisCombat[i] != null)
+                            valide = false;
+                            if (typeTarget == "touteslescartes" || typeTarget == "touslesbatiments" || typeTarget == "placedecombat")
                             {
-                                valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombatEnnemie);
+                                if (styleCarteEnnemisCombat[i] != null)
+                                {
+                                    valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombatEnnemie);
+                                    if (valide)
+                                        doTheDmg(dmg, i, ZoneCombatEnnemie, styleCarteEnnemisCombat[i]);
+                                }
+                            }
+                            if (styleCarteAlliercombat[i] != null)
+                            {
+                                valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
                                 if (valide)
-                                    doTheDmg(dmg, i, ZoneCombatEnnemie, styleCarteEnnemisCombat[i]);
+                                    doTheDmg(dmg, i, ZoneCombat, styleCarteAlliercombat[i]);
                             }
                         }
-                        if (styleCarteAlliercombat[i] != null)
-                        {
-                            valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
-                            if (valide)
-                                doTheDmg(dmg, i, ZoneCombat, styleCarteAlliercombat[i]);
-                        }
                     }
-                    if (typeTarget == "placedecombat" || typeTarget == "ennemis")
+                    if (typeTarget == "placedecombat" || typeTarget == "ennemis" || typeTarget =="herosennemis")
                         if (typeTarget == "placedecombat")
                         {
                             HpEnnemi -= dmg;
@@ -1252,19 +1255,21 @@ public class Jouer : MonoBehaviour
                         valide = false;
                         if (typeTarget == "touteslescartes" || typeTarget == "touslesbatiments" || typeTarget == "touteslescreatures")
                         {
-                            if (styleCarteEnnemisCombat[i] != null)
+                            if (transformEnnemis(typeTarget) && styleCarteEnnemisCombat[i] != null)
                             {
                                 valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombatEnnemie);
                                 if (valide)
                                     doTransformation(styleCarteEnnemisCombat[i], i, ZoneCombatEnnemie, statsTransforme);
                             }
+
+                            if (transformAllies(typeTarget) && styleCarteAlliercombat[i] != null)
+                            {
+                                valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
+                                if (valide)
+                                    doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
+                            }
                         }
-                        if (styleCarteAlliercombat[i] != null)
-                        {
-                            valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
-                            if (valide)
-                                doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
-                        }
+                        
                     }
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Endort")
@@ -1352,6 +1357,16 @@ public class Jouer : MonoBehaviour
         {
             EstGagnant = true;
         }
+    }
+    private bool transformEnnemis(string typeTarget)
+    {
+        return typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsallies" || typeTarget == "touteslescartes" || 
+            typeTarget == "touteslescartesalliees" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesalliees";
+    }
+    private bool transformAllies(string typeTarget)
+    {
+        return typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsennemis" || typeTarget == "touteslescartes" ||
+            typeTarget == "touteslescartesennemis" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesennemies";
     }
 
     private void checkIfDmgHeroes(string typeTarget, int dmg)
@@ -1465,7 +1480,7 @@ public class Jouer : MonoBehaviour
     }
     private void doTransformation(GameObject t, int i, PosZoneCombat[] zone, string[] statsTransforme)
     {
-        int vieTransformation = int.Parse(statsTransforme[0]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[2]);
+        int vieTransformation = int.Parse(statsTransforme[2]); int attaqueTransformation = int.Parse(statsTransforme[1]); int armureTransformation = int.Parse(statsTransforme[0]);
 
         zone[i].carte.perm.Vie = vieTransformation;
         zone[i].carte.perm.Attaque = attaqueTransformation;
@@ -1491,29 +1506,33 @@ public class Jouer : MonoBehaviour
 
         if (typeSpell == "Inflige")
         {
-            if (typeTarget == "cible" || typeTarget == "ennemis" || typeTarget == "touteslescartesennemis" || typeTarget == "touteslescartes" || typeTarget == "placedecombat")
+            if (typeTarget == "cible" || typeTarget == "ennemis" || typeTarget == "touteslescartesennemies" || typeTarget == "touteslescartes" || typeTarget == "placedecombat")
                 valide = true;
-            else if (typeTarget == "creature" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesennemis")
+            else if (typeTarget == "creature" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesennemies")
+            {
                 if (zone[i].carte.perm.TypePerm == "Creature")
                     valide = true;
-                else if (typeTarget == "batiment" || typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsennemis")
-                    if (zone[i].carte.perm.TypePerm == "Batiment")
-                        valide = true;
+            }
+            else if (typeTarget == "batiment" || typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsennemis")
+                if (zone[i].carte.perm.TypePerm == "Batiment")
+                    valide = true;
         }
         else if (typeSpell == "Detruit" || typeSpell == "Transforme" || typeSpell == "Endort")
         {
-            if (typeTarget == "cible" || typeTarget == "touteslescartesennemis" || typeTarget == "touteslescartes")
+            if (typeTarget == "cible" || typeTarget == "touteslescartesennemies" || typeTarget == "touteslescartes" || typeTarget =="touteslescartesalliees")
                 valide = true;
-            else if (typeTarget == "creature" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesennemis")
+            else if (typeTarget == "creature" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesennemies")
+            {
                 if (zone[i].carte.perm.TypePerm == "Creature")
                     valide = true;
-                else if (typeTarget == "batiment" || typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsennemis")
-                    if (zone[i].carte.perm.TypePerm == "Batiment")
-                        valide = true;
+            }
+            else if (typeTarget == "batiment" || typeTarget == "touslesbatiments" || typeTarget == "touslesbatimentsennemis")
+                if (zone[i].carte.perm.TypePerm == "Batiment")
+                    valide = true;
         }
         else if (typeSpell == "Soigne")
         {
-            if (typeTarget == "cible" || typeTarget == "ennemis" || typeTarget == "touteslescartesennemis" || typeTarget == "touteslescartes" || typeTarget == "placedecombat")
+            if (typeTarget == "cible" || typeTarget == "ennemis" || typeTarget == "touteslescartesalliees" || typeTarget == "touteslescartes" || typeTarget == "placedecombat")
                 valide = true;
             else if (typeTarget == "creature" || typeTarget == "touteslescreatures" || typeTarget == "touteslescreaturesalliees")
             {
@@ -1956,7 +1975,7 @@ public class Jouer : MonoBehaviour
             }
             else if (motsHabilete[i] == "heros")
             {
-                if (motsHabilete[i + 1] == "ennemi")
+                if (motsHabilete[i + 1] == "ennemis")
                 {
                     target = motsHabilete[i] + motsHabilete[i + 1];
                     pasTrouver = false;

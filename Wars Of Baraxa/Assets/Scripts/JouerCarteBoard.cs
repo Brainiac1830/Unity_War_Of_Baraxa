@@ -15,8 +15,6 @@ public class JouerCarteBoard : MonoBehaviour
     public bool EstJouer = false;
     public bool EstEnnemie = false;
 
-    GameObject target;
-    GameObject spell;
     Transform clonetransform;
     GameObject cloneCarte;
     bool estClone;
@@ -88,32 +86,19 @@ public class JouerCarteBoard : MonoBehaviour
         }
         return nbCarte;
     }
-
-    private bool spellSummon(string target, int nbCreatures, int[] stats, PosZoneCombat[] zone)
-    {
-        bool valide = false; int nbSummon = nbCreatures; int placeDisponnible = 0;
-        for (int i = 0; i < zone.Length; i++)
-        {
-            if (!zone[i].EstOccupee)
-                placeDisponnible++;
-        }
-        if (nbSummon > placeDisponnible)
-            nbSummon = placeDisponnible;
-
-        //Créer les summons
-        return !valide;
-    }
     private bool spellBurn(string target, int nbDegat, Carte zeTarget, GameObject t, int posTarget)
     {
         bool valide = false;
         if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
+        {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
-            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
-                if (zeTarget.perm.TypePerm == "Batiment")
-                    valide = true;
+        }
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+            if (zeTarget.perm.TypePerm == "Batiment")
+                valide = true;
 
         if (valide)
         {
@@ -148,11 +133,13 @@ public class JouerCarteBoard : MonoBehaviour
         if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
+        {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
-            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
-                if (zeTarget.perm.TypePerm == "Batiment")
-                    valide = true;
+        }
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+            if (zeTarget.perm.TypePerm == "Batiment")
+                valide = true;
 
         if ((zeTarget.perm.Vie + nbVie) >= zeTarget.perm.basicVie)
             zeTarget.perm.Vie = zeTarget.perm.basicVie;
@@ -186,11 +173,13 @@ public class JouerCarteBoard : MonoBehaviour
         if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
+        {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
-            else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
-                if (zeTarget.perm.TypePerm == "Batiment")
-                    valide = true;
+        }
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+            if (zeTarget.perm.TypePerm == "Batiment")
+                valide = true;
         if (valide)
         {
             Destroy(t, 1);
@@ -205,14 +194,14 @@ public class JouerCarteBoard : MonoBehaviour
         ////////////////////
 
         bool valide = false;
-        if (target == "cible" || target == "touteslescartes")
+        if (target == "cible" || target == "touteslescartes" || target == "touteslescartesennemies" || target == "touteslescartesalliees")
             valide = true;
-        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies" || target == "touteslescreaturesalliees")
         {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
         }
-        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis" || target =="touslesbatimentsallies")
         {
             if (zeTarget.perm.TypePerm == "Batiment")
                 valide = true;
@@ -220,12 +209,12 @@ public class JouerCarteBoard : MonoBehaviour
 
         if (valide)
         {
-            zeTarget.perm.Vie = stats[0];
+            zeTarget.perm.Vie = stats[2];
             zeTarget.perm.Attaque = stats[1];
-            zeTarget.perm.Armure = stats[2];
-            zeTarget.perm.basicVie = stats[0];
+            zeTarget.perm.Armure = stats[0];
+            zeTarget.perm.basicVie = stats[2];
             zeTarget.perm.basicAttaque = stats[1];
-            zeTarget.perm.basicArmor = stats[2];
+            zeTarget.perm.basicArmor = stats[0];
         }
 
         if (t != null)
@@ -246,8 +235,14 @@ public class JouerCarteBoard : MonoBehaviour
         if (target == "cible")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesalliees")
+        {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
+        }
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsallies")
+            if (zeTarget.perm.TypePerm == "Batiment")
+                valide = true;
+
         if (valide)
         {
             for (int i = 1; i < Jouer.texteHabileteSansEspace.Length; i++)
@@ -355,13 +350,21 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 if (motsHabilete[i + 1] == "les" && motsHabilete[i + 2] == "batiments")
                 {
-                    target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2];
-                    pasTrouver = false;
+                    if (i + 3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemies" || motsHabilete[i + 3] == "alliees"))
+                    {
+                        target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2] + motsHabilete[i + 3];
+                        pasTrouver = false;
+                    }
+                    else
+                    {
+                        target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2];
+                        pasTrouver = false;
+                    }
                 }
             }
             else if (motsHabilete[i] == "heros")
             {
-                if (motsHabilete[i + 1] == "ennemi")
+                if (motsHabilete[i + 1] == "ennemis")
                 {
                     target = motsHabilete[i] + motsHabilete[i + 1];
                     pasTrouver = false;
@@ -486,7 +489,7 @@ public class JouerCarteBoard : MonoBehaviour
     }
     public bool isOnHeros(string target)
     {
-        return target == "placedecombat" || target == "ennemis";
+        return target == "placedecombat" || target == "ennemis" || target == "herosennemis";
     }
     public bool isOnBothHeros(string target)
     {
@@ -645,14 +648,17 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 if (Jouer.effet == "Inflige")
                 {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
+                    if (Jouer.spellTarget != "herosennemis")
                     {
-                        if (Jouer.ZoneCombatEnnemie[i].carte != null)
-                            spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
-                        if (isOnBothPlayers(Jouer.spellTarget))
+                        for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                         {
-                            if (Jouer.ZoneCombat[i].carte != null)
-                                spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                            if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                                spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
+                            if (isOnBothPlayers(Jouer.spellTarget))
+                            {
+                                if (Jouer.ZoneCombat[i].carte != null)
+                                    spellBurn(Jouer.spellTarget, trouverNbDegat(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                            }
                         }
                     }
                     if (isOnHeros(Jouer.spellTarget))
@@ -661,11 +667,6 @@ public class JouerCarteBoard : MonoBehaviour
                         if (isOnBothHeros(Jouer.spellTarget))
                             burnHeros("Allier", trouverNbDegat(Jouer.texteHabileteSansEspace));
                     }
-                }
-                else if (Jouer.effet == "Invoque")
-                {
-                    for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
-                        spellSummon(Jouer.spellTarget, trouverNbSummon(Jouer.texteHabileteSansEspace), trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat);
                 }
                 else if (Jouer.effet == "Endort")
                 {
