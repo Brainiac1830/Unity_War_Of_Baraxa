@@ -96,7 +96,7 @@ public class Script_Lobby : MonoBehaviour
         else
         {
             GUI.enabled = false;
-            GUI.Button(new Rect(Screen.width * 0.25f, Screen.height * 0.91f, Screen.width * 0.1f, Screen.height * 0.07f), "Rejoindre", GUIButton);
+            GUI.Button(new Rect(Screen.width * 0.25f, Screen.height * 0.91f, Screen.width * 0.15f, Screen.height * 0.07f), "Rejoindre", GUIButton);
             GUI.Button(new Rect((Screen.width * 0.75f), (Screen.height * 0.8f), Screen.width * 0.1f, Screen.height * 0.07f), "annuler", GUIButton);
             GUI.enabled = true;
         }

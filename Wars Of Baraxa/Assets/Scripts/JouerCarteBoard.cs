@@ -924,17 +924,21 @@ public class JouerCarteBoard : MonoBehaviour
     void OnMouseOver(){
         delay += Time.deltaTime;
         //// here the 2 is the time that you want before load the bar
-        if(delay >=1f && cloneCarte == null &&  !estClone){
-           //create clone
-            clonetransform = Instantiate(this.gameObject.transform) as Transform;
-            clonetransform.tag = "clone";
-            cloneCarte = clonetransform.gameObject;
-            cloneCarte.GetComponent<JouerCarteBoard>().estClone = true;
-           //grossir
-            cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
-           //changer de position
-            cloneCarte.transform.position = new Vector3(6.5f,-0.5f, 1);
-         }
+        if (this.name != "hero" && this.name != "hero ennemis")
+        {
+            if (delay >= 1f && cloneCarte == null && !estClone)
+            {
+                //create clone
+                clonetransform = Instantiate(this.gameObject.transform) as Transform;
+                clonetransform.tag = "clone";
+                cloneCarte = clonetransform.gameObject;
+                cloneCarte.GetComponent<JouerCarteBoard>().estClone = true;
+                //grossir
+                cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
+                //changer de position
+                cloneCarte.transform.position = new Vector3(6.5f, -0.5f, 1);
+            }
+        }
 	}
 
 	void OnMouseExit(){
