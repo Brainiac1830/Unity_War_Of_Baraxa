@@ -35,6 +35,9 @@ public class Jouer : MonoBehaviour
     public Texture2D ble;
     public Texture2D bois;
     public Texture2D gem;
+    public Texture2D bleAjouter;
+    public Texture2D boisAjouter;
+    public Texture2D gemAjouter;
     public Texture2D Worker;
     public Texture2D PlayerChar;
     public Texture2D EnnemiChar;
@@ -185,7 +188,7 @@ public class Jouer : MonoBehaviour
                     if (longueur + mot[y].Length + 1 > maxcaractere)
                     {
                         mot[y - 1] += "\n";
-                        longueur = 0;
+                        longueur = mot[y].Length+1;
                     }
                     else
                         longueur += mot[y].Length + 1;
@@ -810,19 +813,19 @@ public class Jouer : MonoBehaviour
         if (!placerClick && MonTour)
         {
             //BLE
-            if (GUI.Button(new Rect(Screen.width / 1.27f, Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), ble))
+            if (GUI.Button(new Rect(Screen.width / 1.27f, Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), bleAjouter))
             {
                 NbBle = SetManaAjouter(e, NbBle, "ble");
             }
             GUI.Label(new Rect(Screen.width / 1.27f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Blé: " + NbBle.ToString());
             //BOIS
-            if (GUI.Button(new Rect((Screen.width / 1.17f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), bois))
+            if (GUI.Button(new Rect((Screen.width / 1.17f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), boisAjouter))
             {
                 NbBois = SetManaAjouter(e, NbBois, "bois");
             }
             GUI.Label(new Rect(Screen.width / 1.17f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Bois: " + NbBois.ToString());
             //GEM
-            if (GUI.Button(new Rect((Screen.width / 1.08f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), gem))
+            if (GUI.Button(new Rect((Screen.width / 1.08f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), gemAjouter))
             {
                 NbGem = SetManaAjouter(e, NbGem, "gem");
             }
@@ -843,9 +846,9 @@ public class Jouer : MonoBehaviour
         else
         {
             GUI.enabled = false;
-            GUI.Button(new Rect(Screen.width / 1.27f, Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), ble);
-            GUI.Button(new Rect((Screen.width / 1.17f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), bois);
-            GUI.Button(new Rect((Screen.width / 1.08f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), gem);
+            GUI.Button(new Rect(Screen.width / 1.27f, Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), bleAjouter);
+            GUI.Button(new Rect((Screen.width / 1.17f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), boisAjouter);
+            GUI.Button(new Rect((Screen.width / 1.08f), Screen.height / 1.12f, Screen.width * 0.05f, Screen.height * 0.07f), gemAjouter);
 
             GUI.enabled = true;
             GUI.Label(new Rect(Screen.width / 1.27f, Screen.height / 1.04f, Screen.width * 0.09f, Screen.height * 0.07f), "Blé: " + NbBle.ToString());

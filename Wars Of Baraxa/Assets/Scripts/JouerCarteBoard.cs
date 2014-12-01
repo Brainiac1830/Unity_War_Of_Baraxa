@@ -106,9 +106,9 @@ public class JouerCarteBoard : MonoBehaviour
     private bool spellBurn(string target, int nbDegat, Carte zeTarget, GameObject t, int posTarget)
     {
         bool valide = false;
-        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
-        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
             else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
@@ -145,9 +145,9 @@ public class JouerCarteBoard : MonoBehaviour
     private bool spellHeal(string target, int nbVie, Carte zeTarget, GameObject t, int posTarget)
     {
         bool valide = false;
-        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
-        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
             else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
@@ -167,7 +167,7 @@ public class JouerCarteBoard : MonoBehaviour
     private bool spellSleep(string target, int nbTour, Carte zeTarget, GameObject t, int posTarget)
     {
         bool valide = false;
-        if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
 
@@ -183,9 +183,9 @@ public class JouerCarteBoard : MonoBehaviour
     private bool spellDestroy(string target, Carte zeTarget, GameObject t, int posTarget)
     {
         bool valide = false;
-        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemis" || target == "touteslescartes" || target == "placedecombat")
+        if (target == "cible" || target == "ennemis" || target == "touteslescartesennemies" || target == "touteslescartes" || target == "placedecombat")
             valide = true;
-        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
             else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis")
@@ -207,7 +207,7 @@ public class JouerCarteBoard : MonoBehaviour
         bool valide = false;
         if (target == "cible" || target == "touteslescartes")
             valide = true;
-        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemis")
+        else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesennemies")
         {
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
@@ -923,17 +923,21 @@ public class JouerCarteBoard : MonoBehaviour
     void OnMouseOver(){
         delay += Time.deltaTime;
         //// here the 2 is the time that you want before load the bar
-        if(delay >=1f && cloneCarte == null &&  !estClone){
-           //create clone
-            clonetransform = Instantiate(this.gameObject.transform) as Transform;
-            clonetransform.tag = "clone";
-            cloneCarte = clonetransform.gameObject;
-            cloneCarte.GetComponent<JouerCarteBoard>().estClone = true;
-           //grossir
-            cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
-           //changer de position
-            cloneCarte.transform.position = new Vector3(6.5f,-0.5f, 1);
-         }
+        if (this.name != "hero" && this.name != "hero ennemis")
+        {
+            if (delay >= 1f && cloneCarte == null && !estClone)
+            {
+                //create clone
+                clonetransform = Instantiate(this.gameObject.transform) as Transform;
+                clonetransform.tag = "clone";
+                cloneCarte = clonetransform.gameObject;
+                cloneCarte.GetComponent<JouerCarteBoard>().estClone = true;
+                //grossir
+                cloneCarte.transform.localScale = new Vector3(cloneCarte.transform.localScale.x * 2, cloneCarte.transform.localScale.y * 2, cloneCarte.transform.localScale.y);
+                //changer de position
+                cloneCarte.transform.position = new Vector3(6.5f, -0.5f, 1);
+            }
+        }
 	}
 
 	void OnMouseExit(){
