@@ -42,7 +42,7 @@ public class attaque : MonoBehaviour {
     {
         for (int i = 0; i < tab.Length; ++i)
         {
-            if (tab[i].carte != null && style[i] != null && i == posAllier)
+            if (tab[i].carte != null && style[i] != null && tab[i].carte.perm != null && i == posAllier && tab[i].carte.perm.TypePerm == "Creature")
             {
                 style[i].renderer.material.color = Color.blue;
             }

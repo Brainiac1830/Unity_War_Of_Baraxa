@@ -276,7 +276,7 @@ public class JouerCarteBoard : MonoBehaviour
             zeTarget.perm.basicAttaque += buffAttaque;
             zeTarget.perm.Armure += buffArmure;
             zeTarget.perm.basicArmor += buffArmure;
-            if (buffHabilete == "provocateur")
+            if (buffHabilete == "provocation")
             {
                 if(!zeTarget.perm.estInvisible)
                     zeTarget.perm.estTaunt = true;
@@ -289,13 +289,16 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 zeTarget.perm.estAttaqueDouble = true;
             }
+            else if (buffHabilete == "invisible")
+            {
+                zeTarget.perm.estInvisible = true;
+            }
 
             TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
 
             stat[3].text = zeTarget.perm.Armure.ToString();
             stat[4].text = zeTarget.perm.Attaque.ToString();
             stat[5].text = zeTarget.perm.Vie.ToString();
-            stat[7].text = zeTarget.Habilete.ToString();
         }
 
         return !valide;
@@ -336,7 +339,7 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 if (motsHabilete[i + 1] == "les" && (motsHabilete[i + 2] == "cartes" || motsHabilete[i + 2] == "creatures"))
                 {
-                    if (i+3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemis" || motsHabilete[i+3] == "alliees"))
+                    if (i+3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemies" || motsHabilete[i+3] == "alliees"))
                     {
                         target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2] + motsHabilete[i + 3];
                         pasTrouver = false;
@@ -479,27 +482,6 @@ public class JouerCarteBoard : MonoBehaviour
             Jouer.HpJoueur -= nbDegat;
         else
             Jouer.HpEnnemi -= nbDegat;
-
-        if(Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
-        {
-            Jouer.gameFini = true;
-            Jouer.EstNul = true;
-        }
-        else if(Jouer.HpJoueur <= 0)
-        {
-            Jouer.gameFini = true;
-            Jouer.EstPerdant = true;
-        }
-        else if(Jouer.HpEnnemi <= 0)
-        {
-            Jouer.gameFini = true;
-            Jouer.EstGagnant = true;
-        }
-        else if(Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
-        {
-            Jouer.gameFini = true;
-            Jouer.EstNul = true;
-        }
         return false;
     }
     public bool isOnHeros(string target)
@@ -609,6 +591,22 @@ public class JouerCarteBoard : MonoBehaviour
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                     Jouer.spell = null;
+
+                    if (Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
+                    {
+                        Jouer.gameFini = true;
+                        Jouer.EstNul = true;
+                    }
+                    else if (Jouer.HpJoueur <= 0)
+                    {
+                        Jouer.gameFini = true;
+                        Jouer.EstPerdant = true;
+                    }
+                    else if (Jouer.HpEnnemi <= 0)
+                    {
+                        Jouer.gameFini = true;
+                        Jouer.EstGagnant = true;
+                    }
                 }
             }
         }
@@ -756,6 +754,22 @@ public class JouerCarteBoard : MonoBehaviour
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
+
+                if (Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
+                {
+                    Jouer.gameFini = true;
+                    Jouer.EstNul = true;
+                }
+                else if (Jouer.HpJoueur <= 0)
+                {
+                    Jouer.gameFini = true;
+                    Jouer.EstPerdant = true;
+                }
+                else if (Jouer.HpEnnemi <= 0)
+                {
+                    Jouer.gameFini = true;
+                    Jouer.EstGagnant = true;
+                }
             }
         }
         else if ((this.tag != "hero" || this.tag != "hero ennemis") && Cout.Length != 0 && !Jouer.enTrainCaster && getNbCarteZone(Jouer.ZoneCombat) < Jouer.ZoneCombat.Length && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
