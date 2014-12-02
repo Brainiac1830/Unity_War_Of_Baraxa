@@ -99,7 +99,6 @@ public class Jouer : MonoBehaviour
     public GameObject card;
     public GameObject cardennemis;
     public JouerCarteBoard ScriptEnnemie;
-    public attaque Script_attaque;
     public int NoCarte;
     public int noCarteEnnemis;
     static public float pos;
