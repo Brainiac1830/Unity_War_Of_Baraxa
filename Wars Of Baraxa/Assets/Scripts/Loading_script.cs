@@ -56,12 +56,12 @@ public class Loading_script : MonoBehaviour
 
         if (fadeUp)
         {
-            alpha += 0.01f;
+            alpha += 0.1f;
             couleur = new Color(1, 1, 1, alpha);
         }
         else
         {
-            alpha -= 0.01f;
+            alpha -= 0.1f;
             couleur = new Color(1, 1, 1, alpha);
         }
     }
