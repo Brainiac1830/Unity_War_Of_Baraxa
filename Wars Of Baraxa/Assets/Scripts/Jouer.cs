@@ -22,6 +22,7 @@ public class Jouer : MonoBehaviour
     static public bool  gameFini = false;
     static public bool  EstGagnant = false;
     static public bool  EstPerdant = false;
+    public attaque Script_attaque;
 
     static public PosZoneCombat[] ZoneCarteJoueur;
     static public PosZoneCombat[] ZoneCombat;
@@ -389,6 +390,49 @@ public class Jouer : MonoBehaviour
                 t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
         }
     }
+    private void setValueFromCard(Transform t, Carte card, bool allier)
+    {
+        if (allier)
+        {
+            int taille = t.name.Length - 4;
+            int i = int.Parse(t.name.Substring(4,taille));
+            t.Find("coutBois" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
+            t.Find("coutBle" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
+            t.Find("coutGem" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
+            t.Find("habilete" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
+            t.Find("Nom" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("Image" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
+            if (card.perm != null)
+            {
+                t.Find("attaque" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
+                t.Find("armure" + i).GetComponent<TextMesh>().text = card.perm.Armure.ToString();
+                t.Find("vie" + i).GetComponent<TextMesh>().text = card.perm.Vie.ToString();
+                t.Find("type" + i).GetComponent<TextMesh>().text = card.perm.TypePerm;
+            }
+            else if (card.TypeCarte == "Sort")
+                t.Find("type" + i).GetComponent<TextMesh>().text = card.TypeCarte;
+        }
+        else
+        {
+            int taille = t.name.Length - 11;
+            int i = int.Parse(t.name.Substring(11, taille));
+            t.Find("coutBoisEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBois.ToString();
+            t.Find("coutBleEnnemis" + i).GetComponent<TextMesh>().text = card.CoutBle.ToString();
+            t.Find("coutGemEnnemis" + i).GetComponent<TextMesh>().text = card.CoutGem.ToString();
+            t.Find("habileteEnnemis" + i).GetComponent<TextMesh>().text = formaterHabilete(card.Habilete);
+            t.Find("NomEnnemis" + i).GetComponent<TextMesh>().text = card.NomCarte;
+            t.Find("ImageEnnemis" + i).GetComponent<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
+            if (card.perm != null)
+            {
+                t.Find("attaqueEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Attaque.ToString();
+                t.Find("armureEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Armure.ToString();
+                t.Find("vieEnnemis" + i).GetComponent<TextMesh>().text = card.perm.Vie.ToString();
+                t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.perm.TypePerm;
+            }
+            else if (card.TypeCarte == "Sort")
+                t.Find("typeEnnemis" + i).GetComponent<TextMesh>().text = card.TypeCarte;
+        }
+    }
     private void setValueFromCard(Transform t, Carte card)
     {
         if (card != null && t != null)
@@ -409,8 +453,7 @@ public class Jouer : MonoBehaviour
                 stat[8].text = card.TypeCarte;
             else
                 stat[8].text = card.perm.TypePerm;
-            SpriteRenderer sprite = t.GetComponentInChildren<SpriteRenderer>();
-            sprite.sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
+            t.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load(card.NomCarte, typeof(Sprite)) as Sprite;
         }
     }
     private void changestatFromCard(GameObject t, Carte card)
@@ -709,7 +752,7 @@ public class Jouer : MonoBehaviour
             joueur1.nbGem += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutGem;
         }
         Script_attaque = GetComponent<attaque>();
-        if (enTrainCaster)
+        if(enTrainCaster)
         {
             Script_attaque.enabled = false;
         }
@@ -1058,6 +1101,10 @@ public class Jouer : MonoBehaviour
                 ZoneCarteEnnemie[places].EstOccupee = false;
                 Destroy(tempss);
                 GameObject gamespell = GameObject.Find(data[1]);
+                if (spell.Habilete.Split(new char[] {' '})[0] == "Donne")
+                    setValueFromCard(gamespell.transform, spell, true);
+                else
+                    setValueFromCard(gamespell.transform, spell, false);
                 GameObject gametarget = GameObject.Find(data[2]);
                 gamespell.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell, 3);
@@ -1195,7 +1242,10 @@ public class Jouer : MonoBehaviour
                 ZoneCarteEnnemie[placess].EstOccupee = false;
                 Destroy(tempsss);
                 GameObject gamespell2 = GameObject.Find(data[1]);
-                setValueFromCard(gamespell2.transform,spell2);
+                if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Donne")
+                    setValueFromCard(gamespell2.transform, spell2, true);
+                else
+                    setValueFromCard(gamespell2.transform, spell2, false);
                 gamespell2.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell2, 3);
                 if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Inflige")
@@ -1283,16 +1333,16 @@ public class Jouer : MonoBehaviour
                                     doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
                             }
                         }
-                        else if (typeTarget == "touteslescreaturesalliees" || typeTarget == "touteslescartesalliees" || typeTarget == "touslesbatimentsallies")
+                        else if(typeTarget == "touteslescartesalliees" || typeTarget == "touslesbatimentsallies" || typeTarget == "touteslescreaturesalliees")
                         {
                             if (transformAllies(typeTarget) && styleCarteAlliercombat[i] != null)
                             {
                                 valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
                                 if (valide)
                                     doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
-                            }                            
+                            }
                         }
-                        else if (typeTarget == "touteslescreaturesennemies" || typeTarget == "touteslescartesennemies" || typeTarget == "touslesbatimentsennemis")
+                        else if(typeTarget == "touteslescartesennemies" || typeTarget == "touslesbatimentsennemis" || typeTarget == "touteslescreaturesennemies")
                         {
                             if (transformEnnemis(typeTarget) && styleCarteEnnemisCombat[i] != null)
                             {
@@ -1663,6 +1713,7 @@ public class Jouer : MonoBehaviour
         {
             if (allier)
             {
+                
                 int posi = nom.IndexOf("d");
                 string position = nom.Substring(posi + 1, nom.Length - (posi + 1));
                 t = GameObject.Find("card" + position);
