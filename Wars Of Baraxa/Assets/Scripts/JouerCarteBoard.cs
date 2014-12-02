@@ -745,11 +745,11 @@ public class JouerCarteBoard : MonoBehaviour
                 {
                     for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
-                        if (Jouer.ZoneCombat[i].carte != null)
+                        if (Jouer.ZoneCombat[i].carte != null && Jouer.ZoneCombat[i].EstOccupee)
                             spellBuff(Jouer.spellTarget, Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
                         if (isOnBothPlayers(Jouer.spellTarget))
                         {
-                            if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                            if (Jouer.ZoneCombatEnnemie[i].carte != null && Jouer.ZoneCombatEnnemie[i].EstOccupee)
                                 spellBuff(Jouer.spellTarget, Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
                         }
                     }
