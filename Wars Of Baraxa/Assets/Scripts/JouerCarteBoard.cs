@@ -596,9 +596,9 @@ public class JouerCarteBoard : MonoBehaviour
                     EstJouer = true;
                     Destroy(Jouer.spell, 1);
                     envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name);
-                    wait(1);
+                    StartCoroutine(wait(1));
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
-                    wait(1);
+                    StartCoroutine(wait(1));
                     if (Jouer.target.name != "hero ennemis" && Jouer.target.name != "hero")
                         EnvoyerCarte(connexionServeur.sck, Jouer.carteTarget);
 
@@ -760,7 +760,7 @@ public class JouerCarteBoard : MonoBehaviour
                 EstJouer = true;
                 Destroy(Jouer.spell, 1);
                 envoyerMessage("Jouer spellnotarget." + Jouer.spell.name);
-                wait(1);
+                StartCoroutine(wait(1));
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -822,7 +822,7 @@ public class JouerCarteBoard : MonoBehaviour
                     setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                 }
                 envoyerMessage("Jouer Carte." + this.name);
-                wait(1);
+                StartCoroutine(wait(1f));
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
             }
             //}
@@ -926,7 +926,7 @@ public class JouerCarteBoard : MonoBehaviour
     {
         return mot == "Donne" || mot == "Ajoute";
     }
-    public IEnumerator wait(int i)
+    public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
     }
@@ -967,6 +967,7 @@ public class JouerCarteBoard : MonoBehaviour
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
+        StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
@@ -1000,6 +1001,7 @@ public class JouerCarteBoard : MonoBehaviour
             data = stream.ToArray();
         }
         client.Send(data);
+        StartCoroutine(wait(0.5f));
     }
 
     int[] getStat(Permanent perm)

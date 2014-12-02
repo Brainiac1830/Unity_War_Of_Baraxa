@@ -11,9 +11,15 @@ using warsofbaraxa;
 public class Loading_script : MonoBehaviour
 {
     public GUIStyle Background;
+    public GUI Label_loading;
+    public GUIStyle Loading;
     public Texture gear;
-    string reponse="";
+    string reponse = "";
     bool appeler = false;
+    Color couleur = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+    float alpha = 1;
+    bool fadeUp;
+
     // Use this for initialization
     void Start()
     {
@@ -41,7 +47,23 @@ public class Loading_script : MonoBehaviour
     void OnGUI()
     {
         GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", Background);
-        GUI.Label(new Rect(Screen.width * 0.37f, Screen.height * 0.82f, Screen.width * 0.3f, Screen.height * 0.2f), "<color=white><size=60>Loading</size></color>");
+        GUI.Label(new Rect(Screen.width * 0.41f, Screen.height * 0.82f, Screen.width * 0.3f, Screen.height * 0.2f), "Loading", Loading);
+        Loading.normal.textColor = couleur;
+        if (couleur.a <= 0)
+            fadeUp = true;
+        else if (couleur.a == 1)
+            fadeUp = false;
+
+        if (fadeUp)
+        {
+            alpha += 0.1f;
+            couleur = new Color(1, 1, 1, alpha);
+        }
+        else
+        {
+            alpha -= 0.1f;
+            couleur = new Color(1, 1, 1, alpha);
+        }
     }
     private void envoyerMessage(string message)
     {

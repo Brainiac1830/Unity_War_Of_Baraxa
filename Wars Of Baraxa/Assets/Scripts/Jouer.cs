@@ -796,7 +796,7 @@ public class Jouer : MonoBehaviour
             if (EstGagnant)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();
@@ -808,7 +808,7 @@ public class Jouer : MonoBehaviour
             else if (EstPerdant)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();
@@ -821,7 +821,7 @@ public class Jouer : MonoBehaviour
             else if(EstNul)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Partie nul!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();
@@ -1739,7 +1739,7 @@ public class Jouer : MonoBehaviour
             }
         }
     }
-    public IEnumerator wait(int i)
+    public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
     }
@@ -1877,7 +1877,7 @@ public class Jouer : MonoBehaviour
     }
     private Carte setHabilete(Carte card)
     {
-        if (card.Habilete != "" && card.Habilete != null)
+        if (card != null && card.Habilete != "" && card.Habilete != null)
         {
             string[] data = card.Habilete.Split(new char[] { ',' });
             for (int i = 0; i < data.Length; ++i)
@@ -1933,6 +1933,7 @@ public class Jouer : MonoBehaviour
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
+        StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
@@ -1993,6 +1994,7 @@ public class Jouer : MonoBehaviour
             data = stream.ToArray();
         }
         client.Send(data);
+        StartCoroutine(wait(0.5f));
     }
     private Deck ReceiveDeck(Socket client)
     {
