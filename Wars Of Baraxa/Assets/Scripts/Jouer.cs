@@ -99,7 +99,6 @@ public class Jouer : MonoBehaviour
     public GameObject card;
     public GameObject cardennemis;
     public JouerCarteBoard ScriptEnnemie;
-    public attaque Script_attaque;
     public int NoCarte;
     public int noCarteEnnemis;
     static public float pos;
@@ -1878,7 +1877,7 @@ public class Jouer : MonoBehaviour
     }
     private Carte setHabilete(Carte card)
     {
-        if (card.Habilete != "" && card.Habilete != null)
+        if (card != null && card.Habilete != "" && card.Habilete != null)
         {
             string[] data = card.Habilete.Split(new char[] { ',' });
             for (int i = 0; i < data.Length; ++i)
