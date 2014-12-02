@@ -595,12 +595,14 @@ public class JouerCarteBoard : MonoBehaviour
                 {
                     EstJouer = true;
                     Destroy(Jouer.spell, 1);
-                    envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name);
-                    StartCoroutine(wait(1));
-                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
-                    StartCoroutine(wait(1));
+                    string spellString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
                     if (Jouer.target.name != "hero ennemis" && Jouer.target.name != "hero")
-                        EnvoyerCarte(connexionServeur.sck, Jouer.carteTarget);
+                    {
+                        string targerString = SetCarteString(Jouer.carteTarget);
+                        envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name + "." + spellString+"." +targerString);
+                    }
+                    else
+                        envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name +"."+spellString);
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -759,9 +761,8 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 EstJouer = true;
                 Destroy(Jouer.spell, 1);
-                envoyerMessage("Jouer spellnotarget." + Jouer.spell.name);
-                StartCoroutine(wait(1));
-                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                string spellCarteString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                envoyerMessage("Jouer spellnotarget." + Jouer.spell.name +"." + spellCarteString);
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
@@ -886,6 +887,18 @@ public class JouerCarteBoard : MonoBehaviour
         /*vie*/
         stat[5].text = c.perm.Vie.ToString();
 
+    }
+    private string SetCarteString(Carte temp)
+    {
+        if (temp.TypeCarte == "Permanents")
+        {
+            /*0                    1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
+            return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
+        }
+        else
+        {
+            return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte;
+        }
     }
     private GameObject getGameObjet(GameObject[] tab, PosZoneCombat[] carte, int pos)
     {
