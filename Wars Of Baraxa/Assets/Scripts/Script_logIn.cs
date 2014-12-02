@@ -36,7 +36,7 @@ public class Script_logIn : MonoBehaviour {
         if (connexionServeur.sck == null)
         {
             connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.114"), 1234);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("172.17.104.113"), 1234);
             try
             {
                 connexionServeur.sck.Connect(localEndPoint);
@@ -246,6 +246,10 @@ public void OnGUI() {
         }
 
         return false;
+    }
+    public IEnumerator wait(float i)
+    {
+        yield return new WaitForSeconds(i);
     }
     private void envoyerMessage(string message)
     {
