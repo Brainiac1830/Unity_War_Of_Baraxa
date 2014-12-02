@@ -1887,7 +1887,10 @@ public class Jouer : MonoBehaviour
                     if (getHabilete(zeSpecialHability[0]) && card != null && card.perm != null)
                     {
                         card.perm.specialhability = true;
-                        card.perm.habilityspecial = data[i];
+                        if (card.perm.habilityspecial == "" || card.perm.habilityspecial == null)
+                            card.perm.habilityspecial += data[i];
+                        else
+                            card.perm.habilityspecial += "," +data[i];
                     }
                 }
             }
