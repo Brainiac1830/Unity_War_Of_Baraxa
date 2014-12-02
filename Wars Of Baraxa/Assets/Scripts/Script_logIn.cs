@@ -247,6 +247,10 @@ public void OnGUI() {
 
         return false;
     }
+    public IEnumerator wait(float i)
+    {
+        yield return new WaitForSeconds(i);
+    }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);

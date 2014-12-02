@@ -595,12 +595,14 @@ public class JouerCarteBoard : MonoBehaviour
                 {
                     EstJouer = true;
                     Destroy(Jouer.spell, 1);
-                    envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name);
-                    wait(1);
-                    EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
-                    wait(1);
+                    string spellString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
                     if (Jouer.target.name != "hero ennemis" && Jouer.target.name != "hero")
-                        EnvoyerCarte(connexionServeur.sck, Jouer.carteTarget);
+                    {
+                        string targerString = SetCarteString(Jouer.carteTarget);
+                        envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name + "." + spellString+"." +targerString);
+                    }
+                    else
+                        envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name +"."+spellString);
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -743,11 +745,11 @@ public class JouerCarteBoard : MonoBehaviour
                 {
                     for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
-                        if (Jouer.ZoneCombat[i].carte != null)
+                        if (Jouer.ZoneCombat[i].carte != null && Jouer.ZoneCombat[i].EstOccupee)
                             spellBuff(Jouer.spellTarget, Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
                         if (isOnBothPlayers(Jouer.spellTarget))
                         {
-                            if (Jouer.ZoneCombatEnnemie[i].carte != null)
+                            if (Jouer.ZoneCombatEnnemie[i].carte != null && Jouer.ZoneCombatEnnemie[i].EstOccupee)
                                 spellBuff(Jouer.spellTarget, Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
                         }
                     }
@@ -759,9 +761,8 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 EstJouer = true;
                 Destroy(Jouer.spell, 1);
-                envoyerMessage("Jouer spellnotarget." + Jouer.spell.name);
-                wait(1);
-                EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                string spellCarteString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
+                envoyerMessage("Jouer spellnotarget." + Jouer.spell.name +"." + spellCarteString);
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
@@ -808,21 +809,26 @@ public class JouerCarteBoard : MonoBehaviour
                 Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
                 if (Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
                 {
-                    string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
-                    if (zeSpecialHability[0] == "Donne")
+                    string[] lesHabiletes = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ',' });
+                    for (int i = 0; i < lesHabiletes.Length; ++i)
                     {
-                        setStatbonus(zeSpecialHability);
-                        setStat(Jouer.ZoneCombat, PlacementZoneCombat);
+                        string[] zeSpecialHability = lesHabiletes[i].Split(new char[] { ' ' });
+
+                        if (zeSpecialHability[0] == "Donne")
+                        {
+                            setStatbonus(zeSpecialHability);
+                            setStat(Jouer.ZoneCombat, PlacementZoneCombat);
+                        }
+                        else if (zeSpecialHability[0] == "Ajoute")
+                            setManaBonus(zeSpecialHability);
                     }
-                    else if (zeSpecialHability[0] == "Ajoute")
-                        setManaBonus(zeSpecialHability);
                 }
                 else
                 {
                     setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                 }
                 envoyerMessage("Jouer Carte." + this.name);
-                
+                StartCoroutine(wait(1f));
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
             }
             //}
@@ -886,6 +892,18 @@ public class JouerCarteBoard : MonoBehaviour
         /*vie*/
         stat[5].text = c.perm.Vie.ToString();
 
+    }
+    private string SetCarteString(Carte temp)
+    {
+        if (temp.TypeCarte == "Permanents")
+        {
+            /*0                    1                     2                   3                      4                      5                    6                     7                            8                   9                         10*/
+            return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
+        }
+        else
+        {
+            return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte;
+        }
     }
     private GameObject getGameObjet(GameObject[] tab, PosZoneCombat[] carte, int pos)
     {

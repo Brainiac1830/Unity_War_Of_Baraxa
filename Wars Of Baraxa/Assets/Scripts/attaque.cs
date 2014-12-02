@@ -148,7 +148,7 @@ public class attaque : MonoBehaviour {
             //change le border pour une autre couleur
         peutAttaquer(Jouer.ZoneCombat, Jouer.styleCarteAlliercombat);
         peutEtreAttaquer(Jouer.ZoneCombatEnnemie,Jouer.styleCarteEnnemisCombat);
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && Jouer.MonTour)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit carte;
