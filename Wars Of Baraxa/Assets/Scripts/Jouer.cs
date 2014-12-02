@@ -746,7 +746,7 @@ public class Jouer : MonoBehaviour
             if (EstGagnant)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez gagné!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();
@@ -758,7 +758,7 @@ public class Jouer : MonoBehaviour
             else if (EstPerdant)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Vous avez perdu!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();
@@ -771,7 +771,7 @@ public class Jouer : MonoBehaviour
             else if(EstNul)
             {
                 GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\n  Partie nul!", GUIBox);
-                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "   Menu", GUIButton))
+                if (GUI.Button(new Rect((Screen.width * 0.43f), Screen.height * 0.54f, Screen.width * 0.135f, Screen.height * 0.07f), "Menu", GUIButton))
                 {
                     envoyerMessage("asd");
                     t.Abort();

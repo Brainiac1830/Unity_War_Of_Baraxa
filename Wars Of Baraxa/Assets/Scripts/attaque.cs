@@ -15,6 +15,8 @@ public class attaque : MonoBehaviour {
     GameObject carteDefense;
     int posAllier=-1;
     int posDefenseur=-1;
+    int taille;
+    int numero;
     Color Normal;
 	// Use this for initialization
 	void Start () {
@@ -42,17 +44,31 @@ public class attaque : MonoBehaviour {
     {
         for (int i = 0; i < tab.Length; ++i)
         {
+            
             if (tab[i].carte != null && style[i] != null && tab[i].carte.perm != null && i == posAllier && tab[i].carte.perm.TypePerm == "Creature")
             {
-                style[i].renderer.material.color = Color.blue;
+                taille = style[i].name.Length - 4;
+                numero = int.Parse(style[i].name.Substring(4, taille));
+                style[i].transform.FindChild("glow" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = true;
+                style[i].transform.FindChild("glow" + numero.ToString()).GetComponent<SpriteRenderer>().color = Color.blue;
+                //style[i].renderer.material.color = Color.blue;
             }
             else if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.aAttaque && tab[i].carte.perm.TypePerm == "Creature" && Selectionable(style[i], tab) && tab[i].carte.perm.estEndormi == 0)
             {
-                style[i].renderer.material.color = Color.green;
+                taille = style[i].name.Length - 4;
+                numero = int.Parse(style[i].name.Substring(4, taille));
+                style[i].transform.FindChild("glow" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = true;
+                style[i].transform.FindChild("glow" + numero.ToString()).GetComponent<SpriteRenderer>().color = Color.green;
+                //style[i].renderer.material.color = Color.green;
             }
 
             else if (tab[i].carte != null && style[i] != null)
-                style[i].renderer.material.color = Color.white;
+            {
+                taille = style[i].name.Length - 4;
+                numero = int.Parse(style[i].name.Substring(4, taille));
+                style[i].transform.FindChild("glow" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = false;
+                //style[i].renderer.material.color = Color.white;
+            }
         }
     }
     public void peutEtreAttaquer(PosZoneCombat[] tab, GameObject [] style)
@@ -63,11 +79,22 @@ public class attaque : MonoBehaviour {
         if (esttaunt)
         {
             for (int i = 0;i < tab.Length; ++i)
-            {
+            {  
                 if (peutEtreAttaquer[i] == taunt && Selectionable(style[i], tab))
-                    style[i].renderer.material.color = Color.red;
+                {
+                    taille = style[i].name.Length - 11;
+                    numero = int.Parse(style[i].name.Substring(11, taille));
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = true;
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().color = Color.red;
+                    //style[i].renderer.material.color = Color.red;
+                }
                 else if (tab[i].carte != null && style[i] != null)
-                    style[i].renderer.material.color = Color.white;
+                {
+                    taille = style[i].name.Length - 11;
+                    numero = int.Parse(style[i].name.Substring(11, taille));
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = false;
+                    //style[i].renderer.material.color = Color.white;
+                }
             }
         }
         else
@@ -75,9 +102,20 @@ public class attaque : MonoBehaviour {
             for (int i = 0; i < tab.Length; ++i)
             {
                 if (tab[i].carte != null && style[i] != null && !tab[i].carte.perm.estInvisible && Selectionable(style[i], tab))
-                    style[i].renderer.material.color = Color.red;
+                {
+                    taille = style[i].name.Length - 11;
+                    numero = int.Parse(style[i].name.Substring(11, taille));
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = true;
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().color = Color.red;
+                    //style[i].renderer.material.color = Color.red;
+                }
                 else if (tab[i] != null && style[i] != null)
-                    style[i].renderer.material.color = Color.white;
+                {
+                    taille = style[i].name.Length - 11;
+                    numero = int.Parse(style[i].name.Substring(11, taille));
+                    style[i].transform.FindChild("glowEnnemis" + numero.ToString()).GetComponent<SpriteRenderer>().enabled = false;
+                    //style[i].renderer.material.color = Color.white;
+                }
             }
         }
     }
@@ -124,6 +162,10 @@ public class attaque : MonoBehaviour {
                     int[] stat = getStat(Jouer.ZoneCombat[posAllier].carte.perm);
                     Attaquant = new Permanent("Creature", stat[0], stat[1],stat[2]);
                     
+                }
+                else
+                {
+                    posAllier = -1;
                 }
             }
             else if (Physics.Raycast(ray, out carte) && AttaquantClick)
