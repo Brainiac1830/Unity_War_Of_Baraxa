@@ -12,9 +12,9 @@ public class JouerCarteBoard : MonoBehaviour
 {
     public float delay;
     public Jouer Script_Jouer;
+    public attaque Script_attaque;
     public bool EstJouer = false;
     public bool EstEnnemie = false;
-
     Transform clonetransform;
     GameObject cloneCarte;
     bool estClone;
@@ -47,7 +47,7 @@ public class JouerCarteBoard : MonoBehaviour
                 if (PlacementZoneCombat != -1)
                 {
                     Jouer.ZoneCombat[PlacementZoneCombat].EstOccupee = false;
-                    if (Jouer.ZoneCombat[PlacementZoneCombat] != null && Jouer.ZoneCombat[PlacementZoneCombat].carte!= null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm!= null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
+                    if (Jouer.ZoneCombat[PlacementZoneCombat] != null && Jouer.ZoneCombat[PlacementZoneCombat].carte != null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm != null && Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
                     {
                         string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
                         if (zeSpecialHability[0] == "Donne")
@@ -57,8 +57,13 @@ public class JouerCarteBoard : MonoBehaviour
                     }
                 }
             }
-            if (cloneCarte != null)
-                Destroy(cloneCarte);
+        }
+        if (cloneCarte != null)
+        {
+            Color c = cloneCarte.renderer.material.color;
+            c.a = 0f;
+            Destroy(cloneCarte);
+            cloneCarte = null;
         }
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
@@ -147,8 +152,8 @@ public class JouerCarteBoard : MonoBehaviour
         else
             zeTarget.perm.Vie += nbVie;
 
-            TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
-            stat[5].text = zeTarget.perm.Vie.ToString();
+        TextMesh[] stat = t.GetComponentsInChildren<TextMesh>();
+        stat[5].text = zeTarget.perm.Vie.ToString();
 
         return !valide;
     }
@@ -203,7 +208,7 @@ public class JouerCarteBoard : MonoBehaviour
             if (zeTarget.perm.TypePerm == "Creature")
                 valide = true;
         }
-        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis" || target =="touslesbatimentsallies")
+        else if (target == "batiment" || target == "touslesbatiments" || target == "touslesbatimentsennemis" || target == "touslesbatimentsallies")
         {
             if (zeTarget.perm.TypePerm == "Batiment")
                 valide = true;
@@ -339,7 +344,7 @@ public class JouerCarteBoard : MonoBehaviour
             {
                 if (motsHabilete[i + 1] == "les" && (motsHabilete[i + 2] == "cartes" || motsHabilete[i + 2] == "creatures"))
                 {
-                    if (i+3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemies" || motsHabilete[i+3] == "alliees"))
+                    if (i + 3 < motsHabilete.Length && (motsHabilete[i + 3] == "ennemies" || motsHabilete[i + 3] == "alliees"))
                     {
                         target = motsHabilete[i] + motsHabilete[i + 1] + motsHabilete[i + 2] + motsHabilete[i + 3];
                         pasTrouver = false;
@@ -508,7 +513,7 @@ public class JouerCarteBoard : MonoBehaviour
     public static int trouverPosEnTrainCaster(GameObject carte)
     {
         int pos = 0;
-        for(int i = 0; i < Jouer.ZoneCarteJoueur.Length; i++)
+        for (int i = 0; i < Jouer.ZoneCarteJoueur.Length; i++)
         {
             if (carte.transform.position == Jouer.ZoneCarteJoueur[i].Pos)
                 pos = i;
@@ -521,18 +526,19 @@ public class JouerCarteBoard : MonoBehaviour
         Jouer.target = null;
         int Emplacement = 0;
         int posTarget;
-        if(Jouer.enTrainCaster)
+        if (Jouer.enTrainCaster)
         {
+               
             if (Jouer.targetNeeded)
             {
-                
+
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit carte;
                 if (Physics.Raycast(ray, out carte))
                 {
                     Jouer.target = GameObject.Find(carte.collider.gameObject.name);
-                    
-                    if(Jouer.target != null && (Jouer.target.name == "hero ennemis" || Jouer.target.name == "hero"))
+
+                    if (Jouer.target != null && (Jouer.target.name == "hero ennemis" || Jouer.target.name == "hero"))
                     {
                         if (Jouer.effet == "Inflige")
                         {
@@ -541,7 +547,7 @@ public class JouerCarteBoard : MonoBehaviour
                             else
                                 Jouer.enTrainCaster = burnHeros("Allier", trouverNbDegat(Jouer.texteHabileteSansEspace));
                         }
-                        else if(Jouer.effet == "Soigne")
+                        else if (Jouer.effet == "Soigne")
                         {
                             if (Jouer.target.name == "hero")
                                 Jouer.enTrainCaster = healHeros("Allier", trouverNbVie(Jouer.texteHabileteSansEspace));
@@ -550,10 +556,10 @@ public class JouerCarteBoard : MonoBehaviour
                         }
                     }
                     /*permanents car est sur le board*/
-                    
+
                     else
                     {
-                        if (! isEnnemi(Jouer.effet))
+                        if (!isEnnemi(Jouer.effet))
                         {
                             posTarget = TrouverEmplacementCarteJoueur(Jouer.target.transform.position, Jouer.ZoneCombat);
                             Jouer.carteTarget = Jouer.ZoneCombat[posTarget].carte;
@@ -588,8 +594,8 @@ public class JouerCarteBoard : MonoBehaviour
                 if (!Jouer.enTrainCaster)
                 {
                     EstJouer = true;
-                    Destroy(Jouer.spell,1);
-                    envoyerMessage("Jouer spellTarget." + Jouer.spell.name +"." + Jouer.target.name);
+                    Destroy(Jouer.spell, 1);
+                    envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name);
                     wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCarteJoueur[Jouer.position].carte);
                     wait(1);
@@ -599,7 +605,6 @@ public class JouerCarteBoard : MonoBehaviour
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                     Jouer.spell = null;
-
                     if (Jouer.HpEnnemi <= 0 && Jouer.HpJoueur <= 0)
                     {
                         Jouer.gameFini = true;
@@ -642,14 +647,14 @@ public class JouerCarteBoard : MonoBehaviour
             Jouer.effet = trouverTypeEffet(Jouer.texteHabileteSansEspace);
             //target qui recoit le spell
             Jouer.spellTarget = trouverTypeTarget(Jouer.texteHabileteSansEspace);
-            
+
 
             if (isATargetNeeded(trouverTypeTarget(Jouer.texteHabileteSansEspace)))
                 Jouer.targetNeeded = true;
             else
                 Jouer.targetNeeded = false;
 
-            if(!Jouer.targetNeeded)
+            if (!Jouer.targetNeeded)
             {
                 if (Jouer.effet == "Inflige")
                 {
@@ -684,21 +689,21 @@ public class JouerCarteBoard : MonoBehaviour
                             if (Jouer.ZoneCombat[i].carte != null)
                                 spellSleep(Jouer.spellTarget, trouverNbTour(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
                         }
-                               
+
                     }
                 }
                 else if (Jouer.effet == "Transforme")
                 {
                     for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
-                        if(Jouer.ZoneCombatEnnemie[i].carte != null)
+                        if (Jouer.ZoneCombatEnnemie[i].carte != null)
                             spellTransform(Jouer.spellTarget, trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
-                        if(isOnBothPlayers(Jouer.spellTarget))
+                        if (isOnBothPlayers(Jouer.spellTarget))
                         {
                             if (Jouer.ZoneCombat[i].carte != null)
                                 spellTransform(Jouer.spellTarget, trouverStats(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
                         }
-                        
+
                     }
                 }
                 else if (Jouer.effet == "Detruit")
@@ -719,10 +724,10 @@ public class JouerCarteBoard : MonoBehaviour
                     for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
                         if (Jouer.ZoneCombat[i].carte != null)
-                            spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace) ,Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
+                            spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace), Jouer.ZoneCombat[i].carte, Jouer.styleCarteAlliercombat[i], i);
                         if (isOnBothPlayers(Jouer.spellTarget))
                         {
-                            if(Jouer.ZoneCombatEnnemie[i].carte != null)
+                            if (Jouer.ZoneCombatEnnemie[i].carte != null)
                                 spellHeal(Jouer.spellTarget, trouverNbVie(Jouer.texteHabileteSansEspace), Jouer.ZoneCombatEnnemie[i].carte, Jouer.styleCarteEnnemisCombat[i], i);
 
                             if (isOnHeros(Jouer.spellTarget))
@@ -734,7 +739,7 @@ public class JouerCarteBoard : MonoBehaviour
                         }
                     }
                 }
-                else if(Jouer.effet == "Donne")
+                else if (Jouer.effet == "Donne")
                 {
                     for (int i = 0; i < Jouer.ZoneCombatEnnemie.Length; i++)
                     {
@@ -926,7 +931,8 @@ public class JouerCarteBoard : MonoBehaviour
         yield return new WaitForSeconds(i);
     }
 
-    void OnMouseOver(){
+    void OnMouseOver()
+    {
         delay += Time.deltaTime;
         //// here the 2 is the time that you want before load the bar
         if (this.name != "hero" && this.name != "hero ennemis")
@@ -944,15 +950,19 @@ public class JouerCarteBoard : MonoBehaviour
                 cloneCarte.transform.position = new Vector3(6.5f, -0.5f, 1);
             }
         }
-	}
+    }
 
-	void OnMouseExit(){
+    void OnMouseExit()
+    {
         delay = 0;
         if (cloneCarte != null)
         {
+            Color c = cloneCarte.renderer.material.color;
+            c.a = 0f;
             Destroy(cloneCarte);
+            cloneCarte = null;
         }
-       }
+    }
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
