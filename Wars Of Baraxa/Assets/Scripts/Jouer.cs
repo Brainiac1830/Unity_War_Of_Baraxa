@@ -98,6 +98,7 @@ public class Jouer : MonoBehaviour
     public GameObject card;
     public GameObject cardennemis;
     public JouerCarteBoard ScriptEnnemie;
+    public attaque Script_attaque;
     public int NoCarte;
     public int noCarteEnnemis;
     static public float pos;
@@ -530,11 +531,8 @@ public class Jouer : MonoBehaviour
     }
     private void afficherIconSpecial()
     {
-
         for (int i = 0; i < ZoneCombat.Length; i++)
         {
-
-
             if (styleCarteAlliercombat[i] != null)
             {
                 taille = styleCarteAlliercombat[i].name.Length - 4;
@@ -702,12 +700,22 @@ public class Jouer : MonoBehaviour
         {
             enTrainCaster = false;
             Jouer.spell.transform.position = ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].Pos;
+            ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].EstOccupee = true;
             NbBle += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBle;
             NbBois += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBois;
             NbGem += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutGem;
             joueur1.nbBle += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBle;
             joueur1.nbBois += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutBois;
             joueur1.nbGem += ZoneCarteJoueur[Jouer.posCarteEnTrainCaster].carte.CoutGem;
+        }
+        Script_attaque = GetComponent<attaque>();
+        if (enTrainCaster)
+        {
+            Script_attaque.enabled = false;
+        }
+        else
+        {
+            Script_attaque.enabled = true;
         }
     }
     //affichage (refresh per frame)
@@ -791,8 +799,8 @@ public class Jouer : MonoBehaviour
                 resetArmor(ZoneCombatEnnemie,styleCarteEnnemisCombat,false);
                 pigerCarteEnnemis();
                 descendreSleep(ZoneCombat);
-                attaque temp = GetComponent<attaque>();
-                temp.enabled = false;
+                Script_attaque = GetComponent<attaque>();
+                Script_attaque.enabled = false;
             }
         }
         else
@@ -871,7 +879,9 @@ public class Jouer : MonoBehaviour
             //attaque s = GetComponent<attaque>();
             //s.enabled = false;
             if (ReceiveMessage.message != "")
-            traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
+            {
+                traiterMessagePartie(ReceiveMessage.message.Split(new char[] { '.' }));
+            }
     }
     private void descendreSleep(PosZoneCombat[] Zone)
     {
@@ -942,8 +952,8 @@ public class Jouer : MonoBehaviour
                 placerClick = false;
                 resetArmor(ZoneCombat, styleCarteAlliercombat, true);
                 resetArmor(ZoneCombatEnnemie, styleCarteEnnemisCombat, false);
-                attaque s = GetComponent<attaque>();
-                s.enabled = true;
+                Script_attaque = GetComponent<attaque>();
+                Script_attaque.enabled = true;
                 //max mana =5
                 if (NbWorkerMax < 5)
                     setWorker(true);
@@ -953,8 +963,8 @@ public class Jouer : MonoBehaviour
                 descendreSleep(ZoneCombatEnnemie);
                 setpeutAttaquer();
                 PigerCarte();
-                attaque attaqueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = GetComponent<attaque>();
-                attaqueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.enabled = true;
+                Script_attaque = GetComponent<attaque>();
+                Script_attaque.enabled = true;
                 ReceiveMessage.message = "";
                 break;
             case "AjouterCarteEnnemis":
@@ -1029,6 +1039,7 @@ public class Jouer : MonoBehaviour
                 if (data[2] != "hero ennemis")
                 {
                     target = createCarte(data, 10);
+                    setHabilete(target);
                 }
                 setManaEnnemis(NbBleEnnemis - spell.CoutBle, NbBoisEnnemis - spell.CoutBois, NbGemEnnemis - spell.CoutGem);
                 int num3 = data[1].IndexOf("d");
@@ -1134,8 +1145,9 @@ public class Jouer : MonoBehaviour
 
                     if (buffHabilete == "provocation")
                     {
-                        if (!ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estInvisible)
-                            ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estTaunt = true;
+                        if (ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estInvisible)
+                            ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estInvisible = false;
+                        ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estTaunt = true;
                     }
                     else if (buffHabilete == "attaque puissante")
                     {
@@ -1147,6 +1159,8 @@ public class Jouer : MonoBehaviour
                     }
                     else if (buffHabilete == "invisible")
                     {
+                        if (ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estTaunt)
+                            ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estTaunt = false;
                         ZoneCombatEnnemie[positionCarteEnJEu].carte.perm.estInvisible = true;
                     }
 
@@ -1269,7 +1283,24 @@ public class Jouer : MonoBehaviour
                                     doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
                             }
                         }
-                        
+                        else if (typeTarget == "touteslescreaturesalliees" || typeTarget == "touteslescartesalliees" || typeTarget == "touslesbatimentsallies")
+                        {
+                            if (transformAllies(typeTarget) && styleCarteAlliercombat[i] != null)
+                            {
+                                valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombat);
+                                if (valide)
+                                    doTransformation(styleCarteAlliercombat[i], i, ZoneCombat, statsTransforme);
+                            }                            
+                        }
+                        else if (typeTarget == "touteslescreaturesennemies" || typeTarget == "touteslescartesennemies" || typeTarget == "touslesbatimentsennemis")
+                        {
+                            if (transformEnnemis(typeTarget) && styleCarteEnnemisCombat[i] != null)
+                            {
+                                valide = checkIfValide(typeTarget, i, spell2.Habilete.Split(new char[] { ' ' })[0], ZoneCombatEnnemie);
+                                if (valide)
+                                    doTransformation(styleCarteEnnemisCombat[i], i, ZoneCombatEnnemie, statsTransforme);
+                            }                        
+                        }
                     }
                 }
                 else if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Endort")
@@ -1280,7 +1311,7 @@ public class Jouer : MonoBehaviour
                     for (int i = 0; i < ZoneCombat.Length; i++)
                     {
                         valide = false;
-                        if (typeTarget == "touteslescreatures")
+                        if (typeTarget == "touteslescreatures" || typeTarget == "touteslescartes" || typeTarget == "touslesbatiments")
                         {
                             if (styleCarteEnnemisCombat[i] != null)
                             {
@@ -1304,7 +1335,7 @@ public class Jouer : MonoBehaviour
                     for(int i = 0; i < ZoneCombatEnnemie.Length; i++)
                     {
                         valide = false;
-                        if (typeTarget == "touteslescreatures")
+                        if (typeTarget == "touteslescreatures" || typeTarget == "touteslescartes" || typeTarget == "touslesbatiments")
                         {
                             if (styleCarteAlliercombat[i] != null)
                             {
@@ -1452,8 +1483,9 @@ public class Jouer : MonoBehaviour
 
         if (buffHabilete == "provocation")
         {
-            if (!zone[pos].carte.perm.estInvisible)
-                zone[pos].carte.perm.estTaunt = true;
+            if (zone[pos].carte.perm.estInvisible)
+                zone[pos].carte.perm.estInvisible = false;
+            zone[pos].carte.perm.estTaunt = true;
         }
         else if (buffHabilete == "attaque puissante")
         {
@@ -1465,6 +1497,8 @@ public class Jouer : MonoBehaviour
         }
         else if (buffHabilete == "invisible")
         {
+            if (zone[pos].carte.perm.estTaunt)
+                zone[pos].carte.perm.estTaunt = false;
             zone[pos].carte.perm.estInvisible = true;
         }
     }
@@ -1588,15 +1622,19 @@ public class Jouer : MonoBehaviour
     private Carte createCarte(string[] data, int posDepart)
     {
         Carte zeCarte = null;
-        zeCarte = new Carte(int.Parse(data[posDepart + 6]), data[posDepart + 5], data[posDepart + 4], data[posDepart + 3], int.Parse(data[posDepart]), int.Parse(data[posDepart + 1]), int.Parse(data[posDepart + 2]));
-        if (zeCarte.TypeCarte == "Permanents" || zeCarte.TypeCarte == "creature" || zeCarte.TypeCarte == "batiment" || zeCarte.TypeCarte == "Permanent")
-            zeCarte.perm = new Permanent(data[posDepart + 10], int.Parse(data[posDepart + 7]), int.Parse(data[posDepart + 8]), int.Parse(data[posDepart + 9]));
+        if (data.Length >= posDepart + 6)
+        {
+            zeCarte = new Carte(int.Parse(data[posDepart + 6]), data[posDepart + 5], data[posDepart + 4], data[posDepart + 3], int.Parse(data[posDepart]), int.Parse(data[posDepart + 1]), int.Parse(data[posDepart + 2]));
+            if (zeCarte.TypeCarte == "Permanents" || zeCarte.TypeCarte == "creature" || zeCarte.TypeCarte == "batiment" || zeCarte.TypeCarte == "Permanent")
+                zeCarte.perm = new Permanent(data[posDepart + 10], int.Parse(data[posDepart + 7]), int.Parse(data[posDepart + 8]), int.Parse(data[posDepart + 9]));
+        }
         return zeCarte;
     }
     private void combat(Carte attaquant, Carte ennemi, int posAllier, int posDefenseur, string nomAttaquant, string nomDefenseur)
     {
         recevoirDegat(attaquant, posAllier, false, nomAttaquant);
         recevoirDegat(ennemi, posDefenseur, true, nomDefenseur);
+
         if (ennemi.perm.estEndormi != 0)
         {
             ennemi.perm.estEndormi = 0;
@@ -1627,6 +1665,10 @@ public class Jouer : MonoBehaviour
             {
                 int posi = nom.IndexOf("d");
                 string position = nom.Substring(posi + 1, nom.Length - (posi + 1));
+                t = GameObject.Find("card" + position);
+                int poscreature = TrouverEmplacementCarteJoueur(t.transform.position,ZoneCombat);
+                if (poscreature != -1 && ZoneCombat[poscreature] != null && ZoneCombat[poscreature].carte != null && ZoneCombat[poscreature].carte.perm != null)
+                    ZoneCombat[poscreature].carte.perm.Vie = carte.perm.Vie;
                 t = GameObject.Find("armure" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vie" + position);
@@ -1636,6 +1678,10 @@ public class Jouer : MonoBehaviour
             {
                 int posi = nom.IndexOf("s");
                 string position = nom.Substring(posi + 1, nom.Length - (posi + 1));
+                t = GameObject.Find("cardennemis" + position);
+                int poscreature = TrouverEmplacementCarteJoueur(t.transform.position, ZoneCombatEnnemie);
+                if (poscreature != -1 && ZoneCombatEnnemie[poscreature] != null && ZoneCombatEnnemie[poscreature].carte != null && ZoneCombatEnnemie[poscreature].carte.perm != null)
+                    ZoneCombatEnnemie[poscreature].carte.perm.Vie = carte.perm.Vie;
                 t = GameObject.Find("armureEnnemis" + position);
                 t.GetComponent<TextMesh>().text = carte.perm.Armure.ToString();
                 t = GameObject.Find("vieEnnemis" + position);
