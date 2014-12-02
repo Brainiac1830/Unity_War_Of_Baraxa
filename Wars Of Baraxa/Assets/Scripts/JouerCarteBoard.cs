@@ -31,6 +31,7 @@ public class JouerCarteBoard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
     }
 
     void OnDestroy()
@@ -184,6 +185,7 @@ public class JouerCarteBoard : MonoBehaviour
         {
             Destroy(t, 1);
             Jouer.ZoneCombatEnnemie[posTarget].EstOccupee = false;
+            Jouer.ZoneCombatEnnemie[posTarget].carte = null;
             zeTarget = null;
         }
         return !valide;
@@ -232,7 +234,7 @@ public class JouerCarteBoard : MonoBehaviour
         bool valide = false;
         string buffHabilete = "";
         int buffVie = 0; int buffAttaque = 0; int buffArmure = 0;
-        if (target == "cible")
+        if (target == "cible" || target == "touteslescartes" || target == "touteslescartesalliees")
             valide = true;
         else if (target == "creature" || target == "touteslescreatures" || target == "touteslescreaturesalliees")
         {
@@ -273,8 +275,9 @@ public class JouerCarteBoard : MonoBehaviour
             zeTarget.perm.basicArmor += buffArmure;
             if (buffHabilete == "provocation")
             {
-                if(!zeTarget.perm.estInvisible)
-                    zeTarget.perm.estTaunt = true;
+                if (zeTarget.perm.estInvisible)
+                    zeTarget.perm.estInvisible = false;
+                zeTarget.perm.estTaunt = true;
             }
             else if (buffHabilete == "attaque puissante")
             {
@@ -286,6 +289,8 @@ public class JouerCarteBoard : MonoBehaviour
             }
             else if (buffHabilete == "invisible")
             {
+                if(zeTarget.perm.estTaunt)
+                    zeTarget.perm.estTaunt = false;
                 zeTarget.perm.estInvisible = true;
             }
 
@@ -304,7 +309,7 @@ public class JouerCarteBoard : MonoBehaviour
         bool selectionable = false;
         for (int i = 0; i < Zone.Length; ++i)
         {
-            if (style.transform.position.Equals(Zone[i].Pos))
+            if (style != null && Zone[i]!= null && style.transform.position.Equals(Zone[i].Pos))
             {
                 selectionable = true;
             }
@@ -315,7 +320,7 @@ public class JouerCarteBoard : MonoBehaviour
     {
         string target = ""; int i = 0;
         bool pasTrouver = true;
-        while (pasTrouver || i > motsHabilete.Length)
+        while (pasTrouver && i < motsHabilete.Length)
         {
             if (motsHabilete[i] == "cible" || motsHabilete[i] == "creature" || motsHabilete[i] == "batiment" || motsHabilete[i] == "ennemis")
             {
