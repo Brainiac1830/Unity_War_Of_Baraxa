@@ -1739,7 +1739,7 @@ public class Jouer : MonoBehaviour
             }
         }
     }
-    public IEnumerator wait(int i)
+    public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
     }
@@ -1933,6 +1933,7 @@ public class Jouer : MonoBehaviour
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
+        StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
@@ -1993,6 +1994,7 @@ public class Jouer : MonoBehaviour
             data = stream.ToArray();
         }
         client.Send(data);
+        StartCoroutine(wait(0.5f));
     }
     private Deck ReceiveDeck(Socket client)
     {
