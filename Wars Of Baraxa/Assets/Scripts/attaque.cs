@@ -33,7 +33,7 @@ public class attaque : MonoBehaviour {
         bool selectionable = false;
         for (int i = 0; i < Zone.Length;++i)
         {
-                if (style.transform.position.Equals(Zone[i].Pos))
+            if (style != null && Zone[i] != null && style.transform.position.Equals(Zone[i].Pos))
                 {
                     selectionable = true;
                 }
