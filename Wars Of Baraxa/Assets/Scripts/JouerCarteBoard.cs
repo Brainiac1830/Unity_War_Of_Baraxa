@@ -809,14 +809,19 @@ public class JouerCarteBoard : MonoBehaviour
                 Jouer.styleCarteAlliercombat[PlacementZoneCombat] = this.gameObject;
                 if (Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.specialhability)
                 {
-                    string[] zeSpecialHability = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ' ' });
-                    if (zeSpecialHability[0] == "Donne")
+                    string[] lesHabiletes = Jouer.ZoneCombat[PlacementZoneCombat].carte.perm.habilityspecial.Split(new char[] { ',' });
+                    for (int i = 0; i < lesHabiletes.Length; ++i)
                     {
-                        setStatbonus(zeSpecialHability);
-                        setStat(Jouer.ZoneCombat, PlacementZoneCombat);
+                        string[] zeSpecialHability = lesHabiletes[i].Split(new char[] { ' ' });
+
+                        if (zeSpecialHability[0] == "Donne")
+                        {
+                            setStatbonus(zeSpecialHability);
+                            setStat(Jouer.ZoneCombat, PlacementZoneCombat);
+                        }
+                        else if (zeSpecialHability[0] == "Ajoute")
+                            setManaBonus(zeSpecialHability);
                     }
-                    else if (zeSpecialHability[0] == "Ajoute")
-                        setManaBonus(zeSpecialHability);
                 }
                 else
                 {

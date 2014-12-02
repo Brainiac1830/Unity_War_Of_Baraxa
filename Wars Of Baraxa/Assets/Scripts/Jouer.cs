@@ -1100,10 +1100,7 @@ public class Jouer : MonoBehaviour
                 ZoneCarteEnnemie[places].EstOccupee = false;
                 Destroy(tempss);
                 GameObject gamespell = GameObject.Find(data[1]);
-                if (spell.Habilete.Split(new char[] {' '})[0] == "Donne")
-                    setValueFromCard(gamespell.transform, spell, true);
-                else
-                    setValueFromCard(gamespell.transform, spell, false);
+                setValueFromCard(gamespell.transform, spell, false);
                 GameObject gametarget = GameObject.Find(data[2]);
                 gamespell.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell, 3);
@@ -1241,10 +1238,7 @@ public class Jouer : MonoBehaviour
                 ZoneCarteEnnemie[placess].EstOccupee = false;
                 Destroy(tempsss);
                 GameObject gamespell2 = GameObject.Find(data[1]);
-                if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Donne")
-                    setValueFromCard(gamespell2.transform, spell2, true);
-                else
-                    setValueFromCard(gamespell2.transform, spell2, false);
+                setValueFromCard(gamespell2.transform, spell2, false);
                 gamespell2.transform.position = new Vector3(-5.4f, 0.0f, 6.0f);
                 Destroy(gamespell2, 3);
                 if (spell2.Habilete.Split(new char[] { ' ' })[0] == "Inflige")
@@ -1892,7 +1886,10 @@ public class Jouer : MonoBehaviour
                     if (getHabilete(zeSpecialHability[0]) && card != null && card.perm != null)
                     {
                         card.perm.specialhability = true;
-                        card.perm.habilityspecial = data[i];
+                        if (card.perm.habilityspecial == "" || card.perm.habilityspecial == null)
+                            card.perm.habilityspecial += data[i];
+                        else
+                            card.perm.habilityspecial += "," +data[i];
                     }
                 }
             }
