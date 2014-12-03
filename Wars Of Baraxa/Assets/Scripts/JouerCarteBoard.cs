@@ -600,9 +600,11 @@ public class JouerCarteBoard : MonoBehaviour
                     {
                         string targerString = SetCarteString(Jouer.carteTarget);
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name + "." + spellString+"." +targerString);
+                        StartCoroutine(wait(1.5f));
                     }
                     else
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name +"."+spellString);
+                    StartCoroutine(wait(1.5f));
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -763,6 +765,7 @@ public class JouerCarteBoard : MonoBehaviour
                 Destroy(Jouer.spell, 1);
                 string spellCarteString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
                 envoyerMessage("Jouer spellnotarget." + Jouer.spell.name +"." + spellCarteString);
+                StartCoroutine(wait(1.5f));
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
@@ -828,7 +831,7 @@ public class JouerCarteBoard : MonoBehaviour
                     setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                 }
                 envoyerMessage("Jouer Carte." + this.name);
-                StartCoroutine(wait(1f));
+                StartCoroutine(wait(1.5f));
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
             }
             //}
@@ -1021,13 +1024,18 @@ public class JouerCarteBoard : MonoBehaviour
         client.Send(data);
         StartCoroutine(wait(0.5f));
     }
-
-    int[] getStat(Permanent perm)
+    /*public void waitForActionDone()
     {
-        int[] stat = new int[3];
-        stat[0] = perm.Attaque;
-        stat[1] = perm.Vie;
-        stat[2] = perm.Armure;
-        return stat;
+        attaque temp_attaque = GetComponent<attaque>();
+        JouerCarteBoard temp_JouerCarteboard
+        Jouer.MonTour = false;
+        Jouer.placerClick = true;
     }
+    public void restart()
+    {
+        attaque temp_attaque = GetComponent<attaque>();
+        Jouer.MonTour = true;
+        Jouer.placerClick = false;
+        temp_attaque.enabled = false;
+    }*/
 }
