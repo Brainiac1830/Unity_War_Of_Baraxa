@@ -536,6 +536,7 @@ public class JouerCarteBoard : MonoBehaviour
                 RaycastHit carte;
                 if (Physics.Raycast(ray, out carte))
                 {
+                    waitForActionDone();
                     Jouer.target = GameObject.Find(carte.collider.gameObject.name);
 
                     if (Jouer.target != null && (Jouer.target.name == "hero ennemis" || Jouer.target.name == "hero"))
@@ -600,11 +601,11 @@ public class JouerCarteBoard : MonoBehaviour
                     {
                         string targerString = SetCarteString(Jouer.carteTarget);
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name + "." + spellString+"." +targerString);
-                        StartCoroutine(wait(1.5f));
+                        StartCoroutine(waitEnvoyer(1.5f));
                     }
                     else
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name +"."+spellString);
-                    StartCoroutine(wait(1.5f));
+                    StartCoroutine(waitEnvoyer(1.5f));
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -660,6 +661,7 @@ public class JouerCarteBoard : MonoBehaviour
 
             if (!Jouer.targetNeeded)
             {
+                waitForActionDone();
                 if (Jouer.effet == "Inflige")
                 {
                     if (Jouer.spellTarget != "herosennemis")
@@ -765,7 +767,7 @@ public class JouerCarteBoard : MonoBehaviour
                 Destroy(Jouer.spell, 1);
                 string spellCarteString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
                 envoyerMessage("Jouer spellnotarget." + Jouer.spell.name +"." + spellCarteString);
-                StartCoroutine(wait(1.5f));
+                StartCoroutine(waitEnvoyer(1.5f));
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
@@ -789,6 +791,7 @@ public class JouerCarteBoard : MonoBehaviour
         }
         else if ((this.tag != "hero" || this.tag != "hero ennemis") && Cout.Length != 0 && !Jouer.enTrainCaster && getNbCarteZone(Jouer.ZoneCombat) < Jouer.ZoneCombat.Length && Jouer.MonTour && !EstJouer && !EstEnnemie && Jouer.joueur1.nbBois >= System.Int32.Parse(Cout[0].text) && Jouer.joueur1.nbBle >= System.Int32.Parse(Cout[1].text) && Jouer.joueur1.nbGem >= System.Int32.Parse(Cout[2].text))
         {
+            waitForActionDone();
             Jouer.joueur1.nbBois -= System.Int32.Parse(Cout[0].text);
             Jouer.joueur1.nbBle -= System.Int32.Parse(Cout[1].text);
             Jouer.joueur1.nbGem -= System.Int32.Parse(Cout[2].text);
@@ -831,8 +834,8 @@ public class JouerCarteBoard : MonoBehaviour
                     setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                 }
                 envoyerMessage("Jouer Carte." + this.name);
-                StartCoroutine(wait(1.5f));
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
+                StartCoroutine(waitEnvoyer(1.5f));
             }
             //}
             //else
@@ -947,6 +950,11 @@ public class JouerCarteBoard : MonoBehaviour
     {
         return mot == "Donne" || mot == "Ajoute";
     }
+    public IEnumerator waitEnvoyer(float i)
+    {
+        yield return new WaitForSeconds(i);
+        restart();
+    }
     public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
@@ -1024,18 +1032,12 @@ public class JouerCarteBoard : MonoBehaviour
         client.Send(data);
         StartCoroutine(wait(0.5f));
     }
-    /*public void waitForActionDone()
+    public void waitForActionDone()
     {
-        attaque temp_attaque = GetComponent<attaque>();
-        JouerCarteBoard temp_JouerCarteboard
         Jouer.MonTour = false;
-        Jouer.placerClick = true;
     }
     public void restart()
     {
-        attaque temp_attaque = GetComponent<attaque>();
         Jouer.MonTour = true;
-        Jouer.placerClick = false;
-        temp_attaque.enabled = false;
-    }*/
+    }
 }

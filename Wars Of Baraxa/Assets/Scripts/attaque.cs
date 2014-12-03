@@ -179,8 +179,10 @@ public class attaque : MonoBehaviour {
                     int pos = TrouverEmplacementCarteJoueur(carte.transform.position, Jouer.ZoneCombatEnnemie);
                     if (taunt)
                     {
-                        if(pos != -1 &&Jouer.ZoneCombatEnnemie[pos].carte.perm.estTaunt)
+                        if (pos != -1 && Jouer.ZoneCombatEnnemie[pos].carte.perm.estTaunt)
+                        {
                             attaqueSomething();
+                        }
                     }
                     else if(!Jouer.ZoneCombatEnnemie[pos].carte.perm.estInvisible)
                     {
@@ -189,6 +191,7 @@ public class attaque : MonoBehaviour {
                 }
                 if (carteDefense!= null && carteDefense.name == "hero ennemis" && !foundTaunt(Jouer.ZoneCombatEnnemie))
                 {
+                    waitForActionDone();
                     Jouer.HpEnnemi = CombatJoueur(Jouer.ZoneCombat[posAllier].carte, Jouer.HpEnnemi);
                     if (!Jouer.ZoneCombat[posAllier].carte.perm.estAttaqueDouble || Jouer.ZoneCombat[posAllier].carte.perm.aAttaquerDouble)
                         Jouer.ZoneCombat[posAllier].carte.perm.aAttaque = true;
@@ -199,8 +202,8 @@ public class attaque : MonoBehaviour {
                     audio.PlayOneShot(Attack);
                     envoyerMessage("Attaquer Joueur");
                     StartCoroutine(wait(1.5f));
-                    wait(1);
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
+                    StartCoroutine(waitEnvoyer(1.5f));
 
                     if (Jouer.HpJoueur <= 0 || Jouer.HpEnnemi <= 0)
                     {
@@ -223,6 +226,7 @@ public class attaque : MonoBehaviour {
         posDefenseur = TrouverEmplacementCarteJoueur(carteDefense.transform.position, Jouer.ZoneCombatEnnemie);
         if (posDefenseur != -1 && carteDefense.name != "hero ennemis")
         {
+            waitForActionDone();
             int[] stat = getStat(Jouer.ZoneCombatEnnemie[posDefenseur].carte.perm);
             AttaquantClick = false;
             Defenseur = new Permanent("Creature", stat[0], stat[1], stat[2]);
@@ -254,7 +258,7 @@ public class attaque : MonoBehaviour {
                 Jouer.ZoneCombatEnnemie[posDefenseur].carte = null;
             }
             envoyerMessage("Attaquer Creature." + posAllier + "." + posDefenseur + "."+carteAttaque.name+"."+carteDefense.name+"." + attaquant + "." + ennemis);
-            StartCoroutine(wait(1.5f));
+            StartCoroutine(waitEnvoyer(1.5f));
             Attaquant = null;
             carteAttaque = null;
             Defenseur = null;
@@ -285,6 +289,11 @@ public class attaque : MonoBehaviour {
     public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
+    }
+    public IEnumerator waitEnvoyer(float i)
+    {
+        yield return new WaitForSeconds(i);
+        restart();
     }
     private int TrouverEmplacementCarteJoueur(Vector3 PosCarte, PosZoneCombat[] Zone)
     {
@@ -389,5 +398,13 @@ public class attaque : MonoBehaviour {
         }
         string strData = Encoding.ASCII.GetString(formatted);
         return strData;
+    }
+    public void waitForActionDone()
+    {
+        Jouer.MonTour = false;
+    }
+    public void restart()
+    {
+        Jouer.MonTour = true;
     }
 }
