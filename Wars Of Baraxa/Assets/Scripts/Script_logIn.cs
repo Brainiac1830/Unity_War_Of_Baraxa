@@ -255,7 +255,6 @@ public void OnGUI() {
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
-        StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
