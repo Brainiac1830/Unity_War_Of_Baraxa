@@ -31,7 +31,7 @@ public class Jouer : MonoBehaviour
     static public GameObject[] styleCarteEnnemisCombat;
     static public PosZoneCombat[] ZoneCarteEnnemie;
     public int NbCarteEnMainJoueur;
-    public bool placerClick;
+    static public bool placerClick;
     public Texture2D Test;
     public Texture2D ble;
     public Texture2D bois;
@@ -783,6 +783,7 @@ public class Jouer : MonoBehaviour
                 gameFini = true;
                 EstPerdant = true;
                 envoyerMessage("surrender");
+                StartCoroutine(wait(1.5f));
             }
             if (GUI.Button(new Rect(Screen.width * 0.36f, Screen.height * 0.53f, Screen.width * 0.15f, Screen.height * 0.07f), "Retour au jeu", GUIButton))
             {
@@ -836,6 +837,7 @@ public class Jouer : MonoBehaviour
             if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini"))
             {
                 envoyerMessage("Fin De Tour");
+                StartCoroutine(wait(1.5f));
                 MonTour = false;
                 resetArmor(ZoneCombat, styleCarteAlliercombat, true);
                 resetArmor(ZoneCombatEnnemie, styleCarteEnnemisCombat, false);
@@ -891,6 +893,7 @@ public class Jouer : MonoBehaviour
                 joueur1.nbBois = NbBois;
                 joueur1.nbGem = NbGem;
                 envoyerMessage("Ajouter Mana." + NbBle + "." + NbBois + "." + NbGem);
+                StartCoroutine(wait(1.5f));
             }
         }
         else
@@ -1818,6 +1821,7 @@ public class Jouer : MonoBehaviour
         if (NoCarte >= 40)
         {
             envoyerMessage("Carte manquante");
+            StartCoroutine(wait(1.5f));
             //afficher vous avez perdu
             EstPerdant = true;
             //Application.LoadLevel("Menu");
@@ -1844,6 +1848,7 @@ public class Jouer : MonoBehaviour
             ++NoCarte;
             //on envoye au serveur qu'on a piger
             envoyerMessage("Piger");
+            StartCoroutine(wait(1.5f));
         }
         --nbCarteAllier;
     }
