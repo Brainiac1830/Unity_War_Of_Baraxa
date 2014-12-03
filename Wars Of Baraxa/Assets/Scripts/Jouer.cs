@@ -1475,7 +1475,6 @@ public class Jouer : MonoBehaviour
             {
                 Destroy(t, 1);
                 zone[i].EstOccupee = false;
-                zone[i].carte = null;
             }
         }
 
@@ -1581,7 +1580,6 @@ public class Jouer : MonoBehaviour
     {
         Destroy(t, 1);
         zone[i].EstOccupee = false;
-        zone[i].carte = null;
     }
     private bool checkIfValide(string typeTarget, int i, string typeSpell, PosZoneCombat[] zone)
     {
@@ -1683,11 +1681,12 @@ public class Jouer : MonoBehaviour
     {
         recevoirDegat(attaquant, posAllier, false, nomAttaquant);
         recevoirDegat(ennemi, posDefenseur, true, nomDefenseur);
-
-        if (ennemi.perm.estEndormi != 0)
-        {
-            ennemi.perm.estEndormi = 0;
-        }
+        GameObject def = GameObject.Find(nomDefenseur);
+        int posDef=-1;
+        if(def != null)
+             posDef = TrouverEmplacementCarteJoueur(def.transform.position, ZoneCombat);
+        if (posDef != -1)
+            ZoneCombat[posDef].carte.perm.estEndormi = 0;
         if (attaquant.perm.Vie <= 0)
         {
             GameObject temp = GameObject.Find(nomAttaquant);

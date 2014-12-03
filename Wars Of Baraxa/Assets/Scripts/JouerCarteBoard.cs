@@ -601,11 +601,11 @@ public class JouerCarteBoard : MonoBehaviour
                     {
                         string targerString = SetCarteString(Jouer.carteTarget);
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name + "." + spellString+"." +targerString);
-                        StartCoroutine(waitEnvoyer(1.5f));
+                        StartCoroutine(waitEnvoyer(0.75f));
                     }
                     else
                         envoyerMessage("Jouer spellTarget." + Jouer.spell.name + "." + Jouer.target.name +"."+spellString);
-                    StartCoroutine(waitEnvoyer(1.5f));
+                    StartCoroutine(waitEnvoyer(0.75f));
 
                     Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                     Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
@@ -767,7 +767,7 @@ public class JouerCarteBoard : MonoBehaviour
                 Destroy(Jouer.spell, 1);
                 string spellCarteString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);
                 envoyerMessage("Jouer spellnotarget." + Jouer.spell.name +"." + spellCarteString);
-                StartCoroutine(waitEnvoyer(1.5f));
+                StartCoroutine(waitEnvoyer(0.75f));
                 Jouer.ZoneCarteJoueur[Jouer.position].carte = null;
                 Jouer.ZoneCarteJoueur[Jouer.position].EstOccupee = false;
                 Jouer.spell = null;
@@ -835,7 +835,7 @@ public class JouerCarteBoard : MonoBehaviour
                 }
                 envoyerMessage("Jouer Carte." + this.name);
                 EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[PlacementZoneCombat].carte);
-                StartCoroutine(waitEnvoyer(1.5f));
+                StartCoroutine(waitEnvoyer(0.75f));
             }
             //}
             //else
