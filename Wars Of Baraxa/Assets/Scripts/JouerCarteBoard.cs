@@ -834,9 +834,8 @@ public class JouerCarteBoard : MonoBehaviour
                 {
                     setStat(Jouer.ZoneCombat, PlacementZoneCombat);
                 }
-                string carteJouer = SetCarteString(Jouer.ZoneCombat[PlacementZoneCombat].carte);
-                                                                    /*2*/
-                envoyerMessage("Jouer Carte." + this.name +"." + carteJouer);
+                envoyerMessage("Jouer Carte." + this.name);
+                EnvoyerCarte(connexionServeur.sck,Jouer.ZoneCombat[PlacementZoneCombat].carte);
                 StartCoroutine(waitEnvoyer(0.75f));
             }
             //}
