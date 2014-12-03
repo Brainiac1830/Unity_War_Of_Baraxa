@@ -943,7 +943,7 @@ public class Jouer : MonoBehaviour
     private void setManaBonus(string[] data)
     {
         int num = getNumBonus(data[1]);
-        string sorteMana = data[2];
+        string sorteMana = data[2].Split(new char[] {','})[0];
         if (sorteMana == "bois")
             NbBoisEnnemis += num;
         else if (sorteMana == "gem")
@@ -1110,6 +1110,7 @@ public class Jouer : MonoBehaviour
                 if (spell.Habilete.Split(new char[] { ' ' })[0] == "Detruit")
                 {
                     ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].EstOccupee = false;
+                    ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].carte = null;
                     Destroy(gametarget, 1);
                 }
                 else if (spell.Habilete.Split(new char[] { ' ' })[0] == "Inflige")
@@ -1119,6 +1120,7 @@ public class Jouer : MonoBehaviour
                         if (target != null && target.perm != null && target.perm.Vie <= 0)
                         {
                             ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].EstOccupee = false;
+                            ZoneCombat[TrouverEmplacementCarteJoueur(gametarget.transform.position, ZoneCombat)].carte = null;
                             Destroy(gametarget, 1);
                         }
                         else
