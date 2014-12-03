@@ -203,7 +203,7 @@ public class attaque : MonoBehaviour {
                     envoyerMessage("Attaquer Joueur");
                     StartCoroutine(wait(1.5f));
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
-                    StartCoroutine(waitEnvoyer(1.5f));
+                    StartCoroutine(waitEnvoyer(0.75f));
 
                     if (Jouer.HpJoueur <= 0 || Jouer.HpEnnemi <= 0)
                     {
@@ -258,7 +258,7 @@ public class attaque : MonoBehaviour {
                 Jouer.ZoneCombatEnnemie[posDefenseur].carte = null;
             }
             envoyerMessage("Attaquer Creature." + posAllier + "." + posDefenseur + "."+carteAttaque.name+"."+carteDefense.name+"." + attaquant + "." + ennemis);
-            StartCoroutine(waitEnvoyer(1.5f));
+            StartCoroutine(waitEnvoyer(0.75f));
             Attaquant = null;
             carteAttaque = null;
             Defenseur = null;

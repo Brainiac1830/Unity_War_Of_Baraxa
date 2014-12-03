@@ -55,6 +55,7 @@ public class JouerCarteBoard : MonoBehaviour
                             enleverBonusStat(zeSpecialHability);
                         }
                     }
+                    Jouer.ZoneCombat[PlacementZoneCombat].carte = null;
                 }
             }
         }
