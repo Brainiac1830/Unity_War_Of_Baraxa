@@ -888,12 +888,13 @@ public class Jouer : MonoBehaviour
 
             if (GUI.Button(new Rect(Screen.width / 1.12f, Screen.height / 1.26f, Screen.width * 0.1f, Screen.height * 0.1f), "Placer") && NbWorker == 0)
             {
+                waitForActionDone();
                 placerClick = true;
                 joueur1.nbBle = NbBle;
                 joueur1.nbBois = NbBois;
                 joueur1.nbGem = NbGem;
                 envoyerMessage("Ajouter Mana." + NbBle + "." + NbBois + "." + NbGem);
-                StartCoroutine(wait(1.5f));
+                StartCoroutine(waitEnvoyer(0.75f));
             }
         }
         else
@@ -1488,6 +1489,19 @@ public class Jouer : MonoBehaviour
     private void doSleep(int i, PosZoneCombat[] zone, int nbTours)
     {
         zone[i].carte.perm.estEndormi = nbTours;
+    }
+    public void waitForActionDone()
+    {
+        Jouer.MonTour = false;
+    }
+    public void restart()
+    {
+        Jouer.MonTour = true;
+    }
+    public IEnumerator waitEnvoyer(float i)
+    {
+        yield return new WaitForSeconds(i);
+        restart();
     }
     private void doBuffShitUp(int pos, PosZoneCombat[] zone, string[] tabHabileteSpell)
     {
