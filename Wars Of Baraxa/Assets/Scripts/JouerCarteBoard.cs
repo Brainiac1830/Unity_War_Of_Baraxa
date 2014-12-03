@@ -537,7 +537,6 @@ public class JouerCarteBoard : MonoBehaviour
                 RaycastHit carte;
                 if (Physics.Raycast(ray, out carte))
                 {
-                    waitForActionDone();
                     Jouer.target = GameObject.Find(carte.collider.gameObject.name);
 
                     if (Jouer.target != null && (Jouer.target.name == "hero ennemis" || Jouer.target.name == "hero"))
@@ -595,6 +594,7 @@ public class JouerCarteBoard : MonoBehaviour
                 }
                 if (!Jouer.enTrainCaster)
                 {
+                    waitForActionDone();
                     EstJouer = true;
                     Destroy(Jouer.spell, 1);
                     string spellString = SetCarteString(Jouer.ZoneCarteJoueur[Jouer.position].carte);

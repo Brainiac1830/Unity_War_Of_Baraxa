@@ -61,13 +61,13 @@
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Oracle.DataAccess">
- <HintPath>C:/Users/201184401/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/Oracle.DataAccess.dll</HintPath>
+ <HintPath>C:/Users/201093812/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/Oracle.DataAccess.dll</HintPath>
  </Reference>
  <Reference Include="warsofbaraxa">
- <HintPath>C:/Users/201184401/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
+ <HintPath>C:/Users/201093812/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/warsofbaraxa.dll</HintPath>
  </Reference>
  <Reference Include="WarsOfBaraxaBD">
- <HintPath>C:/Users/201184401/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
+ <HintPath>C:/Users/201093812/Desktop/GitHub/Unity_War_Of_Baraxa/Wars Of Baraxa/Assets/Plugins/WarsOfBaraxaBD.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

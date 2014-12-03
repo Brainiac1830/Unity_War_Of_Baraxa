@@ -861,7 +861,7 @@ public class Jouer : MonoBehaviour
         GUI.Label(new Rect(Screen.width * 0.06f, Screen.height * 0.07f, Screen.width * 0.09f, Screen.height * 0.07f), "Bois: " + NbBoisEnnemis.ToString());
         //gem
         GUI.Label(new Rect(Screen.width * 0.14f, Screen.height * 0.005f, Screen.width * 0.05f, Screen.height * 0.07f), gem);
-        GUI.Label(new Rect(Screen.width * 0.14f, Screen.height * 0.07f, Screen.width * 0.09f, Screen.height * 0.07f), "Gem: " + NbGemEnnemis.ToString());
+        GUI.Label(new Rect(Screen.width * 0.14f, Screen.height * 0.07f, Screen.width * 0.09f, Screen.height * 0.07f), "Gemmes: " + NbGemEnnemis.ToString());
         if (!placerClick && MonTour)
         {
             //BLE
