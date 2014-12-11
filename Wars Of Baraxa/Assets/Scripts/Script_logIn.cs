@@ -27,12 +27,16 @@ public class Script_logIn : MonoBehaviour {
     public GUIStyle Background;
     public GUIStyle GUIBox;
     public GUIStyle GUIButton;
+    //si on ferme l'application
     void OnApplicationQuit()
     {
+        //on dit au serveur qu'on quitte
         envoyerMessage("deconnection");
     }
+    //avant le début du programe
     void Awake()
     {
+        //on se connecte au serveur
         if (connexionServeur.sck == null)
         {
             connexionServeur.sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -41,32 +45,38 @@ public class Script_logIn : MonoBehaviour {
             {
                 connexionServeur.sck.Connect(localEndPoint);
             }
+                //si il y a un probleme on reload la scene de base
             catch (SocketException)
             {
                 Application.LoadLevel("Acceuil");
             }
         }
     }
-
+    //ONGUI est appelé a chaque frame et s'occupe de l'interface graphique
 public void OnGUI() {
+    //met l'image du background
 	GUI.Box(new Rect(0,0,Screen.width,Screen.height),"",Background);
+    //change la grosseur des textes
 	warOfBaraxa.fontSize = Screen.width / 10;
 	text.fontSize = Screen.width/35;
 	textArea.fontSize = Screen.width/42;
 	buttons.fontSize = Screen.width/42;
+    //si il n'y a pas de message d'erreur
     if (!showBox)
     {
         /*Bonton enter pour log in*/
         if (Event.current.keyCode == KeyCode.Return)
             hitReturn = true;
-
+        //si il a click sur enter et que on essaye de se connecter
         if (hitReturn && !enTrainDeConnecter && !nouveauCompte)
         {
+            //on essaye de se connecter
             connect();
             hitReturn = false;
         }
         else if (hitReturn && !enTrainDeConnecter)
         {
+            //sinon on veut créer un compte
             Creer();
             hitReturn = false;
         }
@@ -85,6 +95,7 @@ public void OnGUI() {
             //Tente de se connecter avec les informations fournis
             if (GUI.Button(new Rect((Screen.width * 0.435f) - (Screen.width * 0.12f / 2), Screen.height * 0.62f, Screen.width * 0.12f, Screen.height * 0.06f), "Connecter", buttons))
             {
+                //essaye de se connecter
                 connect();
             }
             //Change l'interface pour pouvoir créer un compte
@@ -136,63 +147,79 @@ public void OnGUI() {
 	
 	// Update is called once per frame
 	void Update () {
+        //si on click Return pour se conencter
         if (Input.GetKeyDown(KeyCode.Return))
         {
             //Conditions d'erreurs
             if (alias == "" || password == "")
             {
+                //si il manque des champs
                 showBox = true;
                 messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
             }
             else if (!estDansBd(alias, password))
             {
+                //si il n'est pas dans la BD
                 showBox = true;
                 messageErreur = "Votre alias ou votre mot de passe \n est invalide.";
             }
             else
             {
+                //si il a réussis a se connecter
                 Application.LoadLevel("Menu");
             }
         }
 	}
+    //créer un compte
     private void Creer()
     {
+        //si un des champs n'est pas remplis
         if (alias == "" || password == "" || nom == "" || prenom == "")
         {
+            //erreur
             showBox = true;
             messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
         }
+            //si il est deja créer 
         else if (getAliasBd(alias, password, nom, prenom))
         {
+            //erreur
             showBox = true;
             messageErreur = "\n Votre alias est deja utiliser.";
         }
         else
         {
+            //on créer le compte et on va au menu
             //manque a se connecter
             enTrainDeConnecter = true;
             Application.LoadLevel("Menu");
         }        
     }
+    //connect un compte au jeu
     private void connect()
     {
-        //Conditions d'erreurs
+        //si un des champs n'est pas remplis
         if (alias == "" || password == "")
         {
+            //erreur
             showBox = true;
             messageErreur = "Un des champs est vide. \n Veuillez entrer tous les champs.";
         }
+        //si les données sont incorrect ou qu'il est conencter
         else if (!estDansBd(alias, password))
         {
+            //erreur
             showBox = true;
             messageErreur = "Votre alias ou votre mot de passe \n est invalide.";
         }
         else
         {
+            //il se connect au jeu
             enTrainDeConnecter = true;
             Application.LoadLevel("Menu");
         }               
     }
+    //essaye de créer le compte
     private bool getAliasBd(string alias,string mdp,string nom,string prenom)
     {
         string reponse = "";
@@ -220,6 +247,7 @@ public void OnGUI() {
 
         return false;
     }
+    //essaye de voir si on peut se connect
     private bool estDansBd(string alias, string mdp)
     {
         string reponse = "";
@@ -247,24 +275,29 @@ public void OnGUI() {
 
         return false;
     }
+    //Sleep en unity
     public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
     }
+    //envoie un message au serveur
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
     }
+    //recois un message du serveur
     private string lire()
     {
         string message = null;
         do
         {
             message = recevoirResultat();
+            //tant qu'il n'a rien recus
         } while (message == null);
         return message;
     }
+    //recois le string du serveur et l'envoie a la fct lire
     private string recevoirResultat()
     {
         byte[] buff = new byte[connexionServeur.sck.SendBufferSize];

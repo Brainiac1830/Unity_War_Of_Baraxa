@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 
 public class profile_Script : MonoBehaviour {
+    //pour le ONGUI
     public GUIStyle Logo;
     public GUIStyle warOfBaraxa;
     public GUIStyle text;
@@ -12,6 +13,7 @@ public class profile_Script : MonoBehaviour {
     public GUIStyle Background;
     public GUIStyle GUIBox;
     public GUIStyle textArea;
+
     public string victoire;
     public string defaite;
     public string aliasRechercher = "";
@@ -26,16 +28,20 @@ public class profile_Script : MonoBehaviour {
 	void Start () {
 	    
 	}
+    //quand on quitte on le dit au serveur
         void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
     }
+    //au début du programme
     public void Awake()
     {
         int tour = 0;
         connexionServeur.sck.ReceiveTimeout = 500;
         string message = "";
         bool recu = false;
+        //on demande au serveur si on peut avoir notre profil apres on recois un message
+        //si on ne recois pas le message apres une demie seconde on recommence apres 5 seconde on retourne au menu de départ
         while (!recu && tour <10)
         {
             try
@@ -54,8 +60,10 @@ public class profile_Script : MonoBehaviour {
         {
             Application.LoadLevel("Menu");
         }
+        //on reset le timeout a infini
         connexionServeur.sck.ReceiveTimeout = 0;
         string[] data = message.Split(new char[] { ',' });
+        //on set les données du profile
         if (data.Length >= 4)
         {
             victoire = data[0];
@@ -80,16 +88,18 @@ public class profile_Script : MonoBehaviour {
 	}
     public void OnGUI()
     {
+        //set le background
         GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", Background);
         text.fontSize = Screen.width / 35;
+        //quand on ne recherche pas un autre joueur (on affiche une box)
         if (!showBox)
         {
             //GUI.Label(new Rect((Screen.width / 2) - (Screen.width * 0.6f / 2), Screen.height * 0.1f, Screen.width * 0.6f, Screen.height * 0.1f), "Wars of Baraxa", warOfBaraxa);
-            //account name         nom joueur
+            //account name         
             GUI.Label(new Rect(Screen.width * 0.25f, Screen.height * 0.47f, Screen.width * 0.005f, Screen.height * 0.05f), "alias :", text);
             GUI.TextField(new Rect(Screen.width * 0.31f, Screen.height * 0.47f, Screen.width * 0.03f, Screen.height * 0.05f), alias, text);
 
-            //Défaites
+            //Nom complet
             GUI.Label(new Rect(Screen.width * 0.65f, Screen.height * 0.47f, Screen.width * 0.03f, Screen.height * 0.05f), "nom :", text);
             GUI.TextField(new Rect(Screen.width * 0.76f, Screen.height * 0.47f, Screen.width * 0.03f, Screen.height * 0.05f), nomComplet, text);
             //Victoires
@@ -116,26 +126,31 @@ public class profile_Script : MonoBehaviour {
         }
         else 
         {
+            //pour enter
             if (Event.current.keyCode == KeyCode.Return)
                 hitReturn = true;
 
             if (hitReturn)
             {
+                //envoie le profile(du joueur rechercher)
                 envoyerProfile(aliasRechercher);
                 showBox = false;
                 aliasRechercher = "";
                 hitReturn = false;
             }
+            //créer la box pour mettre les données
             GUIButton.fontSize = Screen.width / 50;
             GUI.Box(new Rect(Screen.width * 0.25f, Screen.height * 0.5f, Screen.width * 0.40f, Screen.height * 0.22f),"", GUIBox);
             GUI.Label(new Rect(Screen.width*0.18f, Screen.height * 0.55f, Screen.width * 0.25f, Screen.height * 0.05f),"Alias:", text);
             aliasRechercher = GUI.TextField(new Rect((Screen.width / 2) - (Screen.width * 0.25f / 2), Screen.height * 0.55f, Screen.width * 0.25f, Screen.height * 0.05f), aliasRechercher, 25, textArea);
+            //si on click on recherche le joueur
             if (GUI.Button(new Rect((Screen.width * 0.3f), Screen.height * 0.63f, Screen.width * 0.15f, Screen.height * 0.07f), "rechercher", GUIButton))
             {
                 envoyerProfile(aliasRechercher);
                 showBox = false;
                 aliasRechercher = "";
             }
+            //on revient
             if (GUI.Button(new Rect((Screen.width * 0.48f), Screen.height * 0.63f, Screen.width * 0.15f, Screen.height * 0.07f), "retour", GUIButton))
             {
                 showBox = false;
@@ -143,6 +158,7 @@ public class profile_Script : MonoBehaviour {
             }
         }
     }
+    //---------communication le serveur--------------////////
     private void envoyerProfile(string al)
     {
         envoyerMessage("afficher profil Joueur" + "," + al);
@@ -185,4 +201,5 @@ public class profile_Script : MonoBehaviour {
         string strData = Encoding.ASCII.GetString(formatted);
         return strData;
     }
+    //------fin de la communication--------////////////////////
 }

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/// <summary>
+/// Inutile permet seulement de tester des fct!!!
+/// comment bouger la carte, utiliser les prefabs 
+/// </summary>
 public class script_TestingShit : MonoBehaviour {
 	//cartes
 	public GameObject card;

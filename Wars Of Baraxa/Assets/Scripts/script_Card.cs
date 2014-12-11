@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/// <summary>
+/// script de test
+/// utiliser pour voir comment modifier les cartes
+/// </summary>
 public class script_Card : MonoBehaviour {
 
 	/*string nom_ = "";

@@ -10,6 +10,7 @@ using warsofbaraxa;
 
 public class Loading_script : MonoBehaviour
 {
+    //pour ONGUI
     public GUIStyle Background;
     public GUI Label_loading;
     public GUIStyle Loading;
@@ -24,13 +25,12 @@ public class Loading_script : MonoBehaviour
     void Start()
     {
     }
+    //sleep en unity
     public IEnumerator wait(float i)
     {
         yield return new WaitForSeconds(i);
     }
-    void Awake()
-    {
-    }
+    //a la fin du programme on envoie au serveur que l'on se déconnect
     void OnApplicationQuit()
     {
         envoyerMessage("deconnection");
@@ -38,17 +38,22 @@ public class Loading_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //on recois un message a chaque seconde et on en recois un du serveur
         string message = lire();
         if (message == "Partie Commencer")
             Application.LoadLevel("Board");
 
         envoyerMessage("oui");
     }
+    //ONGUI est appelé a chaque frame et s'occupe de l'interface graphique
     void OnGUI()
     {
+        //background
         GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", Background);
         GUI.Label(new Rect(Screen.width * 0.41f, Screen.height * 0.82f, Screen.width * 0.3f, Screen.height * 0.2f), "Loading", Loading);
+        //permet de rendre invisible et visible le texte. il le rend visible et invisible progressivement
         Loading.normal.textColor = couleur;
+        //si il est invisible on le met visible sinon c'est le contraire
         if (couleur.a <= 0)
             fadeUp = true;
         else if (couleur.a == 1)
@@ -65,6 +70,7 @@ public class Loading_script : MonoBehaviour
             couleur = new Color(1, 1, 1, alpha);
         }
     }
+    //-------communication serveur-----------////////////
     private void envoyerMessage(string message)
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
@@ -91,4 +97,5 @@ public class Loading_script : MonoBehaviour
         string strData = Encoding.ASCII.GetString(formatted);
         return strData;
     }
+    //-------Fin communication serveur-----------////////////
 }

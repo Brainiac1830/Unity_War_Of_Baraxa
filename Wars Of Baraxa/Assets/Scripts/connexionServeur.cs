@@ -18,7 +18,7 @@ public class connexionServeur : MonoBehaviour {
 	}
     public void Awake()
     {
-        // Do not destroy this game object:
+        // Do not destroy this game object:donc une variables qui va etre présente tout au long du programme
         DontDestroyOnLoad(this);
     }
 }
