@@ -363,19 +363,6 @@ public class attaque : MonoBehaviour {
         return temp.CoutBle + "." + temp.CoutBois + "." + temp.CoutGem + "." + temp.Habilete + "." + temp.TypeCarte + "." + temp.NomCarte + "." + temp.NoCarte + "." + temp.perm.Attaque + "." + temp.perm.Vie + "." + temp.perm.Armure + "." + temp.perm.TypePerm;
     }
 
-    private void EnvoyerCarte(Socket client, Carte carte)
-    {
-        byte[] data;
-        BinaryFormatter b = new BinaryFormatter();
-        using (var stream = new MemoryStream())
-        {
-            b.Serialize(stream, carte);
-            data = stream.ToArray();
-        }
-        client.Send(data);
-        //StartCoroutine(wait(0.5f));
-    }
-
     //sleep en unity 
     public IEnumerator wait(float i)
     {
@@ -509,7 +496,7 @@ public class attaque : MonoBehaviour {
             data = stream.ToArray();
         }
         client.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     ///////////-----fin communication serveur-------//////////
     //ne l'aisse le joueur faire aucune action
