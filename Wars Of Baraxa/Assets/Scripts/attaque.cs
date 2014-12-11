@@ -201,7 +201,7 @@ public class attaque : MonoBehaviour {
                     AttaquantClick = false;
                     audio.PlayOneShot(Attack);
                     envoyerMessage("Attaquer Joueur");
-                    StartCoroutine(wait(1.5f));
+                    //StartCoroutine(wait(1.5f));
                     EnvoyerCarte(connexionServeur.sck, Jouer.ZoneCombat[posAllier].carte);
                     StartCoroutine(waitEnvoyer(0.75f));
 
@@ -284,7 +284,7 @@ public class attaque : MonoBehaviour {
             data = stream.ToArray();
         }
         client.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     public IEnumerator wait(float i)
     {
@@ -375,7 +375,7 @@ public class attaque : MonoBehaviour {
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     private string lire()
     {

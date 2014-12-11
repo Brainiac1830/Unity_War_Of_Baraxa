@@ -783,7 +783,7 @@ public class Jouer : MonoBehaviour
                 gameFini = true;
                 EstPerdant = true;
                 envoyerMessage("surrender");
-                StartCoroutine(wait(1.5f));
+                //StartCoroutine(wait(1.5f));
             }
             if (GUI.Button(new Rect(Screen.width * 0.36f, Screen.height * 0.53f, Screen.width * 0.15f, Screen.height * 0.07f), "Retour au jeu", GUIButton))
             {
@@ -837,7 +837,7 @@ public class Jouer : MonoBehaviour
             if (GUI.Button(new Rect(Screen.width * 0.067f, Screen.height * 0.47f, Screen.width * 0.07f, Screen.height * 0.05f), "Fini"))
             {
                 envoyerMessage("Fin De Tour");
-                StartCoroutine(wait(1.5f));
+                //StartCoroutine(wait(1.5f));
                 MonTour = false;
                 resetArmor(ZoneCombat, styleCarteAlliercombat, true);
                 resetArmor(ZoneCombatEnnemie, styleCarteEnnemisCombat, false);
@@ -1836,7 +1836,7 @@ public class Jouer : MonoBehaviour
         if (NoCarte >= 40)
         {
             envoyerMessage("Carte manquante");
-            StartCoroutine(wait(1.5f));
+            //StartCoroutine(wait(1.5f));
             //afficher vous avez perdu
             EstPerdant = true;
             //Application.LoadLevel("Menu");
@@ -1863,7 +1863,7 @@ public class Jouer : MonoBehaviour
             ++NoCarte;
             //on envoye au serveur qu'on a piger
             envoyerMessage("Piger");
-            StartCoroutine(wait(1.5f));
+            //StartCoroutine(wait(1.5f));
         }
         --nbCarteAllier;
     }
@@ -1951,7 +1951,7 @@ public class Jouer : MonoBehaviour
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
@@ -2012,7 +2012,7 @@ public class Jouer : MonoBehaviour
             data = stream.ToArray();
         }
         client.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     private Deck ReceiveDeck(Socket client)
     {

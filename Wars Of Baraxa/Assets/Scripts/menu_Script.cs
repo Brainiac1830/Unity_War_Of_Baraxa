@@ -83,7 +83,7 @@ public class menu_Script : MonoBehaviour
         {
             GUIBox.fontSize = Screen.width / 30;
             GUIButton.fontSize = Screen.width / 40;
-            GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "\nVoulez-vous \n vraiment quitter?", GUIBox);
+            GUI.Box(new Rect(Screen.width * 0.35f, Screen.height * 0.35f, Screen.width * 0.30f, Screen.height * 0.30f), "Voulez-vous \n vraiment quitter?", GUIBox);
 
             if (GUI.Button(new Rect((Screen.width * 0.36f), Screen.height * 0.55f, Screen.width * 0.135f, Screen.height * 0.07f), "Confirmer", GUIButton))
             {

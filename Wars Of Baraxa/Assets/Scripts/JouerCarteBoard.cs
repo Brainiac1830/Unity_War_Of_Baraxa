@@ -997,7 +997,7 @@ public class JouerCarteBoard : MonoBehaviour
     {
         byte[] data = Encoding.ASCII.GetBytes(message);
         connexionServeur.sck.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     private string lire()
     {
@@ -1031,7 +1031,7 @@ public class JouerCarteBoard : MonoBehaviour
             data = stream.ToArray();
         }
         client.Send(data);
-        StartCoroutine(wait(0.5f));
+        //StartCoroutine(wait(0.5f));
     }
     public void waitForActionDone()
     {
